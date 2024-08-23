@@ -171,12 +171,20 @@ app.post("/users/edit/:userId", async (req: Request, res: Response) => {
       },
     });
 
+    const serializeUser = (user: any) => {
+        return {
+          ...user,
+          id: user.id.toString(),  // Convert BigInt to string
+        };
+      };
+
     return res.status(200).json({
       error: undefined,
-      data: updateUser,
+      data: serializeUser(updateUser),
       success: true,
     });
   } catch (error) {
+    console.error("Error updating user:", error)
     res.status(500).json({
       error: Errors.ServerError,
       data: undefined,
@@ -187,9 +195,8 @@ app.post("/users/edit/:userId", async (req: Request, res: Response) => {
 
 // Get a user by email
 app.get("/users", async (req: Request, res: Response) => {
-    res.send("here i am")
   try {
-    const { email } = req.params as { email: string }
+    const { email } = req.query as { email: string }
 
     if (!email) {
       return res.status(404).json({
@@ -214,7 +221,7 @@ app.get("/users", async (req: Request, res: Response) => {
     return res.status(200).json({
       error: undefined,
       data: {
-        id: user.id,
+        id: user.id.toString(),
         email: user.email,
         username: user.username,
         firstName: user.firstName,
@@ -223,8 +230,9 @@ app.get("/users", async (req: Request, res: Response) => {
       success: true,
     });
   } catch (error) {
+    console.error("Server Error:", error)
     return res.status(500).json({
-      error: Errors.ValidationError,
+      error: Errors.ServerError,
       data: undefined,
       success: false,
     });
