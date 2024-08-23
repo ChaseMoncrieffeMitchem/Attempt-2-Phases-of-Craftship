@@ -1,36 +1,26 @@
-import express, { Request, Response } from 'express';
-import cors from 'cors'
-import { PrismaClient } from '@prisma/client';
+import express, { Request, Response } from "express";
+import cors from "cors";
+import { PrismaClient, Users_Table } from "@prisma/client";
 
 const prisma = new PrismaClient();
+
+const Errors = {
+  UsernameAlreadyTaken: "UserNameAlreadyTaken",
+  EmailAlreadyInUse: "EmailAlreadyInUse",
+  ValidationError: "ValidationError",
+  ServerError: "ServerError",
+  ClientError: "ClientError",
+  UserNotFound: "UserNotFound",
+};
 
 async function main() {
   // Example: Fetch all users
   const users = await prisma.users_Table.findMany();
   console.log(users);
-
-  // Create Users
-  try {
-    const newUser = await prisma.users_Table.create({
-      data: {
-        email: 'test@example.com',
-        username: 'testuser',
-        firstName: 'John',
-        lastName: 'Doe',
-        password: 'password123', // Make sure to hash passwords before storing them in production
-      },
-    });
-
-    console.log('User created:', newUser);
-  } catch (error) {
-    console.error('Error creating user:', error);
-  } finally {
-    await prisma.$disconnect();
-  }
 }
 
 main()
-  .catch(e => {
+  .catch((e) => {
     throw e;
   })
   .finally(async () => {
@@ -39,28 +29,213 @@ main()
 
 const app = express();
 app.use(express.json());
-app.use(cors())
+app.use(cors());
+
+function generateRandomPassword(length: number): string {
+  const charset =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
+  const passwordArray = [];
+
+  for (let i = 0; i < length; ++i) {
+    const randomIndex = Math.floor(Math.random() * charset.length);
+    passwordArray.push(charset[randomIndex]);
+  }
+
+  return passwordArray.join("");
+}
+
+function parseUserForResponse(user: Users_Table) {
+  const returnData = JSON.parse(JSON.stringify(user));
+  delete returnData.password;
+  return returnData;
+}
 
 // Create a new user
-app.post('/users/new', async (req: Request, res: Response) => {
-  // ...
+app.post("/users/new", async (req: Request, res: Response) => {
+  try {
+    const userData = req.body
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(userData.email)) {
+      return res
+        .status(400)
+        .json({
+          error: Errors.ValidationError,
+          data: undefined,
+          success: false,
+        });
+    }
+
+    const anExistingUserFoundByUsername = await prisma.users_Table.findFirst({
+      where: { username: req.body.username },
+    });
+    if (anExistingUserFoundByUsername) {
+      return res
+        .status(409)
+        .json({
+          error: Errors.UsernameAlreadyTaken,
+          data: undefined,
+          success: false,
+        });
+    }
+
+    const anExistingUserFoundByEmail = await prisma.users_Table.findFirst({
+      where: { email: req.body.email },
+    });
+    if (anExistingUserFoundByEmail) {
+      return res
+        .status(409)
+        .json({
+          error: Errors.EmailAlreadyInUse,
+          data: undefined,
+          success: false,
+        });
+    }
+
+    const user = await prisma.users_Table.create({
+      data: { ...userData, password: generateRandomPassword(10) },
+    });
+
+    return res.status(201).json({
+      error: undefined,
+      data: parseUserForResponse(user),
+      success: true,
+    });
+  } catch (error) {
+    console.log("Cannot create user");
+    return res.status(500).json({
+      error: Errors.ServerError,
+      data: undefined,
+      success: false,
+    });
+  }
 });
 
 // Edit a user
-app.post('/users/edit/:userId', async (req: Request, res: Response) => {
-  // ...
+app.post("/users/edit/:userId", async (req: Request, res: Response) => {
+  try {
+    const userData = req.body;
+    const { userId } = req.params;
+
+    const user = await prisma.users_Table.findUnique({
+      where: { id: BigInt(userId) },
+    });
+    if (!user) {
+      return res.status(404).json({
+        error: Errors.UserNotFound,
+        data: undefined,
+        success: false,
+      });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(userData.email)) {
+      return res
+        .status(400)
+        .json({
+          error: Errors.ValidationError,
+          data: undefined,
+          success: false,
+        });
+    }
+
+    const usernameAlreadyTaken = await prisma.users_Table.findFirst({
+      where: { username: req.body.username },
+    });
+    if (usernameAlreadyTaken) {
+      return res.status(409).json({
+        error: Errors.UsernameAlreadyTaken,
+        data: undefined,
+        success: false,
+      });
+    }
+
+    const emailAlreadyTaken = await prisma.users_Table.findFirst({
+      where: { email: req.body.email },
+    });
+    if (emailAlreadyTaken) {
+      return res.status(409).json({
+        error: Errors.EmailAlreadyInUse,
+        data: undefined,
+        success: false,
+      });
+    }
+
+    const updateUser = await prisma.users_Table.update({
+      where: { id: BigInt(userId) },
+      data: {
+        email: userData.email || user.email,
+        username: userData.username || user.username,
+        firstName: userData.firstName || user.firstName,
+        lastName: userData.lastName || user.lastName,
+      },
+    });
+
+    return res.status(200).json({
+      error: undefined,
+      data: updateUser,
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: Errors.ServerError,
+      data: undefined,
+      success: false,
+    });
+  }
 });
 
 // Get a user by email
-app.get('/users', async (req: Request, res: Response) => {
-  // ...
+app.get("/users", async (req: Request, res: Response) => {
+    res.send("here i am")
+  try {
+    const { email } = req.params as { email: string }
+
+    if (!email) {
+      return res.status(404).json({
+        error: Errors.UserNotFound,
+        data: undefined,
+        success: false,
+      });
+    }
+
+    const user = await prisma.users_Table.findFirst({
+      where: { email: email },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        error: "UserNotFound",
+        data: undefined,
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      error: undefined,
+      data: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      },
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: Errors.ValidationError,
+      data: undefined,
+      success: false,
+    });
+  }
 });
 
 const port = process.env.PORT || 3000;
 
-app.get('/', (req: Request, res: Response) => {
-    res.send("Server is running!")
-})
+app.get("/", (req: Request, res: Response) => {
+  res.send("Server is running!");
+});
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
