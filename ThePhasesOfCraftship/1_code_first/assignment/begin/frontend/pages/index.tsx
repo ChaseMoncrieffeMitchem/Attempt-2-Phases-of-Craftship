@@ -1,11 +1,12 @@
 // pages/index.tsx
 import React from 'react';
+import { MainPage } from './mainPage';
 
 const Home: React.FC = () => {
   return (
-    <div>
-      <h1>Welcome to Next.js</h1>
-    </div>
+    <>
+    <MainPage />
+    </>
   );
 };
 

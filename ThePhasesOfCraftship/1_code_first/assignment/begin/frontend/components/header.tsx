@@ -1,6 +1,6 @@
 import React from "react";
 // import logo from "../assets/dddforumlogo.png";
-import { Link } from "react-router-dom";
+import Link from "next/link"
 
 const Logo = () => (
   <div id="app-logo">
@@ -11,7 +11,7 @@ const TitleAndSubmission = () => (
   <div id="title-container">
     <h1>Domain-Driven Designers</h1>
     <h3>Where awesome domain driven designers are made</h3>
-    <Link to={"/submit"}>submit</Link>
+    <Link href={"/submit"}>submit</Link>
   </div>
 );
 
@@ -25,7 +25,7 @@ const HeaderActionButton = ({ user }: { user: any }) => (
         </u>
       </div>
     ) : (
-      <Link to="/join">Join</Link>
+      <Link href="/join">Join</Link>
     )}
   </div>
 );
@@ -39,11 +39,11 @@ const shouldShowActionButton = (pathName: string) => {
       <header id="header" className="flex align-center">
         <Logo />
         <TitleAndSubmission />
-        {shouldShowActionButton(location.pathname) ? (
+        {/* {shouldShowActionButton(location.pathname) ? (
           <HeaderActionButton user={{ username: '@john' }} />
         ) : (
           ""
-        )}
+        )} */}
       </header>
     );
   };
