@@ -4,7 +4,7 @@ import { PostsList } from "../components/postList";
 import { PostViewSwitcher } from "../components/postViewSwitcher";
 // import { api } from "../api";
 
-export const mainPage = () => {
+export const MainPage = () => {
   const posts = [];
 
   return (

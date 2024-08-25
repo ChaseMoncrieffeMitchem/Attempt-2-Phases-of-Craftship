@@ -1,10 +1,10 @@
 import React from "react";
-import logo from "../assets/dddforumlogo.png";
+// import logo from "../assets/dddforumlogo.png";
 import { Link } from "react-router-dom";
 
 const Logo = () => (
   <div id="app-logo">
-    <img src={logo}></img>
+    {/* <img src={logo}></img> */}
   </div>
 );
 const TitleAndSubmission = () => (
