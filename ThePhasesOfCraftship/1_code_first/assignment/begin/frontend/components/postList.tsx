@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import arrow from "../public/assets/arrow.svg"
 import moment from 'moment';
 
@@ -38,7 +38,7 @@ export const PostsList = ({ posts }: { posts: Post[] }) => (
           <div className="post-item-title">{post.title}</div>
           <div className="post-item-details">
           <div>{moment(post.dateCreated).fromNow()}</div>
-          <Link to={`/member/${post.memberPostedBy.user.username}`}>
+          <Link href={`/member/${post.memberPostedBy.user.username}`}>
             by {post.memberPostedBy.user.username}
           </Link>
           <div>

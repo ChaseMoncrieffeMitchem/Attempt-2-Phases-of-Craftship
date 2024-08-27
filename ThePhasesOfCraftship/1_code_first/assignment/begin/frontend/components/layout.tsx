@@ -9,7 +9,7 @@ export const Content = ({ children }: any) => (
 
 export const Layout = ({ children }: any) => (
   <>
-    <Header pathName=''/>
+    <Header user={children}/>
     <Content>
       {children}
     </Content>

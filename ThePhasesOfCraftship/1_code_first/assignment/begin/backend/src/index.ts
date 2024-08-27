@@ -45,10 +45,17 @@ function generateRandomPassword(length: number): string {
 }
 
 function parseUserForResponse(user: Users_Table) {
-  const returnData = JSON.parse(JSON.stringify(user));
+  // Convert user object to plain object, then handle the BigInt conversion
+  const returnData = JSON.parse(JSON.stringify(user, (key, value) =>
+    typeof value === 'bigint' ? value.toString() : value
+  ));
+  
+  // Remove the password field
   delete returnData.password;
+
   return returnData;
 }
+
 
 // Create a new user
 app.post("/users/new", async (req: Request, res: Response) => {
@@ -102,7 +109,7 @@ app.post("/users/new", async (req: Request, res: Response) => {
       success: true,
     });
   } catch (error) {
-    console.log("Cannot create user");
+    console.log("Cannot create user", error);
     return res.status(500).json({
       error: Errors.ServerError,
       data: undefined,
@@ -239,7 +246,7 @@ app.get("/users", async (req: Request, res: Response) => {
   }
 });
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Server is running!");

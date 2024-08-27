@@ -1,17 +1,22 @@
 import React from "react";
-// import logo from "../assets/dddforumlogo.png";
-import Link from "next/link"
+import { useRouter } from "next/router";
+import logo from "../public/assets/dddforumlogo.png";
+import Link from "next/link";
+import Image from "next/image";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 const Logo = () => (
   <div id="app-logo">
-    {/* <img src={logo}></img> */}
+    <Image src={logo} height={100} width={100} alt="logo" />
   </div>
 );
+
 const TitleAndSubmission = () => (
   <div id="title-container">
     <h1>Domain-Driven Designers</h1>
     <h3>Where awesome domain driven designers are made</h3>
-    <Link href={"/submit"}>submit</Link>
+    <Link href={"/registerPage"}>Submit</Link>
   </div>
 );
 
@@ -21,7 +26,7 @@ const HeaderActionButton = ({ user }: { user: any }) => (
       <div>
         <div>{user.username}</div>
         <u>
-          <div>logout</div>
+          <div>Logout</div>
         </u>
       </div>
     ) : (
@@ -31,19 +36,21 @@ const HeaderActionButton = ({ user }: { user: any }) => (
 );
 
 const shouldShowActionButton = (pathName: string) => {
-    return pathName !== "/join";
-  };
-  
-  export const Header = ({ pathName }: { pathName: string }) => {
-    return (
-      <header id="header" className="flex align-center">
-        <Logo />
-        <TitleAndSubmission />
-        {/* {shouldShowActionButton(location.pathname) ? (
-          <HeaderActionButton user={{ username: '@john' }} />
-        ) : (
-          ""
-        )} */}
-      </header>
-    );
-  };
+  return pathName !== "/join";
+};
+
+export const Header = () => {
+  const router = useRouter();
+  const { pathname } = router;
+  const user = useSelector((state: RootState) => state.user)
+
+  return (
+    <header id="header" className="flex align-center">
+      <Logo />
+      <TitleAndSubmission />
+      {shouldShowActionButton(pathname) && (
+        <HeaderActionButton user={user.isLoggedIn ? user : null} />
+      )}
+    </header>
+  );
+};

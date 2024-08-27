@@ -1,10 +1,18 @@
-// pages/_app.tsx
-import '../styles/App.css';
+import '../styles/App.css'; // Import your global styles
 import type { AppProps } from 'next/app';
-import React from 'react';
+import React, { StrictMode } from 'react';
+import { store } from '../redux/store';
+import { Provider } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+  return (
+    <Provider store={store}>
+      <Component {...pageProps} />
+      <ToastContainer />
+    </Provider>
+  );
 }
 
 export default MyApp;
