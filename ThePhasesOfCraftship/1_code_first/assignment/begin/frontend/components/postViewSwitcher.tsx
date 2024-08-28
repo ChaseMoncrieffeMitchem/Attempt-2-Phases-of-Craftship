@@ -1,15 +1,18 @@
 import React from "react";
+import Link from "next/link";
 
 export const PostViewSwitcher = () => {
   return (
     <>
       <div className="content-container">
+        
         <div className="posts-view-switcher flex">
           <div className="active">Popular</div>
-          <div className="active">New</div>
+          <Link href={"/posts?sort=recent"} className="active">New</Link>
         </div>
 
-        <div className="posts-list">
+        {/* <div className="posts-list">
+
           <div className="post-item">
             <div className="post-item-votes">
               <div className="post-item-upvote">
@@ -69,7 +72,8 @@ export const PostViewSwitcher = () => {
               </div>
             </div>
           </div>
-        </div>
+          
+        </div> */}
       </div>
     </>
   );

@@ -1,8 +1,8 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
-import { PrismaClient, Users_Table } from "@prisma/client";
+import { PrismaClient, Users_Table, Post } from "@prisma/client";
 
-const prisma = new PrismaClient();
+export const prisma = new PrismaClient();
 
 const Errors = {
   UsernameAlreadyTaken: "UserNameAlreadyTaken",
@@ -55,6 +55,14 @@ function parseUserForResponse(user: Users_Table) {
 
   return returnData;
 }
+
+const serializeBigInt = (data: any): any => {
+  return JSON.parse(
+    JSON.stringify(data, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+  );
+};
 
 
 // Create a new user
@@ -246,12 +254,54 @@ app.get("/users", async (req: Request, res: Response) => {
   }
 });
 
+// Get posts "/posts?sort=recent"
+  app.get('/posts', async (req: Request, res: Response) => {
+    try {
+      const { sort } = req.query;
+      
+      if (sort !== 'recent') {
+        return res.status(400).json({ error: Errors.ClientError, data: undefined, success: false })
+      } 
+  
+      let postsWithVotes = await prisma.post.findMany({
+        include: {
+          votes: true, // Include associated votes for each post
+          memberPostedBy: {
+            include: {
+              user: true
+            }
+          },
+          comments: true
+        },
+        orderBy: {
+          dateCreated: 'desc', // Sorts by dateCreated in descending order
+        },
+      });
+
+      const serializedPosts = serializeBigInt(postsWithVotes);
+  
+      return res.json({ error: undefined, data: { posts: serializedPosts }, success: true });
+    } catch (error) {
+      console.error('Error fetching posts:', error)
+      return res.status(500).json({ error: Errors.ServerError, data: undefined, success: false });
+    }
+  });
+
 const port = process.env.PORT || 3001;
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Server is running!");
+app.get("/", async (req: Request, res: Response) => {
+  try {
+    const posts = await prisma.post.findMany({});
+    console.log("Posts retrieved from the database:", posts);
+
+    res.json(posts);
+  } catch (err) {
+    console.error("Error fetching posts:", err);
+    res.status(500).json({ error: "Server Error" });
+  }
 });
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+

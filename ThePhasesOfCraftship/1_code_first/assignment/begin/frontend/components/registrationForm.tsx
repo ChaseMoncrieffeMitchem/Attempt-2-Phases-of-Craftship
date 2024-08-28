@@ -47,6 +47,38 @@ export const api = {
       }
       }
   },
+
+  fetchPosts: async () => {
+    try {
+      const response = await axios.get('http://localhost:3001/posts', {
+        params: {sort : 'recent'}
+      });
+  
+      if (response.data.success && response.data.data?.posts) {
+        return {
+          success: true,
+          data: response.data.data.posts,
+        };
+      } else {
+        return {
+          success: false,
+          errorMessage: response.data.error,
+        };
+      }
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        return {
+          success: false,
+          errorMessage: error.response.data.error || "Unknown error",
+        };
+      } else {
+        return {
+          success: false,
+          errorMessage: "Unknown Error",
+        };
+      }
+    }
+  },
 };
 
 export const RegistrationForm: React.FC<RegistrationFormProps> = ({
