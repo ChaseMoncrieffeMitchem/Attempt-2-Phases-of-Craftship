@@ -4,6 +4,7 @@ import Link from 'next/link';
 import moment from 'moment';
 import arrow from '../public/assets/arrow.svg';
 import { api } from './registrationForm';
+import Image from 'next/image';
 
 type Vote = { id: number; postId: number; voteType: 'Upvote' | 'Downvote' };
 type Comment = {}; // Define Comment type if needed
@@ -35,11 +36,11 @@ export const PostsList: React.FC<PostsListProps> = ({ posts }) => {
         <div className="post-item" key={key}>
           <div className="post-item-votes">
             <div className="post-item-upvote">
-              <img src={arrow} alt="Upvote" />
+              <Image src={arrow} alt="Upvote" />
             </div>
             <div>{computeVoteCount(post.votes)}</div>
             <div className="post-item-downvote">
-              <img src={arrow} alt="Downvote" />
+              <Image src={arrow} alt="Downvote" />
             </div>
           </div>
           <div className="post-item-content">

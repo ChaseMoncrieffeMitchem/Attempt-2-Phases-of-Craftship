@@ -30,13 +30,13 @@ const HeaderActionButton = ({ user }: { user: any }) => (
         </u>
       </div>
     ) : (
-      <Link href="/join">Join</Link>
+      <Link href="/registerPage">Register</Link>
     )}
   </div>
 );
 
 const shouldShowActionButton = (pathName: string) => {
-  return pathName !== "/join";
+  return pathName !== "/registerPage";
 };
 
 export const Header = () => {
