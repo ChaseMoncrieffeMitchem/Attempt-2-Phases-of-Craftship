@@ -29,17 +29,17 @@ describe("fizzbuzz", () => {
         expect(fizzbuzz(value)).toBe("Buzz")
     })
 
-    // it ('returns "Buzz" for 5', () => {
-    //     expect(fizzbuzz(5)).toBe("Buzz")
+    it.each([15, 45])('returns "FizzBuzz" when num is multiple of 3 and 5', (value: number) => {
+        expect(fizzbuzz(value)).toBe("FizzBuzz")
+    })
+
+    // it ('returns "Fizzbuzz" for 15', () => {
+    //     expect(fizzbuzz(15)).toBe("FizzBuzz")
     // })
 
-    it ('returns "Fizzbuzz" for 15', () => {
-        expect(fizzbuzz(15)).toBe("FizzBuzz")
-    })
-
-    it ('returns "Fizzbuzz" for 45', () => {
-        expect(fizzbuzz(45)).toBe("FizzBuzz")
-    })
+    // it ('returns "Fizzbuzz" for 45', () => {
+    //     expect(fizzbuzz(45)).toBe("FizzBuzz")
+    // })
 
     it ('returns "43" for 43', () => {
         expect(fizzbuzz(43)).toBe("43")
