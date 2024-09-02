@@ -25,10 +25,13 @@ describe("fizzbuzz", () => {
         expect(fizzbuzz(value)).toBe("Fizz")
     })
 
-
-    it ('returns "Buzz" for 5', () => {
-        expect(fizzbuzz(5)).toBe("Buzz")
+    it.each([5, 10, 20])('returns "Buzz" for multiples of 5', (value: number) => {
+        expect(fizzbuzz(value)).toBe("Buzz")
     })
+
+    // it ('returns "Buzz" for 5', () => {
+    //     expect(fizzbuzz(5)).toBe("Buzz")
+    // })
 
     it ('returns "Fizzbuzz" for 15', () => {
         expect(fizzbuzz(15)).toBe("FizzBuzz")
