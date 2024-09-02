@@ -42,4 +42,8 @@ describe("fizzbuzz", () => {
         expect(fizzbuzz(43)).toBe("43")
     })
 
+    it ('returns an error for any number greater than 100', () => {
+        expect(fizzbuzz(102)).toBe("Error")
+    })
+
 });
