@@ -46,4 +46,8 @@ describe("fizzbuzz", () => {
         expect(fizzbuzz(102)).toBe("Error")
     })
 
+    it ('returns an error for any number less than 0', () => {
+        expect(fizzbuzz(-12)).toBe("Error")
+    })
+
 });
