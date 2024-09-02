@@ -21,17 +21,10 @@ import { fizzbuzz } from "./fizzbuzz";
 
 describe("fizzbuzz", () => {
 
-    it ('returns "Fizz" for 3', () => {
-        expect(fizzbuzz(3)).toBe("Fizz")
+    it.each([3, 9, 42])('returns "Fizz" for multiples of 3', (value: number) => {
+        expect(fizzbuzz(value)).toBe("Fizz")
     })
 
-    it ('returns "Fizz" for 9', () => {
-        expect(fizzbuzz(9)).toBe("Fizz")
-    })
-
-    it ('returns "Fizz" for 42', () => {
-        expect(fizzbuzz(42)).toBe("Fizz")
-    })
 
     it ('returns "Buzz" for 5', () => {
         expect(fizzbuzz(5)).toBe("Buzz")
