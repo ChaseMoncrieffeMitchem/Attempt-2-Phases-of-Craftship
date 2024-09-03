@@ -14,5 +14,10 @@ describe('stats calculator', () => {
         expect(output.maxNum).toBe(53)
     })
 
+    it("knows '1' is the number of integers in the array", () => {
+        let output = statsCalculator.validate([1])
+
+        expect(output.arrNum).toBe(1)
+    })
 
 })

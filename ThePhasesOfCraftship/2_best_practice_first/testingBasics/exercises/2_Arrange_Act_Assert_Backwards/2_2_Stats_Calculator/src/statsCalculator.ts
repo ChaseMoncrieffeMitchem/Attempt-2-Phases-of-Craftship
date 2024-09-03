@@ -6,6 +6,7 @@ export class statsCalculator {
         return {
             minNum: -8,
             maxNum: 53,
+            arrNum: 1
         }
     }
 
