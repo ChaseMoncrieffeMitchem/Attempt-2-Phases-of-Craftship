@@ -24,8 +24,12 @@ describe('palindrome checker', () => {
         expect(palindromeChecker("Momx")).toBe(false)
     })
 
-    it('palindrome returns true for str "xMomx', () => {
+    it('palindrome returns true for str "xMomx"', () => {
         expect(palindromeChecker("xMomx")).toBe(true)
+    })
+
+    it('palindrome returns true for str "Was It A Rat I Saw"', () => {
+        expect(palindromeChecker("Was It A Rat I Saw")).toBe(true)
     })
 
 })
