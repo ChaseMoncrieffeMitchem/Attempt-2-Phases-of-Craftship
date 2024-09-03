@@ -4,6 +4,11 @@ export class passwordValidator {
 
         let errors = []
         const isValidLength = password.length >= 5 && password.length <= 15
+        const digitIsPresent = password.split('').some(char => char >= '0' && char <= '9')
+
+        if (!digitIsPresent) {
+            errors.push("NoDigitIncluded")
+        }
 
         if (!isValidLength) {
             errors.push('InvalidLength')
@@ -20,5 +25,5 @@ export class passwordValidator {
 
 
 
-    
+
 }

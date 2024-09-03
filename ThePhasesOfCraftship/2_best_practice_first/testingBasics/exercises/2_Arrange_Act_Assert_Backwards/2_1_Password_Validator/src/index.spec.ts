@@ -27,27 +27,19 @@ describe('password validator', () => {
     })
   })
 
-  // it("knows that 'Mommy5' is bw 5 and 15 characters long", () => {
-  //   let resultObject = passwordValidator.validate("Mommy5")
+  it("knows that 'Daddy2' does have at least one digit", () => {
+    let output = passwordValidator.validate("Daddy2")
 
-  //   expect(resultObject.result).toBeTruthy()
-  //   expect(resultObject.errors).toHaveLength(0)
-  // })
+    expect(output.result).toBe(true)
+    expect(output.errors).toHaveLength(0)
+  })
 
-  // it("knows that 'Mom5' is NOT bw 5 and 15 characters long", () => {
-  //   let resultObject = passwordValidator.validate("Mom5")
+  it("knows that 'Daddy' does NOT have at least one digit", () => {
+    let output = passwordValidator.validate("Daddy")
 
-  //   expect(resultObject.result).toBeFalsy()
-  //   expect(resultObject.errors).toHaveLength(1)
-  //   expect(resultObject.errors[0]).toEqual('InvalidLength')
-  // })
-
-  // it("knows that 'MomTheStar123456' is NOT bw 5 and 15 characters long", () => {
-  //   let resultObject = passwordValidator.validate("MomTheStar123456")
-
-  //   expect(resultObject.result).toBeFalsy()
-  //   expect(resultObject.errors).toHaveLength(1)
-  //   expect(resultObject.errors[0]).toEqual('InvalidLength')
-  // })
+    expect(output.result).toBe(false)
+    expect(output.errors).toHaveLength(1)
+    expect(output.errors).toStrictEqual(["NoDigitIncluded"])
+  })
 
 })
