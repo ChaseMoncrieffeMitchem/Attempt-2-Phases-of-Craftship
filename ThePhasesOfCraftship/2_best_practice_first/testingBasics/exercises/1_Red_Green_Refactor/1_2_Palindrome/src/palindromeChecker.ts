@@ -1,6 +1,7 @@
 
 
 export function palindromeChecker(str: string) {
-    const reversedStr = str.split("").reverse().join("")
-    return str.toLowerCase() === reversedStr.toLowerCase()
-}
+    const noramlizedStr = str.split(' ').join('').toLowerCase()
+    const reversedStr = noramlizedStr.split('').reverse().join("")
+    return noramlizedStr === reversedStr
+ }
