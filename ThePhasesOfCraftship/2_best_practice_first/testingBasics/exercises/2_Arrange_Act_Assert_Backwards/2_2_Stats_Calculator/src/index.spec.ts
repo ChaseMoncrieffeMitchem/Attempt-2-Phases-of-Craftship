@@ -24,10 +24,10 @@ describe('stats calculator', () => {
         })
     })
 
-    // it("knows '1' is the number of integers in the array", () => {
-    //     let output = statsCalculator.validate([1])
+    it("knows '6' is the number of integers in the array", () => {
+        let output = statsCalculator.validate([2, 4, 21, -8, 53, 40])
 
-    //     expect(output.arrNum).toBe(1)
-    // })
+        expect(output.arrNum).toBe(6)
+    })
 
 })
