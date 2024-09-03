@@ -24,22 +24,15 @@ describe('stats calculator', () => {
         })
     })
 
-    it("knows '6' is the number of integers in the array", () => {
-        let output = statsCalculator.validate([2, 4, 21, -8, 53, 40])
-
-        expect(output.arrNum).toBe(6)
-    })
-
-    it("knows '5' is the number of integers in the array", () => {
-        let output = statsCalculator.validate([2, 4, 21, -8, 53])
-
-        expect(output.arrNum).toBe(5)
-    })
-
-    it("knows '3' is the number of integers in the array", () => {
-        let output = statsCalculator.validate([2, 4, 21])
-
-        expect(output.arrNum).toBe(3)
+    describe("Identifying the amount of integers in an array", () => {
+        it.each([
+            [[2, 4, 21, -8, 53, 40], 6],
+            [[2, 4, 21, -8, 53], 5],
+            [[2, 4, 21], 3]
+        ])("%s returns %s", (input: number[], result: number) => {
+            let output = statsCalculator.validate(input)
+            expect(output.arrNum).toBe(result)
+        })
     })
 
 })
