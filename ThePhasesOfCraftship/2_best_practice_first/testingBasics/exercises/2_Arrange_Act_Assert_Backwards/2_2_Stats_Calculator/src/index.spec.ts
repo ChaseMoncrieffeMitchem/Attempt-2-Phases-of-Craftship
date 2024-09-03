@@ -13,22 +13,15 @@ describe('stats calculator', () => {
         })
     })
 
-    it("knows that '53' is the biggest number in the array", () => {
-        let output = statsCalculator.validate([2, 4, 21, -8, 53, 40])
-
-        expect(output.maxNum).toBe(53)
-    })
-
-    it("knows that '100' is the biggest number in the array", () => {
-        let output = statsCalculator.validate([53, 88, 94, 70, 90, 100])
-
-        expect(output.maxNum).toBe(100)
-    })
-
-    it("knows that '1300' is the biggest number in the array", () => {
-        let output = statsCalculator.validate([53, 88, 4, 2, 90, 1300])
-
-        expect(output.maxNum).toBe(1300)
+    describe("Identifying the biggest number given an array of integers", () => {
+        it.each([
+            [[2, 4, 21, -8, 53, 40], 53],
+            [[53, 88, 94, 70, 90, 100], 100],
+            [[53, 88, 4, 2, 90, 1300], 1300]
+        ])("%s returns %s", (input: number[], result: number) => {
+            let output = statsCalculator.validate(input)
+            expect(output.maxNum).toBe(result)
+        })
     })
 
     // it("knows '1' is the number of integers in the array", () => {
