@@ -42,4 +42,11 @@ describe('password validator', () => {
     expect(output.errors).toStrictEqual(["NoDigitIncluded"])
   })
 
+  it("knows that 'Brother1' contains at least one uppercase letter", () => {
+    let output = passwordValidator.validate("Brother1")
+
+    expect(output.result).toBe(true)
+    expect(output.errors).toHaveLength(0)
+  })
+
 })
