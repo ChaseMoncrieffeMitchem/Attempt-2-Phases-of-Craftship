@@ -16,16 +16,20 @@ import { palindromeChecker } from "./palindromeChecker"
 
 describe('palindrome checker', () => {
 
-    it('returns true for str "mom"', () => {
-        expect(palindromeChecker("mom")).toBe(true)
+    it.each(["mom", "Mom", "MoM"])('returns true for palindrome regardless of casing', (value: string) => {
+        expect(palindromeChecker(value)).toBe(true)
     })
 
-    it('returns true for str "Mom"', () => {
-        expect(palindromeChecker("Mom")).toBe(true)
-    })
+    // it('returns true for str "mom"', () => {
+    //     expect(palindromeChecker("mom")).toBe(true)
+    // })
 
-    it('returns true for str "MoM', () => {
-        expect(palindromeChecker("MoM")).toBe(true)
-    })
+    // it('returns true for str "Mom"', () => {
+    //     expect(palindromeChecker("Mom")).toBe(true)
+    // })
+
+    // it('returns true for str "MoM', () => {
+    //     expect(palindromeChecker("MoM")).toBe(true)
+    // })
 
 })
