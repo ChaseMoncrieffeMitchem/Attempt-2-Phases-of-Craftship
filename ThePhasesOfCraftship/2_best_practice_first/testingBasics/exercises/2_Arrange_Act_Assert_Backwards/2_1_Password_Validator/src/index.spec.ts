@@ -27,28 +27,42 @@ describe('password validator', () => {
     })
   })
 
-  it("knows that 'Daddy2' does have at least one digit", () => {
-    let output = passwordValidator.validate("Daddy2")
+  describe('checking that a digit is present in the password', () => {
+    it.each([
+      ["Daddy2", true, []],
+      ["Daddy", false, ["NoDigitIncluded"]],
+      ["DaddyCool", false, ["NoDigitIncluded"]]
+    ])("knows that '%s' should return %s", (input: string, result: boolean, errors: string[]) => {
+      let output = passwordValidator.validate(input)
 
-    expect(output.result).toBe(true)
-    expect(output.errors).toHaveLength(0)
+      expect(output.result).toBe(result)
+      expect(output.errors).toHaveLength(errors.length)
+      expect(output.errors).toStrictEqual(errors)
+    })
   })
 
-  it("knows that 'Daddy' does NOT have at least one digit", () => {
-    let output = passwordValidator.validate("Daddy")
+  // it("knows that 'Daddy2' does have at least one digit", () => {
+  //   let output = passwordValidator.validate("Daddy2")
 
-    expect(output.result).toBe(false)
-    expect(output.errors).toHaveLength(1)
-    expect(output.errors).toStrictEqual(["NoDigitIncluded"])
-  })
+  //   expect(output.result).toBe(true)
+  //   expect(output.errors).toHaveLength(0)
+  // })
 
-  it("knows that 'DaddyCool' does NOT have at least one digit", () => {
-    let output = passwordValidator.validate("DaddyCool")
+  // it("knows that 'Daddy' does NOT have at least one digit", () => {
+  //   let output = passwordValidator.validate("Daddy")
 
-    expect(output.result).toBe(false)
-    expect(output.errors).toHaveLength(1)
-    expect(output.errors).toStrictEqual(["NoDigitIncluded"])
-  })
+  //   expect(output.result).toBe(false)
+  //   expect(output.errors).toHaveLength(1)
+  //   expect(output.errors).toStrictEqual(["NoDigitIncluded"])
+  // })
+
+  // it("knows that 'DaddyCool' does NOT have at least one digit", () => {
+  //   let output = passwordValidator.validate("DaddyCool")
+
+  //   expect(output.result).toBe(false)
+  //   expect(output.errors).toHaveLength(1)
+  //   expect(output.errors).toStrictEqual(["NoDigitIncluded"])
+  // })
 
   it("knows that 'Brother1' contains at least one uppercase letter", () => {
     let output = passwordValidator.validate("Brother1")
