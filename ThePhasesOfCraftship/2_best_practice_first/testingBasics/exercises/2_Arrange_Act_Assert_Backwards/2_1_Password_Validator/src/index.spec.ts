@@ -12,13 +12,19 @@ import { passwordValidator } from "./passwordValidator"
 
 describe('password validator', () => {
 
-  it('returns true when "mom555" bw 5 and 15 chars long', () => {
+  it('returns true when "mom555" is bw 5 and 15 chars long', () => {
     expect(passwordValidator("mom555")).toBe(true)
   })
 
-  it('returns false when "mom" bw 5 and 15 chars long', () => {
+  it('returns false when "mom" is less than 5 and 15 chars long', () => {
     expect(passwordValidator("mom")).toBe(false)
   })
+
+  it('returns false when "mommy" does not contain at least 1 digit', () => {
+    expect(passwordValidator("mommy")).toBe(false)
+  })
+
+
 })
 
 
