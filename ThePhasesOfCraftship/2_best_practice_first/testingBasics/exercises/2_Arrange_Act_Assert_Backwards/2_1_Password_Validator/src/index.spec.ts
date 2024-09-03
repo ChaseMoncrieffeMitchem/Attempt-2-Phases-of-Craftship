@@ -15,6 +15,10 @@ describe('password validator', () => {
   it('returns true when "mom555" bw 5 and 15 chars long', () => {
     expect(passwordValidator("mom555")).toBe(true)
   })
+
+  it('returns false when "mom" bw 5 and 15 chars long', () => {
+    expect(passwordValidator("mom")).toBe(false)
+  })
 })
 
 
