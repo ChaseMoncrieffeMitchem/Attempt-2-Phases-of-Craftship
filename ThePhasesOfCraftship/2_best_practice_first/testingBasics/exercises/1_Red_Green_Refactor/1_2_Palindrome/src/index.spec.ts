@@ -20,16 +20,8 @@ describe('palindrome checker', () => {
         expect(palindromeChecker(value)).toBe(true)
     })
 
-    // it('returns true for str "mom"', () => {
-    //     expect(palindromeChecker("mom")).toBe(true)
-    // })
-
-    // it('returns true for str "Mom"', () => {
-    //     expect(palindromeChecker("Mom")).toBe(true)
-    // })
-
-    // it('returns true for str "MoM', () => {
-    //     expect(palindromeChecker("MoM")).toBe(true)
-    // })
+    it('palindrome returns false for str "Momx"', () => {
+        expect(palindromeChecker("Momx")).toBe(false)
+    })
 
 })
