@@ -35,4 +35,9 @@ describe('stats calculator', () => {
         })
     })
 
+    it("knows '18.666666666667' is the average value of an array of numbers", () => {
+        let output = statsCalculator.validate([2, 4, 21, -8, 53, 40])
+        expect(output.avgNum).toBe(18.666666666666668)
+    })
+
 })
