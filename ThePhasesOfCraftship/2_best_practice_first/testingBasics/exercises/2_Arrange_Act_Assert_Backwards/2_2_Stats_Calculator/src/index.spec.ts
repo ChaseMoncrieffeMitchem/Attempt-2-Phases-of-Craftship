@@ -46,19 +46,4 @@ describe('stats calculator', () => {
         })
     })
 
-    // it("knows '18.66666666666668' is the average value of an array of numbers", () => {
-    //     let output = statsCalculator.validate([2, 4, 21, -8, 53, 40])
-    //     expect(output.avgNum).toBe(18.666666666666668)
-    // })
-
-    // it("knows '82.5' is the average value of an array of numbers", () => {
-    //     let output = statsCalculator.validate([53, 88, 94, 70, 90, 100])
-    //     expect(output.avgNum).toBe(82.5)
-    // })
-
-    // it("knows '256.1666666666667' is the average value of an array of numbers", () => {
-    //     let output = statsCalculator.validate([53, 88, 4, 2, 90, 1300])
-    //     expect(output.avgNum).toBe(256.1666666666667)
-    // })
-
 })
