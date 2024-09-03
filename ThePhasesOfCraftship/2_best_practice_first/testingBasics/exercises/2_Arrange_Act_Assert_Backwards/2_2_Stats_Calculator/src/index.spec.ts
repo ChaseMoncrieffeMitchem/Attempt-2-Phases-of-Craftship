@@ -19,6 +19,12 @@ describe('stats calculator', () => {
         expect(output.maxNum).toBe(53)
     })
 
+    it("knows that '100' is the biggest number in the array", () => {
+        let output = statsCalculator.validate([53, 88, 94, 70, 90, 100])
+
+        expect(output.maxNum).toBe(100)
+    })
+
     // it("knows '1' is the number of integers in the array", () => {
     //     let output = statsCalculator.validate([1])
 
