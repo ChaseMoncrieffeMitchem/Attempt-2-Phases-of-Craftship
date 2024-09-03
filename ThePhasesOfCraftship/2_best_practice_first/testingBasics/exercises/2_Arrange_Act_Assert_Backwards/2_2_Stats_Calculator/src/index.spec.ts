@@ -14,6 +14,12 @@ describe('stats calculator', () => {
         expect(output.minNum).toBe(53)
     })
 
+    it("knows that '2' is the smallest number in the array", () => {
+        let output = statsCalculator.validate([53, 88, 4, 2, 90, 100])
+
+        expect(output.minNum).toBe(2)
+    })
+
     // it("knows that '53' is the biggest number in the array", () => {
     //     let output = statsCalculator.validate([53])
 
