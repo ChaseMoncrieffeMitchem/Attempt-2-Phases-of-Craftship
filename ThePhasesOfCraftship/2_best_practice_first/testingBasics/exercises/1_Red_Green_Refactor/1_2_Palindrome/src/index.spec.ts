@@ -32,4 +32,8 @@ describe('palindrome checker', () => {
         expect(palindromeChecker("Was It A Rat I Saw")).toBe(true)
     })
 
+    it('palindrome returns true for str "Never Odd or Even"', () => {
+        expect(palindromeChecker("Never Odd or Even")).toBe(true)
+    })
+
 })
