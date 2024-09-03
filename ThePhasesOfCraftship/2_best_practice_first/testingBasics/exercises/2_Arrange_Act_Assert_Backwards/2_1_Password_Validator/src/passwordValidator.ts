@@ -1,4 +1,5 @@
 export class passwordValidator {
+
     public static validate (password: string) {
 
         let errors = []
@@ -13,4 +14,11 @@ export class passwordValidator {
             errors
         }
     }
+
+
+
+
+
+
+    
 }
