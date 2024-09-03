@@ -24,6 +24,10 @@ describe('password validator', () => {
     expect(passwordValidator("mommy")).toBe(false)
   })
 
+  it('returns true when "mommy1" does contain at least 1 digit', () => {
+    expect(passwordValidator("mommy1")).toBe(true)
+  })
+
 
 })
 

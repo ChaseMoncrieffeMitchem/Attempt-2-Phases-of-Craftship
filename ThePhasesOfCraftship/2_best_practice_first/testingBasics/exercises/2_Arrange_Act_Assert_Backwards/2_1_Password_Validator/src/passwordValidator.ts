@@ -3,12 +3,11 @@ export function passwordValidator(str: string) {
     const passwordLength = str.length
     const hasDigit = digits.some(digit => str.includes(digit))
     const isValidLength = passwordLength >= 5 && passwordLength <= 15
+    // const hasUppercaseLetter = str !== str.toLowerCase()
 
+    // if (!hasUppercaseLetter) return false
     if (!isValidLength) return false
     if (!hasDigit) return false
     return true
 
-    // if (str === "mom555") return true
-    // if (str === "mom") return false
-    // if (str === "mommy") return false
 }
