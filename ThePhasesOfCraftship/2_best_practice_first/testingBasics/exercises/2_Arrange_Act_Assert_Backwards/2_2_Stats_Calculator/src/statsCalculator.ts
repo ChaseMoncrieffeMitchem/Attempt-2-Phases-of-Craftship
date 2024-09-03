@@ -4,7 +4,8 @@ export class statsCalculator {
         input = [2, 4, 21, -8, 53, 40]
 
         return {
-            minNum: -8
+            minNum: -8,
+            maxNum: 53,
         }
     }
 

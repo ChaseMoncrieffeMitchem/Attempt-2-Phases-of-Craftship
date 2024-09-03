@@ -7,4 +7,12 @@ describe('stats calculator', () => {
 
         expect(output.minNum).toBe(-8)
     })
+
+    it("knows that '53' is the biggest number in the array", () => {
+        let output = statsCalculator.validate([53])
+
+        expect(output.maxNum).toBe(53)
+    })
+
+
 })
