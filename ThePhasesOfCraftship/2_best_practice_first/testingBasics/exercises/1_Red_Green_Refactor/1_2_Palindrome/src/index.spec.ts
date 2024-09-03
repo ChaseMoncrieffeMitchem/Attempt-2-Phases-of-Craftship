@@ -24,4 +24,8 @@ describe('palindrome checker', () => {
         expect(palindromeChecker("Mom")).toBe(true)
     })
 
+    it('returns true for str "MoM', () => {
+        expect(palindromeChecker("MoM")).toBe(true)
+    })
+
 })
