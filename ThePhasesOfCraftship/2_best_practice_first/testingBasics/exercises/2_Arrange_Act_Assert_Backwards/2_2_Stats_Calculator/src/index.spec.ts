@@ -30,4 +30,10 @@ describe('stats calculator', () => {
         expect(output.arrNum).toBe(6)
     })
 
+    it("knows '5' is the number of integers in the array", () => {
+        let output = statsCalculator.validate([2, 4, 21, -8, 53])
+
+        expect(output.arrNum).toBe(5)
+    })
+
 })
