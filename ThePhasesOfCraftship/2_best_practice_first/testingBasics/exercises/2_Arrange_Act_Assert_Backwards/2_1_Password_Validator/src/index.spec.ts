@@ -28,6 +28,9 @@ describe('password validator', () => {
     expect(passwordValidator("mommy1")).toBe(true)
   })
 
+  it('returns false when "mommy12" does not contain at least one uppercase letter', () => {
+    expect(passwordValidator("mommy12")).toBe(false)
+  })
 
 })
 
