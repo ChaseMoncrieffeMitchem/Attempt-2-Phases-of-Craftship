@@ -6,7 +6,7 @@ describe('stats calculator', () => {
         it.each([
             [[2, 4, 21, -8, 53, 40], -8],
             [[53, 88, 94, 70, 90, 100], 53],
-            [[53, 88, 4, 2, 90, 100], 2]
+            [[53, 88, 4, 2, 90, 1300], 2]
         ])("%s returns %s", (input: number[], result: number) => {
             let output = statsCalculator.validate(input)
             expect(output.minNum).toBe(result)
@@ -23,6 +23,12 @@ describe('stats calculator', () => {
         let output = statsCalculator.validate([53, 88, 94, 70, 90, 100])
 
         expect(output.maxNum).toBe(100)
+    })
+
+    it("knows that '1300' is the biggest number in the array", () => {
+        let output = statsCalculator.validate([53, 88, 4, 2, 90, 1300])
+
+        expect(output.maxNum).toBe(1300)
     })
 
     // it("knows '1' is the number of integers in the array", () => {
