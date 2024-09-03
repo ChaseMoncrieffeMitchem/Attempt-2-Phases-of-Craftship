@@ -27,4 +27,12 @@ describe('password validator', () => {
     expect(resultObject.errors[0]).toEqual('InvalidLength')
   })
 
+  it("knows that 'MomTheStar123456' is NOT bw 5 and 15 characters long", () => {
+    let resultObject = passwordValidator.validate("MomTheStar123456")
+
+    expect(resultObject.result).toBeFalsy()
+    expect(resultObject.errors).toHaveLength(1)
+    expect(resultObject.errors[0]).toEqual('InvalidLength')
+  })
+
 })
