@@ -1,3 +1,8 @@
-export function passwordValidator (str: string) {
-
+export class passwordValidator {
+    public static validate () {
+        return {
+            result: true,
+            errors: []
+        }
+    }
 }

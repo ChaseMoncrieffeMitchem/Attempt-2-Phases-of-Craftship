@@ -13,12 +13,14 @@ import { passwordValidator } from "./passwordValidator";
 describe('password validator', () => {
 
   it("knows that 'Mommy5' is bw 5 and 15 characters long", () => {
-    let resultObject = passwordValidator.validate("Mommy5")
+    let resultObject = passwordValidator.validate()
 
     expect(resultObject.result).toBeTruthy()
     expect(resultObject.errors).toHaveLength(0)
   })
 
 })
+
+
 
 
