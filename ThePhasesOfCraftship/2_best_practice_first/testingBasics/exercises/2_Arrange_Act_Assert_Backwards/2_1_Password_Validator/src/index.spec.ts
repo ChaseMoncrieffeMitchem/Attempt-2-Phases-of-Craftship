@@ -41,27 +41,18 @@ describe('password validator', () => {
     })
   })
 
-  it("knows that 'Brother1' contains at least one uppercase letter", () => {
-    let output = passwordValidator.validate("Brother1")
+  describe("checking that password containes at least one uppercase letter", () => {
+    it.each([
+      ["Brother1", true, []],
+      ["brother4", false, ["MissingUpperCaseCharacter"]],
+      ["sister12", false, ["MissingUpperCaseCharacter"]]
+    ])("knows that '%s' returns %s", (input: string, result: boolean, errors: string[]) => {
+      let output = passwordValidator.validate(input)
 
-    expect(output.result).toBe(true)
-    expect(output.errors).toHaveLength(0)
-  })
-
-  it("knows that 'brother4' does NOT contain at least one uppercase letter", () => {
-    let output = passwordValidator.validate("brother4")
-
-    expect(output.result).toBe(false)
-    expect(output.errors).toHaveLength(1)
-    expect(output.errors).toStrictEqual(["MissingUpperCaseCharacter"])
-  })
-
-  it("knows that 'sister12' does NOT contain at least one uppercase letter", () => {
-    let output = passwordValidator.validate("sister12")
-
-    expect(output.result).toBe(false)
-    expect(output.errors).toHaveLength(1)
-    expect(output.errors).toStrictEqual(["MissingUpperCaseCharacter"])
+      expect(output.result).toBe(result)
+      expect(output.errors).toHaveLength(errors.length)
+      expect(output.errors).toStrictEqual(errors)
+    })
   })
 
 })
