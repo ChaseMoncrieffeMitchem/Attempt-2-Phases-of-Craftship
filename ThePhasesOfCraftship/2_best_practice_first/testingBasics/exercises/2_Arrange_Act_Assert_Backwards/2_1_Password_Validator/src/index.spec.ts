@@ -49,4 +49,12 @@ describe('password validator', () => {
     expect(output.errors).toHaveLength(0)
   })
 
+  it("knows that 'brother4' does NOT contain at least one uppercase letter", () => {
+    let output = passwordValidator.validate("brother4")
+
+    expect(output.result).toBe(false)
+    expect(output.errors).toHaveLength(1)
+    expect(output.errors).toStrictEqual(["MissingUpperCaseCharacter"])
+  })
+
 })
