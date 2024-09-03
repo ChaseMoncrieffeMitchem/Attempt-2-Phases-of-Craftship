@@ -16,7 +16,7 @@ import { palindromeChecker } from "./palindromeChecker"
 
 describe('palindrome checker', () => {
 
-    it.each(["mom", "Mom", "MoM"])('returns true for palindrome regardless of casing', (value: string) => {
+    it.each(["mom", "Mom", "MoM", "xMomx"])('returns true for one word palindromes regardless of casing', (value: string) => {
         expect(palindromeChecker(value)).toBe(true)
     })
 
@@ -24,24 +24,28 @@ describe('palindrome checker', () => {
         expect(palindromeChecker("Momx")).toBe(false)
     })
 
-    it('palindrome returns true for str "xMomx"', () => {
-        expect(palindromeChecker("xMomx")).toBe(true)
+    // it('palindrome returns true for str "xMomx"', () => {
+    //     expect(palindromeChecker("xMomx")).toBe(true)
+    // })
+
+    it.each(["Was It A Rat I Saw", "Never Odd or Even", "1Never Odd or Even1"])('multi-word palindrome returns true regardless of casing', (value: string) => {
+        expect(palindromeChecker(value)).toBe(true)
     })
 
-    it('palindrome returns true for str "Was It A Rat I Saw"', () => {
-        expect(palindromeChecker("Was It A Rat I Saw")).toBe(true)
-    })
+    // it('palindrome returns true for str "Was It A Rat I Saw"', () => {
+    //     expect(palindromeChecker("Was It A Rat I Saw")).toBe(true)
+    // })
 
-    it('palindrome returns true for str "Never Odd or Even"', () => {
-        expect(palindromeChecker("Never Odd or Even")).toBe(true)
-    })
+    // it('palindrome returns true for str "Never Odd or Even"', () => {
+    //     expect(palindromeChecker("Never Odd or Even")).toBe(true)
+    // })
+
+    // it('palindrome returns true for str "1Never Odd or Even1"', () => {
+    //     expect(palindromeChecker("1Never Odd or Even1")).toBe(true)
+    // })
 
     it('palindrome returns true for str "Never Odd or Even1"', () => {
         expect(palindromeChecker("Never Odd or Even1")).toBe(false)
-    })
-
-    it('palindrome returns true for str "1Never Odd or Even1"', () => {
-        expect(palindromeChecker("1Never Odd or Even1")).toBe(true)
     })
 
 })
