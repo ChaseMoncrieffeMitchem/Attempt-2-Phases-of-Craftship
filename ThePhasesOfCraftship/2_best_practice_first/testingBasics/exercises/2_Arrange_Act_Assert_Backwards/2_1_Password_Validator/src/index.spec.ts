@@ -41,29 +41,6 @@ describe('password validator', () => {
     })
   })
 
-  // it("knows that 'Daddy2' does have at least one digit", () => {
-  //   let output = passwordValidator.validate("Daddy2")
-
-  //   expect(output.result).toBe(true)
-  //   expect(output.errors).toHaveLength(0)
-  // })
-
-  // it("knows that 'Daddy' does NOT have at least one digit", () => {
-  //   let output = passwordValidator.validate("Daddy")
-
-  //   expect(output.result).toBe(false)
-  //   expect(output.errors).toHaveLength(1)
-  //   expect(output.errors).toStrictEqual(["NoDigitIncluded"])
-  // })
-
-  // it("knows that 'DaddyCool' does NOT have at least one digit", () => {
-  //   let output = passwordValidator.validate("DaddyCool")
-
-  //   expect(output.result).toBe(false)
-  //   expect(output.errors).toHaveLength(1)
-  //   expect(output.errors).toStrictEqual(["NoDigitIncluded"])
-  // })
-
   it("knows that 'Brother1' contains at least one uppercase letter", () => {
     let output = passwordValidator.validate("Brother1")
 
@@ -73,6 +50,14 @@ describe('password validator', () => {
 
   it("knows that 'brother4' does NOT contain at least one uppercase letter", () => {
     let output = passwordValidator.validate("brother4")
+
+    expect(output.result).toBe(false)
+    expect(output.errors).toHaveLength(1)
+    expect(output.errors).toStrictEqual(["MissingUpperCaseCharacter"])
+  })
+
+  it("knows that 'sister12' does NOT contain at least one uppercase letter", () => {
+    let output = passwordValidator.validate("sister12")
 
     expect(output.result).toBe(false)
     expect(output.errors).toHaveLength(1)
