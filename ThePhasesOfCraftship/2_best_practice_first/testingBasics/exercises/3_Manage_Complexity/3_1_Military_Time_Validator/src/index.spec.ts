@@ -9,10 +9,10 @@ describe('military time validator', () => {
         expect(output).toBeFalsy()
     })
 
-    // it("knows '22:00 - 26:23' is NOT valid military time because right side goes over '24:00'", () => {
-    //     let output = militaryTime.validate("22:00 - 26:23")
+    it("knows '22:00 - 26:23' is NOT valid military time because right side goes over '24:00'", () => {
+        let output = militaryTime.validate("22:00 - 26:23")
 
-    //     expect(output).toBeFalsy()
-    // })
+        expect(output).toBeFalsy()
+    })
 
 })
