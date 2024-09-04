@@ -21,4 +21,10 @@ describe('military time validator', () => {
         expect(output).toBeFalsy()
     })
 
+    it("knows '00:00 - 23:59' is a valid military time", () => {
+        let output = militaryTime.validate("00:00 - 23:59")
+
+        expect(output).toBeTruthy()
+    })
+
 })
