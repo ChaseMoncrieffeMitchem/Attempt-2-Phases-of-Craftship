@@ -15,4 +15,10 @@ describe('military time validator', () => {
         expect(output).toBeFalsy()
     })
 
+    it("knows '22:00 - 22:78' is NOT valid military time because right side minutes go over '00:59'", () => {
+        let output = militaryTime.validate("22:00 - 22:78")
+
+        expect(output).toBeFalsy()
+    })
+
 })
