@@ -13,17 +13,27 @@ describe('military time validator', () => {
         })
     })
 
-    it("knows '00:00 23:59' is not a valid time format", () => {
-        expect(militaryTime.validate("00:00 23:59")).toBeFalsy()
+    describe("Checking is time format is valid", () => {
+        it.each([
+            ["00:00 23:59", false],
+            ["a00:00 - 23:59", false],
+            ["00:000 - 00:00", false]
+        ])("knows '%s' returns %s", (input: string, result: boolean) => {
+            expect(militaryTime.validate(input)).toBe(result)
+        })
     })
 
-    it("knows 'a00:00 - 23:59' is not a valid time format", () => {
-        expect(militaryTime.validate("a00:00 - 23:59")).toBeFalsy()
-    })
+    // it("knows '00:00 23:59' is not a valid time format", () => {
+    //     expect(militaryTime.validate("00:00 23:59")).toBeFalsy()
+    // })
 
-    it("knows '00:000 - 00:00' is not a valid time format", () => {
-        expect(militaryTime.validate("00:000 - 00:00")).toBeFalsy()
-    })
+    // it("knows 'a00:00 - 23:59' is not a valid time format", () => {
+    //     expect(militaryTime.validate("a00:00 - 23:59")).toBeFalsy()
+    // })
+
+    // it("knows '00:000 - 00:00' is not a valid time format", () => {
+    //     expect(militaryTime.validate("00:000 - 00:00")).toBeFalsy()
+    // })
 
 
 
