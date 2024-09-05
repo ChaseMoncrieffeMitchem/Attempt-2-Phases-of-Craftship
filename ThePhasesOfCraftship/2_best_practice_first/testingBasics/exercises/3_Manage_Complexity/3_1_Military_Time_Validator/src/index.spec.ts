@@ -7,29 +7,37 @@ describe('military time validator', () => {
         it.each([
             ["00:00 - 23:59", true],
             ["00:03 - 16:59", true],
-            ["00:80 - 16:59", false]
+            ["00:80 - 16:59", false],
+            ["25:00 - 06:00", false],
+            ["05:00 - 03:00", false],
+            ["23:59 - 03:59", false]
         ])("knows '%s' returns %s", (input: string, result: boolean) => {
             expect(militaryTime.validate(input)).toBe(result)
         })
     })
 
-    describe("Checking is time format is valid", () => {
+    describe("Checking that time format is valid", () => {
         it.each([
             ["00:00 23:59", false],
             ["a00:00 - 23:59", false],
             ["00:000 - 00:00", false],
-            ["0000 - 0001", false]
+            ["0000 - 0001", false],
+            ["eq:qu - ha:hq", false]
         ])("knows '%s' returns %s", (input: string, result: boolean) => {
             expect(militaryTime.validate(input)).toBe(result)
         })
     })
 
-    it("knows '05:00 - 03:00' is not valid military time range", () => {
-        expect(militaryTime.validate('05:00 - 03:00')).toBeFalsy()
-    })
+    // it("knows '05:00 - 03:00' is not valid military time range", () => {
+    //     expect(militaryTime.validate('05:00 - 03:00')).toBeFalsy()
+    // })
 
-    it("knows '23:59 - 03:59' is not valid military time range", () => {
-        expect(militaryTime.validate('23:59 - 03:59')).toBeFalsy()
-    })
+    // it("knows '23:59 - 03:59' is not valid military time range", () => {
+    //     expect(militaryTime.validate('23:59 - 03:59')).toBeFalsy()
+    // })
+
+    // it("knows 'eq:qu - ha:hq' is not valid military time range", () => {
+    //     expect(militaryTime.validate('eq:qu - ha:hq')).toBeFalsy()
+    // })
 
 })
