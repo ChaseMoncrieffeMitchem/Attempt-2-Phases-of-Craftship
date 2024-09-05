@@ -11,5 +11,8 @@ describe('boolean calculator', () => {
         expect(booleanCalc.validate("FALSE")).toBeFalsy()
     })
 
+    it("knows 'NOT TRUE' is false", () => {
+        expect(booleanCalc.validate("NOT TRUE")).toBeFalsy()
+    })
 
 })
