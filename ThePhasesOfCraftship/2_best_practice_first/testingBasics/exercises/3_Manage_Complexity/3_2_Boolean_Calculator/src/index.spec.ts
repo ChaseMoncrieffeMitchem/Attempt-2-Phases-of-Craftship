@@ -27,4 +27,12 @@ describe('boolean calculator', () => {
         expect(booleanCalc.validate("TRUE AND TRUE")).toBeTruthy()
     })
 
+    it("knows 'TRUE AND TRUE OR TRUE NOT FALSE' returns true", () => {
+        expect(booleanCalc.validate("TRUE AND TRUE OR TRUE NOT FALSE")).toBeTruthy()
+    })
+
+    // it("knows '(TRUE OR FALSE OR FALSE) AND TRUE' returns true", () => {
+    //     expect(booleanCalc.validate("(TRUE OR FALSE OR FALSE) AND TRUE")).toBeTruthy()
+    // })
+
 })
