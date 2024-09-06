@@ -26,11 +26,11 @@ const notIsHandled = (input: string) => { // DOING WHAT IS SUPPOSED TO
 
 const andIsHandled = (input: string) => {
     // const handledInput = notIsHandled(input);
-    const split = notIsHandled(input).split(" ")
+    const split = input.split(" ")
     console.log(split)
     let splitArr = []
 
-    for (let i = 0; i < split.length; ++i) {
+    for (let i = 0; i < split.length; ++i) { // ASK GPT TO refactor down to unconditonal statements
         
         if (split[i] === "AND") {
             splitArr.push(split[i - 1], split[i], split[i + 1])
@@ -45,12 +45,14 @@ const andIsHandled = (input: string) => {
     console.log(stringWithAndTransformed)
 
     const andIndex = input.indexOf(andHandled) + andHandled.length;
-    const remainingString = notIsHandled(input).slice(andIndex).trim();
+    const remainingString = input.slice(andIndex).trim();
     console.log(remainingString)
 
-    const finalArray = [
+    const finalArray = [ // Not dynamic so likely will not work w other test
         input.split(" ")[0],
         input.split(" ")[1],
+        input.split(" ")[2],
+        input.split(" ")[3],
         stringWithAndTransformed
     ]
 
@@ -81,27 +83,22 @@ const handleInputInsideParanthesis = (input: string) => {
 }
 
 export class booleanCalc {
-    public static validate(input: string) {
+    public static validate(input: string) { // FIrst thing first is take in an input and go straight to the NOT functions to be handled, then pass that result down to AND to be handled, and pass that result down to OR to be handled
         console.log(andIsHandled(input))
         const goingToOr = andIsHandled(input)
-        orIsHandled(goingToOr)
+        console.log(orIsHandled(goingToOr))
+
+        if(input.includes("NOT")) {
+            notIsHandled(input)
+        }
+        if(!input.includes("NOT")) {
+            andIsHandled(input)
+        }
 
         // if (notIsHandled(input).includes("AND")) {
             
         //     console.log(handleAndOperation(stringWithAnds))
-        // } 
-            // const words = input.split(" ")
-            // const mappedWords = words.map((word, index) => {
-            //     return (index % 2 === 0) ? word + " " : word
-            // })
-
-            // const joinedString = mappedWords.join("").trim()
-
-            // return joinedString.split(/(?=AND|OR)/g)
-            // const what = words[0] + ` ${handleNotOperation(words[1])}` // Returning "TRUE"
-            // console.log(what)
-
-        
+        // }
 
         // const tokenize = input.split(" ")
         

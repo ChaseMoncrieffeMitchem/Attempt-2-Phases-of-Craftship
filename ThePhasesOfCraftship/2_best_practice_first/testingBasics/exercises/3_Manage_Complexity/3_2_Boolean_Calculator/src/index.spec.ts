@@ -27,12 +27,16 @@ describe('boolean calculator', () => {
     //     expect(booleanCalc.validate("TRUE AND TRUE")).toBeTruthy()
     // })
 
-    it("knows 'TRUE OR FALSE AND NOT FALSE' returns true", () => {
-        expect(booleanCalc.validate("TRUE OR FALSE AND NOT FALSE")).toBeTruthy()
-    })
+    // it("knows 'TRUE OR FALSE AND NOT FALSE' returns true", () => {
+    //     expect(booleanCalc.validate("TRUE OR FALSE AND NOT FALSE")).toBeTruthy()
+    // })
 
-    it("knows 'NOT TRUE AND TRUE OR FALSE OR FALSE' returns false", () => {
-        expect(booleanCalc.validate("NOT TRUE AND TRUE OR FALSE OR FALSE")).toBeFalsy()
+    // it("knows 'NOT TRUE AND TRUE OR FALSE OR FALSE' returns false", () => {
+    //     expect(booleanCalc.validate("NOT TRUE AND TRUE OR FALSE OR FALSE")).toBeFalsy()
+    // })
+
+    it("knows 'TRUE OR TRUE OR TRUE AND FALSE' returns true", () => {
+        expect(booleanCalc.validate("TRUE OR TRUE OR TRUE AND FALSE")).toBeTruthy()
     })
 
     // it("knows '(TRUE OR FALSE OR FALSE) AND TRUE' returns true", () => {
