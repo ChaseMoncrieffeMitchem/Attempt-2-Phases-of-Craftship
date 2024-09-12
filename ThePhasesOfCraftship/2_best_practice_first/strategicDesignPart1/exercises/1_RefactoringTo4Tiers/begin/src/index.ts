@@ -2,20 +2,13 @@ import express, { Request, Response } from 'express';
 import { prisma } from './database';
 import { Student, Class, Assignment, StudentAssignment } from '@prisma/client';
 import { error } from 'console';
+import Errors from "./shared/constants";
 const cors = require('cors');
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-const Errors = {
-    ValidationError: 'ValidationError',
-    StudentNotFound: 'StudentNotFound',
-    ClassNotFound: 'ClassNotFound',
-    AssignmentNotFound: 'AssignmentNotFound',
-    ServerError: 'ServerError',
-    ClientError: 'ClientError',
-    StudentAlreadyEnrolled: 'StudentAlreadyEnrolled'
-  }
+
 
 
 function isMissingKeys (data: any, keysToCheckFor: string[]) {
