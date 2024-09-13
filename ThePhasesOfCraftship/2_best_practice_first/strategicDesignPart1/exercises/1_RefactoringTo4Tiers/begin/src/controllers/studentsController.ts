@@ -3,21 +3,13 @@ import { ErrorHandler } from "../shared/errors"
 import express from "express"
 import { prisma } from "../database"
 import { studentsServices } from "../services/studentsServices";
+import { CreateStudentDTO, StudentId } from "../dtos/studentDTO";
 
-function isMissingKeys (data: any, keysToCheckFor: string[]) {
-    for (let key of keysToCheckFor) {
-      if (data[key] === undefined) return true;
-    } 
-    return false;
-}
 
 function parseForResponse(data: unknown) {
     return JSON.parse(JSON.stringify(data));
 }
 
-function isUUID (id: string) {
-    return /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
-}
 
 class studentsController {
     private router: express.Router;
@@ -53,17 +45,8 @@ class studentsController {
         next: express.NextFunction,
     ) {
         try {
-            if (isMissingKeys(req.body, ["name"])) {
-                return res.status(400).json({
-                    error: Errors.ValidationError,
-                    data: undefined,
-                    success: false,
-                })
-            }
-
-            const { name } = req.body
-
-            const response = await this.studentService.createStudent(name)
+            const dto = CreateStudentDTO.formRequest(req.body)
+            const response = await this.studentService.createStudent(dto)
 
             res.status(201).json({
                 error: undefined,
@@ -84,7 +67,7 @@ class studentsController {
             const response = this.studentService.getAllStudents()
             res.status(200).json({ error: undefined, data: parseForResponse(response), success: true})
         } catch (error) {
-            res.status(500).json({ error: Errors.ServerError, data: undefined, success: false})
+            next(error)
         }
     }
 
@@ -94,15 +77,9 @@ class studentsController {
         next: express.NextFunction,
     ) {
         try {
-            const { id } = req.params
-            if(!isUUID(id)) {
-                return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false})
-            }
-            const response = await this.studentService.getStudentById(id)
-
-            if (!response) {
-                return res.status(404).json({ error: Errors.StudentNotFound, data: undefined, success: false})
-            }
+            const dto = StudentId.formRequestParams(req.params)
+            
+            const response = await this.studentService.getStudentById(dto)
 
             res.status(200).json({ error: undefined, data: parseForResponse(response), success: true})
 
@@ -117,17 +94,8 @@ class studentsController {
         next: express.NextFunction,
     ) {
         try {
-            const { id } = req.params
-            if (!isUUID(id)) {
-                return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
-            }
-            const response = await this.studentService.getAssignments(id)
-
-            // if (!response) {
-            //     return res.status(404).json({ error: Errors.StudentNotFound, data: undefined, success: false });
-            // }
-
-            // const studentAssignments = await this.studentService.getAssignments(id)
+            const dto = StudentId.formRequestParams(req.params)
+            const response = await this.studentService.getAssignments(dto)
 
             res.status(200).json({ error: undefined, data: parseForResponse(response), success: true})
     
@@ -142,20 +110,13 @@ class studentsController {
         next: express.NextFunction,
     ) {
         try{
-            const { id } = req.params;
-        if(!isUUID(id)) {
-            return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
-        }
-        const student = await this.studentService.getGrades(id)
-        if (!student) {
-            return res.status(404).json({ error: Errors.StudentNotFound, data: undefined, success: false });
-        };
-        const studentAssignments = await this.studentService.getGrades(id);
-        
-        res.status(200).json({ error: undefined, data: parseForResponse(studentAssignments), success: true });
-        } catch (error) {
-            next(error)
-        }
+            const dto = StudentId.formRequestParams(req.body)
+            const student = await this.studentService.getGrades(dto)
+            
+            res.status(200).json({ error: undefined, data: parseForResponse(student), success: true });
+            } catch (error) {
+                next(error)
+            }
     }
 
 }

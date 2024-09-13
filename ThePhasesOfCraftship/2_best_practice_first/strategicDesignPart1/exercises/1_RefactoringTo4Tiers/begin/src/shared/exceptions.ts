@@ -22,4 +22,18 @@ class StudentAlreadyEnrolledException extends Error {
     }
 }
 
-export { InvalidRequestBodyException, StudentNotFoundException, ClassNotFoundException, StudentAlreadyEnrolledException }
+class AssignmentDoesNotExist extends Error {
+    constructor() {
+        super("Assignment does not exist")
+    }
+}
+
+class GradeNotValid extends Error {
+    constructor() {
+        super("Grade is not valid")
+    }
+}
+
+
+
+export { InvalidRequestBodyException, StudentNotFoundException, ClassNotFoundException, StudentAlreadyEnrolledException, AssignmentDoesNotExist, GradeNotValid }

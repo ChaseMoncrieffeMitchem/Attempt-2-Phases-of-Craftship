@@ -1,16 +1,19 @@
 import { Database, prisma } from "../database";
+import { ClassId, CreateClassDTO, EnrollStudentDTO } from "../dtos/classDTO";
 import { ClassNotFoundException, StudentAlreadyEnrolledException, StudentNotFoundException } from "../shared/exceptions";
 
 class classServices {
     constructor(private db: Database) {}
 
-    async createClass (name: string) {
+    async createClass (dto: CreateClassDTO) {
+        const { name } = dto
         const response = await this.db.classes.save(name)
 
         return response
     }
 
-    async enrollStudent (studentId: string, classId: string) {
+    async enrollStudent (dto: EnrollStudentDTO) {
+        const { studentId, classId } = dto
         const student = await this.db.students.getById(studentId);
 
         if (!student) {
@@ -37,14 +40,16 @@ class classServices {
         
     }
 
-    async getAssignments (classId: string, title: string) {
-        const assignment = await prisma.assignment.create({
-            data: {
-                classId,
-                title
-            }
-        });
-        return assignment
+    async getAssignments (classId: ClassId) {
+        const { id } = classId
+        const cls = await this.db.classes.getById(id)
+
+        if (!cls) {
+            throw new ClassNotFoundException(id)
+        }
+
+        const response = await this.db.classes.getAssignment(id)
+        return response
     }
 }
 

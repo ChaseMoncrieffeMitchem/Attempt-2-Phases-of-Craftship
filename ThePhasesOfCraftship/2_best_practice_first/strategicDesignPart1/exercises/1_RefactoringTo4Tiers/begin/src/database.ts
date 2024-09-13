@@ -12,15 +12,26 @@ interface ClassesPersistence {
     save(name: string): any;
     getById(id: string): any;
     enroll(studentId: string, classId: string): any;
+    getAssignment(classId: string): any;
+}
+
+interface AssignmentPersistence {
+    save(classId: string, title: string): any;
+    getById(id: string): any;
+    getAssignment(studentId: string, assignmentId: string): any;
+    submit(id: string): any;
+    getGrade(id: any, grade: string): any;
 }
 
 class Database {
     public students: StudentPersistence;
     public classes: ClassesPersistence;
+    public assignments: AssignmentPersistence
 
     constructor(private prisma: PrismaClient) {
         this.students = this.buildStudentPersistence();
         this.classes = this.buildClassesPersistence();
+        this.assignments = this.buildAssignmentPersistence()
     }
 
     private buildStudentPersistence(): StudentPersistence {
@@ -38,6 +49,17 @@ class Database {
             save: this.saveClass,
             getById: this.getClassById,
             enroll: this.getEnrollment,
+            getAssignment: this.getClassAssignments,
+        }
+    }
+
+    private buildAssignmentPersistence(): AssignmentPersistence {
+        return {
+            save: this.saveAssignment,
+            getById: this.getAssignmentById,
+            getAssignment: this.studentAssignment,
+            submit: this.submitAssignment,
+            getGrade: this.gradeAssignment,
         }
     }
 
@@ -125,33 +147,86 @@ class Database {
     }
 
     private async getEnrollment(studentId: string, classId: string) {
-        const student = await prisma.student.findUnique({
-            where: {
-                id: studentId
-            }
-        });
-
-        const cls = await prisma.class.findUnique({
-            where: {
-                id: classId
-            }
-        });
-
-        const duplicatedClassEnrollment = await prisma.classEnrollment.findFirst({
-            where: {
-                studentId,
-                classId
-            }
-        });
-
-        const classEnrollment = await prisma.classEnrollment.create({
+        const data = await prisma.classEnrollment.create({
             data: {
                 studentId,
                 classId
             }
         });
 
-        return {student, cls, duplicatedClassEnrollment, classEnrollment}
+        return data
+    }
+
+    private async getClassAssignments(classId: string) {
+        const assignment = await prisma.assignment.create({
+            data: {
+                classId: classId
+            },
+            include: {
+                class: true,
+                studentTasks: true
+            }
+        });
+        return assignment
+    }
+
+    private async saveAssignment(classId: string, title: string) {
+        const data = await prisma.assignment.create({
+            data: {
+                classId,
+                title
+            }
+        });
+        return data
+    }
+
+    private async getAssignmentById (id: string) {
+        const data = await prisma.assignment.findUnique({
+            where: {
+                id,
+            }
+        });
+
+        return data
+    }
+
+    private async studentAssignment(studentId: string, assignmentId: string) {
+        
+        const data = await prisma.studentAssignment.create({
+            data: {
+                studentId,
+                assignmentId,
+            }
+        });
+
+        return data
+    }
+
+    private async submitAssignment(id: string) {
+        const data = await prisma.studentAssignment.update({
+            where: {
+                id
+            },
+            data: {
+                status: 'submitted'
+            }
+        });
+
+        return data
+    }
+
+    private async gradeAssignment(id: string, grade: string) {
+
+        const data = await prisma.studentAssignment.update({
+            where: {
+                id
+            },
+            data: {
+                grade,
+            }
+        });
+
+        return data
     }
 }
 

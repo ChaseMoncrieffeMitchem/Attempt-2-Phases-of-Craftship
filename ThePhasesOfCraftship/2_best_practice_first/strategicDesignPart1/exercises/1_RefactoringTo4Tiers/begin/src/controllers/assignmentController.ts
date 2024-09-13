@@ -3,6 +3,7 @@ import { ErrorHandler } from "../shared/errors"
 import express from "express"
 import { prisma } from "../database"
 import { assignmentService } from "../services/assignmentService";
+import { AssignStudentDTO, CreateAssignmentDTO, GradeAssignmentDTO, SubmitAssignmentDTO } from "../dtos/assignmentDTO";
 
 function isMissingKeys (data: any, keysToCheckFor: string[]) {
     for (let key of keysToCheckFor) {
@@ -52,13 +53,8 @@ class assignmentsController {
         next: express.NextFunction,
     ) {
         try {
-            if (isMissingKeys(req.body, ['classId', 'title'])) {
-                return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
-            }
-        
-            const { classId, title } = req.body;
-        
-            const assignment = await this.assignmentService.createAssignment(classId, title)
+            const dto = CreateAssignmentDTO.formRequest(req.body)
+            const assignment = await this.assignmentService.createAssignment(dto)
         
             res.status(201).json({ error: undefined, data: parseForResponse(assignment), success: true });
         } catch (error) {
@@ -72,27 +68,8 @@ class assignmentsController {
         next: express.NextFunction,
     ) {
         try {
-            if (isMissingKeys(req.body, ['studentId', 'assignmentId'])) {
-                return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
-            }
-        
-            const { studentId, assignmentId, grade } = req.body;
-        
-            // check if student exists
-            const student = await this.assignmentService.assignStudent(studentId, assignmentId)
-        
-            if (!student) {
-                return res.status(404).json({ error: Errors.StudentNotFound, data: undefined, success: false });
-            }
-        
-            // check if assignment exists
-            const assignment = await this.assignmentService.assignStudent(studentId, assignmentId)
-        
-            if (!assignment) {
-                return res.status(404).json({ error: Errors.AssignmentNotFound, data: undefined, success: false });
-            }
-        
-            const studentAssignment = await this.assignmentService.assignStudent(studentId, assignmentId)
+            const dto = AssignStudentDTO.formRequest(req.body)
+            const studentAssignment = await this.assignmentService.assignStudent(dto)
         
             res.status(201).json({ error: undefined, data: parseForResponse(studentAssignment), success: true });
         } catch (error) {
@@ -106,20 +83,8 @@ class assignmentsController {
         next: express.NextFunction,
     ) {
         try {
-            if (isMissingKeys(req.body, ['id'])) {
-                return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
-            }
-    
-            const { id } = req.body;
-            
-            // check if student assignment exists
-            const studentAssignment = await this.assignmentService.submitAssignment(id)
-    
-            if (!studentAssignment) {
-                return res.status(404).json({ error: Errors.AssignmentNotFound, data: undefined, success: false });
-            }
-    
-            const studentAssignmentUpdated = await this.assignmentService.submitAssignment(id)
+            const dto = SubmitAssignmentDTO.formRequest(req.body)
+            const studentAssignmentUpdated = await this.assignmentService.submitAssignment(dto)
     
             res.status(200).json({ error: undefined, data: parseForResponse(studentAssignmentUpdated), success: true });
         } catch (error) {
@@ -133,24 +98,14 @@ class assignmentsController {
         next: express.NextFunction,
     ) {
         try {
-            if (isMissingKeys(req.body, ['id', 'grade'])) {
-                return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
-            }
-        
-            const { id, grade } = req.body;
-        
-            // validate grade
-            if (!['A', 'B', 'C', 'D'].includes(grade)) {
-                return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
-            }
+            const dto = GradeAssignmentDTO.formRequest(req.body)
+
+            // // validate grade
+            // if (!['A', 'B', 'C', 'D'].includes(grade)) {
+            //     return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
+            // }
             
-            // check if student assignment exists
-            const studentAssignment = await this.assignmentService.gradeAssignment(id, grade)
-            if (!studentAssignment) {
-                return res.status(404).json({ error: Errors.AssignmentNotFound, data: undefined, success: false });
-            }
-        
-            const studentAssignmentUpdated = await this.assignmentService.gradeAssignment(id, grade)
+            const studentAssignmentUpdated = await this.assignmentService.gradeAssignment(dto)
         
             res.status(200).json({ error: undefined, data: parseForResponse(studentAssignmentUpdated), success: true });
         } catch (error) {
