@@ -1,15 +1,6 @@
 import { InvalidRequestBodyException } from "../shared/exceptions";
-
-function isMissingKeys (data: any, keysToCheckFor: string[]) {
-    for (let key of keysToCheckFor) {
-      if (data[key] === undefined) return true;
-    } 
-    return false;
-}
-
-function isUUID (id: string) {
-    return /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
-}
+import { isMissingKeys } from "../shared/utils";
+import { isUUID } from "../shared/utils";
 
 class CreateStudentDTO {
     constructor(public name: string) {}

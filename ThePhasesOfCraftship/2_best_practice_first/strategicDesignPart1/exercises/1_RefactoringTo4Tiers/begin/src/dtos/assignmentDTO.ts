@@ -1,11 +1,5 @@
 import { GradeNotValid, InvalidRequestBodyException } from "../shared/exceptions";
-
-function isMissingKeys (data: any, keysToCheckFor: string[]) {
-    for (let key of keysToCheckFor) {
-      if (data[key] === undefined) return true;
-    } 
-    return false;
-}
+import { isMissingKeys } from "../shared/utils";
 
 class CreateAssignmentDTO {
     constructor(public classId: string, public title: string) {}

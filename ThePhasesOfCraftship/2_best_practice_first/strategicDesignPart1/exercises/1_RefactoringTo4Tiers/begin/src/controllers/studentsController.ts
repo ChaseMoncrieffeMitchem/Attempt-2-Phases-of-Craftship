@@ -4,11 +4,7 @@ import express from "express"
 import { prisma } from "../database"
 import { studentsServices } from "../services/studentsServices";
 import { CreateStudentDTO, StudentId } from "../dtos/studentDTO";
-
-
-function parseForResponse(data: unknown) {
-    return JSON.parse(JSON.stringify(data));
-}
+import { parseForResponse } from "../shared/utils";
 
 
 class studentsController {

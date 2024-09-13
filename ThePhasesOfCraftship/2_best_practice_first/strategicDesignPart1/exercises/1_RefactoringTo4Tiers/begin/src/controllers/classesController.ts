@@ -4,21 +4,7 @@ import express from "express"
 import { prisma } from "../database"
 import { classServices } from "../services/classServices";
 import { ClassId, CreateClassDTO, EnrollStudentDTO } from "../dtos/classDTO";
-
-function isMissingKeys (data: any, keysToCheckFor: string[]) {
-    for (let key of keysToCheckFor) {
-      if (data[key] === undefined) return true;
-    } 
-    return false;
-}
-
-function parseForResponse(data: unknown) {
-    return JSON.parse(JSON.stringify(data));
-}
-
-function isUUID (id: string) {
-    return /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
-}
+import { parseForResponse } from "../shared/utils";
 
 class classesController {
     private router: express.Router;
@@ -83,12 +69,6 @@ class classesController {
     ) {
         try {
             const dto = ClassId.formRequestParams(req.params)
-            // if (isMissingKeys(req.body, ['classId', 'title'])) {
-            //     return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
-            // }
-        
-            // const { classId, title } = req.body;
-        
             const assignment = await this.classService.getAssignments(dto)
         
             res.status(201).json({ error: undefined, data: parseForResponse(assignment), success: true });

@@ -4,21 +4,7 @@ import express from "express"
 import { prisma } from "../database"
 import { assignmentService } from "../services/assignmentService";
 import { AssignStudentDTO, CreateAssignmentDTO, GradeAssignmentDTO, SubmitAssignmentDTO } from "../dtos/assignmentDTO";
-
-function isMissingKeys (data: any, keysToCheckFor: string[]) {
-    for (let key of keysToCheckFor) {
-      if (data[key] === undefined) return true;
-    } 
-    return false;
-}
-
-function parseForResponse(data: unknown) {
-    return JSON.parse(JSON.stringify(data));
-}
-
-function isUUID (id: string) {
-    return /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
-}
+import { parseForResponse } from "../shared/utils";
 
 class assignmentsController {
     private router: express.Router;
