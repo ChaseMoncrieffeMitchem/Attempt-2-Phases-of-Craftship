@@ -441,9 +441,9 @@ app.get('/student/:id/assignments', async (req: Request, res: Response) => {
 app.get('/student/:id/grades', async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        if(!isUUID(id)) {
-            return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
-        }
+        // if(!isUUID(id)) {
+        //     return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
+        // }
 
         // check if student exists
         const student = await prisma.student.findUnique({
