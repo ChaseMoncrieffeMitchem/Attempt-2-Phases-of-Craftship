@@ -6,6 +6,7 @@ import { resetDatabase } from "../../reset";
 import { StudentBuilder } from "../../student/builders/createStudentBuilder";
 import { RESTfulAPIDriver } from "../../../../src/shared/http/apiDriver";
 import { createStudentDTO } from "../../../../src/shared/students/dtos/createStudentDTO";
+import { WebServer } from "../../../../src/shared/http/webServer";
 
 const feature = loadFeature(
   path.join(__dirname, "../../features/create_student.feature")
@@ -15,11 +16,22 @@ defineFeature(feature, (test) => {
 
   test('Successfully created a Student', ({ given, when, then }) => {
 
-    let driver = new RESTfulAPIDriver(http);
     let studentInput: createStudentDTO;
     let response: any;
+    let webServer: WebServer = new WebServer()
+    let driver = new RESTfulAPIDriver(webServer.getHttp());
 
-    
+
+    beforeAll(async () => {
+      // Start the Server 
+      await webServer.start()
+      // Reset the database
+    })
+
+    afterAll(async() => {
+      // Stop the processes running on the Server
+      await webServer.stop()
+    })
 
     given(/^I want to create a student named "(.*)"$/, () => {
       studentInput = new StudentBuilder()
