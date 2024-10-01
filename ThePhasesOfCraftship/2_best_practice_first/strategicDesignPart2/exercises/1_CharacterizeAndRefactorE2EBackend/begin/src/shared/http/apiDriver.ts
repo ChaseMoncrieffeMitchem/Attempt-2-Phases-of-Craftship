@@ -14,4 +14,10 @@ export class RESTfulAPIDriver {
       .send(data)
     }
     
+    get(url: string) {
+      return request(this.http)
+        .get(url)
+        .set('Accept', 'application/json');
+  }
+  
 }

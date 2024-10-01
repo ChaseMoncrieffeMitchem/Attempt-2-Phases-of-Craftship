@@ -41,6 +41,9 @@ export class WebServer {
   }
 
   public setupRoutes() {
+    this.express.get('/health', (req, res) => {
+        return res.send({ ok: true }).status(200)
+    })
     this.express.post("/students", createStudentController);
     this.express.post("/classes", createClassController);
     this.express.post("/class-enrollments", classEnrollmentController);
