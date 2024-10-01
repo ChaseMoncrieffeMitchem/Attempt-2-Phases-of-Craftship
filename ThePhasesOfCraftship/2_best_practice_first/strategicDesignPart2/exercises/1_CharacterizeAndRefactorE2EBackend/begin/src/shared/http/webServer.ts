@@ -1,30 +1,22 @@
 import express from "express";
 
 import cors from "cors";
-import {
-  classEnrollmentController,
-  createAssignmentController,
-  createClassController,
-  createStudentController,
-  findAllAssignmentsAllClassesController,
-  getAllGradesController,
-  getAllStudentsController,
-  getAllSubmittedAssignmentsController,
-  getAssignmentByIdController,
-  getStudentByIdController,
-  mergeStudentAssignmentWithSubmissionStatusController,
-  mergeStudentWithAssignmentController,
-  mergeSubmittedAssignmentWithGradeController,
-} from "../../modules/controllers/studentController";
 import { Server } from "http";
 import { ProcessService } from "../processes/processServer";
+import { StudentController } from "../../../src/modules/controllers/studentController"
+import { ClassController } from "../../modules/controllers/classController";
+import { AssignmentController } from "../../modules/controllers/assignmentController";
 
 export class WebServer {
   private express: express.Express;
   private http: Server | undefined
   private state: 'Started' | 'Stopped'
 
-  constructor() {
+  constructor(
+    private studentController: StudentController, 
+    private classController: ClassController, 
+    private assignmentController: AssignmentController) 
+    {
     this.express = this.createExpress();
     this.configureExpress();
     this.setupRoutes();
@@ -44,34 +36,42 @@ export class WebServer {
     this.express.get('/health', (req, res) => {
         return res.send({ ok: true }).status(200)
     })
-    this.express.post("/students", createStudentController);
-    this.express.post("/classes", createClassController);
-    this.express.post("/class-enrollments", classEnrollmentController);
-    this.express.post("/assignments", createAssignmentController);
+
+    this.express.post("/students", (req, res) => this.studentController.createStudent(req, res));
+
+    this.express.post("/classes", (req, res) => this.classController.createClass(req, res));
+
+    this.express.post("/class-enrollments", (req, res) => this.classController.mergeStudentWithClass(req, res));
+
+    this.express.post("/assignments", (req, res) => this.assignmentController.createAssignment(req, res));
+
     this.express.post(
       "/student-assignments",
-      mergeStudentWithAssignmentController
-    );
+      (req, res) => this.studentController.mergeStudentWithAssignment(req, res));
+
     this.express.post(
       "/student-assignments/submit",
-      mergeStudentAssignmentWithSubmissionStatusController
-    );
+      (req, res) => this.assignmentController.mergeStudentAssignmentWithSubmissionStatus(req, res));
+
     this.express.post(
       "/student-assignments/grade",
-      mergeSubmittedAssignmentWithGradeController
-    );
-    this.express.get("/students", getAllStudentsController);
-    this.express.get("/students/:id", getStudentByIdController);
-    this.express.get("/assignments/:id", getAssignmentByIdController);
+      (req, res) => this.assignmentController.mergeSubmittedAssignmentWithGrade(req, res));
+
+    this.express.get("/students", (req, res) => this.studentController.getAllStudents(req, res));
+
+    this.express.get("/students/:id", (req, res) => this.studentController.getStudentById(req, res));
+
+    this.express.get("/assignments/:id", (req, res) => this.assignmentController.getAssignmentById(req, res));
+
     this.express.get(
       "/classes/:id/assignments",
-      findAllAssignmentsAllClassesController
-    );
+      (req, res) => this.classController.findAllAssignmentsForClass(req, res));
+
     this.express.get(
       "/student/:id/assignments",
-      getAllSubmittedAssignmentsController
-    );
-    this.express.get("/student/:id/grades", getAllGradesController);
+      (req, res) => this.studentController.getAllSubmittedAssignments(req, res));
+
+    this.express.get("/student/:id/grades", (req, res) => this.studentController.getAllGrades(req, res));
   }
 
   public async start(): Promise<void> {
