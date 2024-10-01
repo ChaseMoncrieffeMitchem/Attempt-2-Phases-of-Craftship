@@ -17,15 +17,18 @@ import {
   mergeSubmittedAssignmentWithGradeController,
 } from "../../modules/controllers/studentController";
 import { Server } from "http";
+import { ProcessService } from "../processes/processServer";
 
 export class WebServer {
   private express: express.Express;
   private http: Server | undefined
+  private state: 'Started' | 'Stopped'
 
   constructor() {
     this.express = this.createExpress();
     this.configureExpress();
     this.setupRoutes();
+    this.state = 'Stopped'
   }
 
   private createExpress() {
@@ -68,22 +71,41 @@ export class WebServer {
     this.express.get("/student/:id/grades", getAllGradesController);
   }
 
-  public start() {
-    // kill any processes running on the port
-
-    // start the server
-    let port = process.env.PORT || 3000;
-
-    // save the http object
-    this.http = this.express.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
-    });
+  public async start(): Promise<void> {
+    // Kill the process running on the port if it's already running
+    let port = 3000;
     
+    return new Promise(async (resolve, reject) => {
+      await ProcessService.killProcessOnPort(port, () => {
+        this.http = this.express.listen(port, () => {
+          console.log(`Server is running on port ${port}`);
+          this.state = 'Started';
+          resolve();
+        });
+      });
+    });
+  }
+  
+  
+  public isStarted () {
+    return this.state === 'Started'
   }
 
-  public stop() {}
+  public async stop(): Promise<void> {
+    if (!this.isStarted()) return;
+  
+    return new Promise((resolve, reject) => {
+      this.http?.close(() => {
+        this.state = 'Stopped';
+        resolve();
+      });
+    });
+  }
+  
+  
 
   public getHttp() {
+    if (!this.isStarted()) throw new Error('is not started yet')
     return this.http
   }
 }

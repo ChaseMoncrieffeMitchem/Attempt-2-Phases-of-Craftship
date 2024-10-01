@@ -1,5 +1,4 @@
 import request from "supertest";
-import { http } from "../../../../src/index"
 import { defineFeature, loadFeature } from "jest-cucumber";
 import path from "path";
 import { resetDatabase } from "../../reset";
@@ -7,6 +6,7 @@ import { StudentBuilder } from "../../student/builders/createStudentBuilder";
 import { RESTfulAPIDriver } from "../../../../src/shared/http/apiDriver";
 import { createStudentDTO } from "../../../../src/shared/students/dtos/createStudentDTO";
 import { WebServer } from "../../../../src/shared/http/webServer";
+import { Server } from "http";
 
 const feature = loadFeature(
   path.join(__dirname, "../../features/create_student.feature")
@@ -19,12 +19,14 @@ defineFeature(feature, (test) => {
     let studentInput: createStudentDTO;
     let response: any;
     let webServer: WebServer = new WebServer()
-    let driver = new RESTfulAPIDriver(webServer.getHttp());
-
+    let driver: RESTfulAPIDriver;
+    
 
     beforeAll(async () => {
       // Start the Server 
       await webServer.start()
+
+      driver = new RESTfulAPIDriver(webServer.getHttp() as Server)
       // Reset the database
     })
 
