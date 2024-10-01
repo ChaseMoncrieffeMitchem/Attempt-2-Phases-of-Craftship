@@ -20,7 +20,14 @@
     "prettier-watch:win32": "onchange \"src/**/*.ts\" -- prettier --write {{changed}}",
     "prettier-watch:darwin:linux": "onchange 'src/**/*.ts' -- prettier --write {{changed}}",
     "prettier-watch:default": "onchange 'src/**/*.ts' -- prettier --write {{changed}}",
-    "tests:e2e": "jest --verbose src/tests/acceptance/ --runInBand"
+    "tests:e2e": "jest --verbose src/tests/acceptance/ --runInBand",
+    "test:unit": "jest -c jest.config.unit.js",
+    "test:unit:dev": "jest -c jest.config.unit.js --watchAll",
+    "test:infra": "jest -c jest.config.infra.js",
+    "test:infra:dev": "jest -c jest.config.infra.js --watchAll",
+    "test:e2e": "jest -c jest.config.e2e.js",
+    "test:e2e:dev": "jest -c jest.config.e2e.js --watchAll",
+    "test": "jest"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -60,5 +67,9 @@
     "jest-cucumber": "^3.0.2",
     "pg": "^8.11.0",
     "prisma": "^4.16.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
   }
 }

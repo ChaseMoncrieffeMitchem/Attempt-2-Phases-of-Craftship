@@ -54,6 +54,7 @@ app.post('/students', async (req: Request, res: Response) => {
 
         res.status(201).json({ error: undefined, data: parseForResponse(student), success: true });
     } catch (error) {
+        console.log(error)
         res.status(500).json({ error: Errors.ServerError, data: undefined, success: false });
     }
 });
@@ -478,6 +479,8 @@ app.get('/student/:id/grades', async (req: Request, res: Response) => {
 
 const port = process.env.PORT || 3000;
 
-app.listen(port, () => {
+const http = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+export { http }
