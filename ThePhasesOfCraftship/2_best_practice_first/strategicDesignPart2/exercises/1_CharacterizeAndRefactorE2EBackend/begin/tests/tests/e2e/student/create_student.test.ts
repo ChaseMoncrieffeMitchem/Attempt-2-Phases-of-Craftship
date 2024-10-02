@@ -7,6 +7,7 @@ import { RESTfulAPIDriver } from "../../../../src/shared/http/apiDriver";
 import { createStudentDTO } from "../../../../src/shared/students/dtos/createStudentDTO";
 import { WebServer } from "../../../../src/shared/http/webServer";
 import { Server } from "http";
+import { CompositionRoot } from "../../../../src/shared/composition/compositionRoot";
 
 const feature = loadFeature(
   path.join(__dirname, "../../features/create_student.feature")
@@ -18,7 +19,8 @@ defineFeature(feature, (test) => {
 
     let studentInput: createStudentDTO;
     let response: any;
-    let webServer: WebServer = new WebServer()
+    let root = new CompositionRoot()
+    let webServer: WebServer = root.getWebServer()
     let driver: RESTfulAPIDriver;
     
 

@@ -1,10 +1,14 @@
 import { Server } from "http"
 import { RESTfulAPIDriver } from "./apiDriver"
 import { WebServer } from "./webServer"
+import { StudentController } from "../../modules/controllers/studentController"
+import { ClassController } from "../../modules/controllers/classController"
+import { AssignmentController } from "../../modules/controllers/assignmentController"
+import { CompositionRoot } from "../composition/compositionRoot"
 
 describe ('webServer', () => {
 
-    let webServer = new WebServer()
+    let webServer = new CompositionRoot().getWebServer()
 
     describe('starting and stopping server', () => {
         beforeEach(async () => {
