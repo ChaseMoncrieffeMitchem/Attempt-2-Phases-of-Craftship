@@ -10,7 +10,7 @@ Feature: Create Student
         Then the student should be Successfully created
 
     Scenario: Failed to create a student due to a duplicate entry
-        Given a student named "Chase" already exists
+        Given a student named "Alina" already exists
         When I request to create another student with the same name
         Then the creation should fail
         And I should receive an error message saying "Student already exists"

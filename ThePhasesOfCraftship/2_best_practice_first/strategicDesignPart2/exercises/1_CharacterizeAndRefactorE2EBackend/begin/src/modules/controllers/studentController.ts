@@ -40,6 +40,17 @@ export class StudentController {
             }
     
             const { name, email } = req.body;
+
+            const existingStudent = await dbConnection.student.findFirst({
+                where: {
+                    name: name
+                }
+            });
+    
+            if (existingStudent) {
+                // Return error if student with the same name already exists
+                return res.status(400).json({ error: "Student with this name already exists", data: undefined, success: false });
+            }
     
             const student = await dbConnection.student.create({
                 data: {

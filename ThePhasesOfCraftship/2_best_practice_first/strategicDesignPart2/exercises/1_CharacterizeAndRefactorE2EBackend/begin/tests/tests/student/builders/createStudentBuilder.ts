@@ -18,13 +18,15 @@ export class StudentBuilder {
     }
 
     withName (value: string) {
-        this.studentInput.name = value
+        if (value !== "") return this
+        const randomInteger = getRandomNumber(100, 10000)
+        this.studentInput.name = `name-${randomInteger}`
         return this
     }
 
-    withRandomEmail () {
+    withRandomEmail (value: string) {
         const randomInteger = getRandomNumber(100, 10000)
-        this.studentInput.email = `test-${randomInteger}@gmail.com`
+        this.studentInput.email = `email-${randomInteger}@gmail.com`
         return this
     }
 

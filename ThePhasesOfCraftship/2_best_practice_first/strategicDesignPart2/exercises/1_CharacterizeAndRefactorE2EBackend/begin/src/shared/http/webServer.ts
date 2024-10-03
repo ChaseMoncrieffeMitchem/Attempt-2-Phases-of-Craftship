@@ -74,9 +74,9 @@ export class WebServer {
     this.express.get("/student/:id/grades", (req, res) => this.studentController.getAllGrades(req, res));
   }
 
-  public async start(): Promise<void> {
+  public async start(port: number = 3000): Promise<void> {
     // Kill the process running on the port if it's already running
-    let port = 3000;
+    // let port = 3000;
     
     return new Promise(async (resolve, reject) => {
       await ProcessService.killProcessOnPort(port, () => {
@@ -100,6 +100,7 @@ export class WebServer {
     return new Promise((resolve, reject) => {
       this.http?.close(() => {
         this.state = 'Stopped';
+        console.log("Server Successfully Stopped")
         resolve();
       });
     });
