@@ -33,14 +33,13 @@ export class ClassController {
 
     async createClass(req: Request, res: Response) {
         try {
+            let dbConnection = await this.database.getConnection(); // Get the database connection
             if (isMissingKeys(req.body, ['name'])) {
                 return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
             }
     
             const { name } = req.body;
     
-            const dbConnection = await this.database.getConnection(); // Get the database connection
-            
             const cls = await dbConnection.class.create({
                 data: {
                     name

@@ -81,7 +81,7 @@ export class WebServer {
     return new Promise(async (resolve, reject) => {
       await ProcessService.killProcessOnPort(port, () => {
         this.http = this.express.listen(port, () => {
-          console.log(`Server is running on port ${port}`);
+          // console.log(`Server is running on port ${port}`);
           this.state = 'Started';
           resolve();
         });
@@ -100,7 +100,7 @@ export class WebServer {
     return new Promise((resolve, reject) => {
       this.http?.close(() => {
         this.state = 'Stopped';
-        console.log("Server Successfully Stopped")
+        // console.log("Server Successfully Stopped")
         resolve();
       });
     });

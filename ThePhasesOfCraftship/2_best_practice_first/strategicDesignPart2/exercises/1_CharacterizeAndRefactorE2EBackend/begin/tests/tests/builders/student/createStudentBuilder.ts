@@ -1,4 +1,4 @@
-import { createStudentDTO } from "../../../../src/shared/students/dtos/createStudentDTO"
+import { createStudentDTO } from "../../../../src/shared/dtos/student/createStudentDTO"
 
 function getRandomNumber(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;

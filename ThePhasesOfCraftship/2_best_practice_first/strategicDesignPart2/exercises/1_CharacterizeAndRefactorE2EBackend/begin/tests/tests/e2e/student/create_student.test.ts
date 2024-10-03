@@ -2,9 +2,9 @@ import request from "supertest";
 import { defineFeature, loadFeature } from "jest-cucumber";
 import path from "path";
 import { resetDatabase } from "../../reset";
-import { StudentBuilder } from "../../student/builders/createStudentBuilder";
+import { StudentBuilder } from "../../builders/student/createStudentBuilder";
 import { RESTfulAPIDriver } from "../../../../src/shared/http/apiDriver";
-import { createStudentDTO } from "../../../../src/shared/students/dtos/createStudentDTO";
+import { createStudentDTO } from "../../../../src/shared/dtos/student/createStudentDTO";
 import { WebServer } from "../../../../src/shared/http/webServer";
 import { Server } from "http";
 import { CompositionRoot } from "../../../../src/shared/composition/compositionRoot";
@@ -101,9 +101,7 @@ defineFeature(feature, (test) => {
           .build();
 
         studentName = studentInput.name
-        console.log(studentName)
         response = await driver.post("/students", studentInput);
-        console.log(response)
         expect(response.statusCode).toBe(201)
       } catch (error) {
         console.error("Error in creating initial student:", error);
@@ -117,9 +115,7 @@ defineFeature(feature, (test) => {
           .withName(studentName)
           .withRandomEmail("")
           .build();
-          console.log(studentInput)
         response = await driver.post("/students", studentInput);
-        console.log(response)
       } catch (error) {
         console.error("Error in creating duplicate student:", error);
         throw error;
@@ -137,6 +133,4 @@ defineFeature(feature, (test) => {
     });
   });
   
-
-
 });
