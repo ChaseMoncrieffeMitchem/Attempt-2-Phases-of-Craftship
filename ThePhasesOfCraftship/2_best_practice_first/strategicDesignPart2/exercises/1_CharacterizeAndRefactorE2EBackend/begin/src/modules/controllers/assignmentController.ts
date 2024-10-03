@@ -34,13 +34,12 @@ export class AssignmentController {
 
     async createAssignment(req: Request, res: Response) {
         try {
+            let dbConnection = await this.database.getConnection(); // Get the database connection
             if (isMissingKeys(req.body, ['classId', 'title'])) {
                 return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
             }
 
             const { classId, title } = req.body;
-
-            const dbConnection = await this.database.getConnection(); // Get the database connection
 
             const assignment = await dbConnection.assignment.create({
                 data: {

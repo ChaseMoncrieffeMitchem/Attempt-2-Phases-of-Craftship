@@ -73,13 +73,11 @@ defineFeature(feature, (test) => {
       classInput = new ClassBuilder().withName("").build();
       className = classInput.name;
       response = await driver.post("/classes", classInput);
-      console.log(response)
     });
 
     when("I request to create a classroom by that same name", async () => {
       classInput = new ClassBuilder().withName(className).build();
       response = await driver.post("/classes", classInput);
-      console.log(response)
     });
 
     then("the classroom should not be created", () => {
