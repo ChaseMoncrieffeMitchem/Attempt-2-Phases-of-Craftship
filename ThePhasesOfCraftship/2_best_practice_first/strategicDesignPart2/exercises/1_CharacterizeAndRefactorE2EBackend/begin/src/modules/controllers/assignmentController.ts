@@ -41,6 +41,17 @@ export class AssignmentController {
 
             const { classId, title } = req.body;
 
+            const existingAssignment = await dbConnection.assignment.findFirst({
+                where: {
+                    title: title
+                }
+            })
+            
+
+            if (existingAssignment) {
+                return res.status(400).json({ error: "Assignment with this title already exists", data: undefined, success: false });
+            }
+
             const assignment = await dbConnection.assignment.create({
                 data: {
                     classId,

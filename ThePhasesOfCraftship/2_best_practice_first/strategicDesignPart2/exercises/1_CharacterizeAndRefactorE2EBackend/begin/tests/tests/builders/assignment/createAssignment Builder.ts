@@ -12,15 +12,20 @@ export class assignmentBuilder {
     constructor() {
         this.assignmentInput = {
             title: "",
-            classId: ''
+            classId: "",
         }
     }
 
-    withTitle() {
-        const randomInteger = getRandomNumber(100, 10000)
-        this.assignmentInput.title = `title-${randomInteger}`
-        return this
+    withTitle(value: string) {
+        if (value) {
+            this.assignmentInput.title = value; // Set the title if a value is provided
+        } else {
+            const randomInteger = getRandomNumber(100, 10000);
+            this.assignmentInput.title = `title-${randomInteger}`; // Generate a random title if value is empty
+        }
+        return this;
     }
+    
 
     withClassId(value: string) {
         this.assignmentInput.classId = value; 

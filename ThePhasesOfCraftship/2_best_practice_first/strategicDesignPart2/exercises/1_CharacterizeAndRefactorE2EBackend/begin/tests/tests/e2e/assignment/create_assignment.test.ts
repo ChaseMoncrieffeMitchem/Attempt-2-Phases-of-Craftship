@@ -16,6 +16,8 @@ const feature = loadFeature(
 );
 
 defineFeature(feature, (test) => {
+
+
   test("Successfully created a assignment", ({ given, when, then }) => {
     let assignmentInput: createAssignmentDTO;
     let root = new CompositionRoot();
@@ -42,10 +44,9 @@ defineFeature(feature, (test) => {
       response = await driver.post("/classes", {
         name: `Math ${randomInteger}`,
       });
-      classId = response.body.data.id;
-      console.log("I'm right here:", classId);
+      classId = response.body.data?.id;
       assignmentInput = new assignmentBuilder()
-        .withTitle()
+        .withTitle("")
         .withClassId(classId)
         .build();
     });
@@ -62,12 +63,14 @@ defineFeature(feature, (test) => {
   });
 
   test("Failed to create a assignment", ({ given, when, then }) => {
+
     let assignmentInput: createAssignmentDTO;
     let root = new CompositionRoot();
     let webServer: WebServer = root.getWebServer();
     let driver: RESTfulAPIDriver;
     let response: any;
     let classId: any;
+    let title: string;
 
     beforeEach(async () => {
       // Start the Server
@@ -82,20 +85,35 @@ defineFeature(feature, (test) => {
       await webServer.stop();
     });
 
-
     given(/^a assignment by title "(.*)" already exists$/, async (arg0) => {
-        const randomInteger = getRandomNumber(100, 10000);
-        response = await driver.post("/classes", {
-            name: `Math ${randomInteger}`,
-          });
-          const classId = response.body.data.id
-      assignmentInput = new assignmentBuilder().withTitle().withClassId(classId).build();
-      response = await driver.post("/assignments", assignmentInput)
-      console.log(response)
+      const randomInteger = getRandomNumber(100, 10000);
+      response = await driver.post("/classes", {
+        name: `Math ${randomInteger}`,
+      });
+    //   classId = response.body.data.id;
+      assignmentInput = new assignmentBuilder()
+        .withTitle("")
+        .withClassId(response.body.data?.id)
+        .build();
+      response = await driver.post("/assignments", assignmentInput);
+      title = response.body.data?.title
+      console.log(title)
     });
 
     when("I request to create a assignment by that same title", async () => {
+        const randomInteger = getRandomNumber(100, 10000);
+      response = await driver.post("/classes", {
+        name: `Math ${randomInteger}`,
+      });
+      classId = response.body.data.id;
+      console.log(classId)
+      assignmentInput = new assignmentBuilder()
+        .withTitle(title)
+        .withClassId(classId)
+        .build();
+        console.log(assignmentInput)
       response = await driver.post("/assignments", assignmentInput);
+      console.log(response)
     });
 
     then("the assignment should not be created", () => {
