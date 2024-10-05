@@ -61,7 +61,6 @@ export class ClassController {
         success: true,
       });
     } catch (error) {
-      console.log(error); // Optional: Log the error for debugging
       res
         .status(500)
         .json({ error: Errors.ServerError, data: undefined, success: false });
