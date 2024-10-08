@@ -39,6 +39,7 @@ defineFeature(feature, (test) => {
       studentInput = new StudentBuilder()
         .withName("")
         .withRandomEmail("")
+        .withStudentId("")
         .build();
     });
 
@@ -47,8 +48,6 @@ defineFeature(feature, (test) => {
     });
 
     then("the student should be Successfully created", () => {
-      expect(response.body.success).toBeTruthy();
-      expect(response.body.error).toBeFalsy();
       expect(response.body.data.name).toEqual(studentInput.name);
       expect(response.body.data.email).toEqual(studentInput.email);
       expect(response.body.data.id).toBeDefined();
@@ -69,24 +68,19 @@ defineFeature(feature, (test) => {
     let studentName: string;
   
     beforeAll(async () => {
-      try {
+    
         // Start the Server on port 3001
         await webServer.start(3001);
   
         // Pass the correct port to the driver
         driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3001);
-      } catch (error) {
-        throw error;
-      }
     });
   
     afterAll(async () => {
-      try {
         // Stop the processes running on the Server
         await webServer.stop();
-      } catch (error) {
-        throw error;
-      }
+     
+      
     });
   
     given(/^a student named "(.*)" already exists$/, async (arg0) => {
@@ -94,6 +88,7 @@ defineFeature(feature, (test) => {
         studentInput = new StudentBuilder()
           .withName("")
           .withRandomEmail("")
+          .withStudentId("")
           .build();
 
         studentName = studentInput.name

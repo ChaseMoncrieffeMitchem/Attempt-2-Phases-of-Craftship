@@ -68,13 +68,11 @@ defineFeature(feature, (test) => {
           .withStudentId(studentId)
           .withClassId(classId)
           .build();
-        console.log(enrolledStudentInput);
       }
     );
 
     when("I request to enroll that student into that classroom", async () => {
       response = await driver.post("/class-enrollments", enrolledStudentInput);
-      console.log(response);
     });
 
     then("that student should be enrolled in that classroom", () => {
@@ -89,14 +87,10 @@ defineFeature(feature, (test) => {
     when,
     then,
   }) => {
-    let studentInput: createStudentDTO;
-    let classInput: createClassDTO;
     let root = new CompositionRoot();
     let webServer: WebServer = root.getWebServer();
     let driver: RESTfulAPIDriver;
     let response: any;
-    let enrolledStudentInput: createEnrolledStudentDTO;
-    let studentId: any;
     let requestBody: any = {};
 
     beforeAll(async () => {

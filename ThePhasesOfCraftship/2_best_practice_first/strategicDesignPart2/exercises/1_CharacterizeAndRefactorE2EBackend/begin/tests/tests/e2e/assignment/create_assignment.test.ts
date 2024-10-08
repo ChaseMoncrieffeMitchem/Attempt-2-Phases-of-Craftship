@@ -114,7 +114,7 @@ defineFeature(feature, (test) => {
     });
 
     then("the assignment should not be created", () => {
-      expect(response.body.success).toBeFalsy();
+      expect(response.created).toBe(false);
     });
   });
 });

@@ -18,7 +18,7 @@ export class ClassBuilder {
 
     withName (value: string) {
     if (value !== "") return this
-    const randomInteger = getRandomNumber(100, 10000)
+    const randomInteger = getRandomNumber(100, 100000)
     this.classInput.name = `ClassName-${randomInteger}`
     return this
    }

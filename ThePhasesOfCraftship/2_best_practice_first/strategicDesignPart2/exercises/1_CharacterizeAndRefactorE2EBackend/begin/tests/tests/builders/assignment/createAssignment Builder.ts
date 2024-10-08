@@ -8,11 +8,13 @@ export class assignmentBuilder {
     private assignmentInput: createAssignmentDTO
     private title: string = ""
     private classId: string = ''
+    private assignmentId: string = ''
 
     constructor() {
         this.assignmentInput = {
             title: "",
             classId: "",
+            assignmentId: ''
         }
     }
 
@@ -32,10 +34,16 @@ export class assignmentBuilder {
         return this
     }
 
+    withAssignmentId(value: string) {
+        this.assignmentInput.assignmentId = value
+        return this
+    }
+
     build(): createAssignmentDTO {
         return {
             title: this.assignmentInput.title,
-            classId: this.assignmentInput.classId
+            classId: this.assignmentInput.classId,
+            assignmentId: this.assignmentInput.assignmentId
         }
     }
 }
