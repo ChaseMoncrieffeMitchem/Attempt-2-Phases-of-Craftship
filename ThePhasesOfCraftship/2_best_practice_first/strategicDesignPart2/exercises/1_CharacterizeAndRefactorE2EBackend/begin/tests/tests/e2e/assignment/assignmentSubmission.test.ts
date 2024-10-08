@@ -14,7 +14,10 @@ import { StudentAssignmentBuilder } from "../../builders/student/createStudentAs
 import { createStudentAssignmentDTO } from "../../../../src/shared/dtos/student/createStudentAssignmentDTO";
 
 const feature = loadFeature(
-  path.join(__dirname, "../../features/connect_student_with_assignment.feature")
+  path.join(
+    __dirname,
+    "../../features/mergeAssignmentWithSubmission.feature"
+  )
 );
 
 defineFeature(feature, (test) => {
@@ -24,30 +27,25 @@ defineFeature(feature, (test) => {
   let webServer: WebServer = root.getWebServer();
   let driver: RESTfulAPIDriver;
   let response: any;
+  let studentInput: createStudentDTO;
+  let classInput: createClassDTO;
+  let classId: any;
+  let assignmentInput: createAssignmentDTO;
+  let assignmentId: any;
+  let studentWithAssignmentInput: createStudentAssignmentDTO;
 
   beforeAll(async () => {
-    await webServer.start(3012);
-    driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3012);
+    await webServer.start(3013);
+    driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3013);
   });
 
   afterAll(async () => {
     await webServer.stop();
   });
 
-  test("Successfully give Assignment to Student", ({
-    given,
-    and,
-    when,
-    then,
-  }) => {
-    let classInput: createClassDTO;
-    let classId: any;
-    let assignmentInput: createAssignmentDTO;
-    let assignmentId: any;
-    let studentWithAssignmentInput: createStudentAssignmentDTO;
-    let studentInput: createStudentDTO;
-
-    given("a student exists", async () => {
+  test("Successfully submitted an assignment", ({ given, when, then }) => {
+    given("an assignment has been given to a student", async () => {
+      // Student Creation
       studentInput = new StudentBuilder()
         .withName("")
         .withRandomEmail("")
@@ -55,15 +53,13 @@ defineFeature(feature, (test) => {
         .build();
       response = await driver.post("/students", studentInput);
       studentId = response.body.data.id;
-    });
 
-    and("an assignment exists", async () => {
-      // Create a Class so ClassId is obtained
+      // Class Creation
       classInput = new ClassBuilder().withClassId("").withName("").build();
       response = await driver.post("/classes", classInput);
       classId = response.body.data.id;
 
-      // Create an Assignment
+      // Assignment Creation
       assignmentInput = new assignmentBuilder()
         .withClassId(classId)
         .withTitle("")
@@ -71,9 +67,8 @@ defineFeature(feature, (test) => {
         .build();
       response = await driver.post("/assignments", assignmentInput);
       assignmentId = response.body.data.id;
-    });
 
-    when("I request to assign that assignment to the student", async () => {
+      // Merge Student with Assignment
       studentWithAssignmentInput = new StudentAssignmentBuilder()
         .withStudentId(studentId)
         .withAssignmentId(assignmentId)
@@ -85,30 +80,19 @@ defineFeature(feature, (test) => {
       );
     });
 
-    then("the student should be successfully assigned that Assignement", () => {
-      expect(response.statusCode).toBe(201);
-    });
-  });
-
-  test("Failed to give an Assignment to Student b/c assignment Does Not Exist", ({
-    given,
-    when,
-    then,
-  }) => {
-    given("an assignment Does not exist", () => {
-      requestBody = {
-        studentId: studentId,
-        assignmentId: "",
-      };
+    when("I make a request to Submit that assignment", async () => {
+      response = await driver.post(
+        "/student-assignments/submit",
+        studentWithAssignmentInput
+      );
+      console.log(response);
     });
 
-    when("I request to assign that non-assignment to the student", async () => {
-      response = await driver.post("/class-enrollments", requestBody);
-    });
-
-    then("the student should not be assigned that Assignement", () => {
-      expect(response.statusCode).toBe(400);
-      expect(response.body.error).toBeDefined();
-    });
+    then(
+      "the assignment should be given a successful submission status",
+      () => {
+        expect(response.body.data.status).toBe("submitted");
+      }
+    );
   });
 });
