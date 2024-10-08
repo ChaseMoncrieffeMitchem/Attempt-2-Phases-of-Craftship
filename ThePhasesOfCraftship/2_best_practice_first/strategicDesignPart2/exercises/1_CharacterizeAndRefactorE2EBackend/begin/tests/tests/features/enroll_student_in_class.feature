@@ -5,8 +5,7 @@ Feature: Enroll a student inside of a classroom
     So that I can give them assignments
 
     Scenario: Successfully enrolled a Student into a Classroom
-        Given a student exists with the studentId of "(.*)"
-        Given a classroom exists witht the classID of "(.*)"
+        Given an enrolled student exists with the studentId of "(.*)" and classId of "(.*)"
         When I request to enroll that student into that classroom
         Then that student should be enrolled in that classroom
 

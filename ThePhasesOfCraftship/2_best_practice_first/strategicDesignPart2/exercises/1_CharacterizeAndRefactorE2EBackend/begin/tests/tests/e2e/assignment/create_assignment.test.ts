@@ -26,18 +26,19 @@ defineFeature(feature, (test) => {
     let response: any;
     let classId: any;
 
-    beforeEach(async () => {
+    beforeAll(async () => {
       // Start the Server
-      await webServer.start(3004);
+      await webServer.start(3010);
 
-      driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3004);
+      driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3010);
       // Reset the database
     });
 
-    afterEach(async () => {
+    afterAll(async () => {
       // Stop the processes running on the Server
       await webServer.stop();
     });
+
 
     given(/^I want to create a assignment titled "(.*)"$/, async (arg0) => {
       const randomInteger = getRandomNumber(100, 10000);
@@ -97,7 +98,6 @@ defineFeature(feature, (test) => {
         .build();
       response = await driver.post("/assignments", assignmentInput);
       title = response.body.data?.title
-      console.log(title)
     });
 
     when("I request to create a assignment by that same title", async () => {
@@ -106,14 +106,11 @@ defineFeature(feature, (test) => {
         name: `Math ${randomInteger}`,
       });
       classId = response.body.data.id;
-      console.log(classId)
       assignmentInput = new assignmentBuilder()
         .withTitle(title)
         .withClassId(classId)
         .build();
-        console.log(assignmentInput)
       response = await driver.post("/assignments", assignmentInput);
-      console.log(response)
     });
 
     then("the assignment should not be created", () => {

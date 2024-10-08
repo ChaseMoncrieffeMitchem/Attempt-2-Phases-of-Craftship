@@ -72,12 +72,10 @@ defineFeature(feature, (test) => {
       try {
         // Start the Server on port 3001
         await webServer.start(3001);
-        console.log("Server started on port 3001");
   
         // Pass the correct port to the driver
         driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3001);
       } catch (error) {
-        console.error("Error during server startup:", error);
         throw error;
       }
     });
@@ -86,9 +84,7 @@ defineFeature(feature, (test) => {
       try {
         // Stop the processes running on the Server
         await webServer.stop();
-        console.log("Server stopped");
       } catch (error) {
-        console.error("Error during server shutdown:", error);
         throw error;
       }
     });
@@ -104,7 +100,6 @@ defineFeature(feature, (test) => {
         response = await driver.post("/students", studentInput);
         expect(response.statusCode).toBe(201)
       } catch (error) {
-        console.error("Error in creating initial student:", error);
         throw error;
       }
     });
@@ -117,7 +112,6 @@ defineFeature(feature, (test) => {
           .build();
         response = await driver.post("/students", studentInput);
       } catch (error) {
-        console.error("Error in creating duplicate student:", error);
         throw error;
       }
     });

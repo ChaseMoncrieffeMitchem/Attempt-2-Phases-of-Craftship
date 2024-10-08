@@ -20,7 +20,7 @@ defineFeature(feature, (test) => {
     let root = new CompositionRoot();
     let webServer: WebServer = root.getWebServer();
     let response: any;
-    beforeEach(async () => {
+    beforeAll(async () => {
       // Start the Server
       await webServer.start(3002);
 
@@ -28,7 +28,7 @@ defineFeature(feature, (test) => {
       // Reset the database
     });
 
-    afterEach(async () => {
+    afterAll(async () => {
       // Stop the processes running on the Server
       await webServer.stop();
     });

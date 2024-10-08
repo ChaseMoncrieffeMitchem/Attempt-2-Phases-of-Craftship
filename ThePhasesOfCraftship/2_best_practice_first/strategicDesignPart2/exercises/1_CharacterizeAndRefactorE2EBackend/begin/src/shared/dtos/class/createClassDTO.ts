@@ -1,3 +1,4 @@
 export type createClassDTO = {
-    name: string
+    name: string,
+    classId: string
 }

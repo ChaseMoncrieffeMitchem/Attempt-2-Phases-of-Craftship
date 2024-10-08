@@ -1,4 +1,5 @@
 export type createStudentDTO = {
     name: string,
-    email: string
+    email: string,
+    studentId: string,
 }

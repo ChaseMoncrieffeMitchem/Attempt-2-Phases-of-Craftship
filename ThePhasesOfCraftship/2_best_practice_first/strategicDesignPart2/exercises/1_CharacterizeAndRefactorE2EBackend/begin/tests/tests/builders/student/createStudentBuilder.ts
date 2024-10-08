@@ -9,11 +9,13 @@ export class StudentBuilder {
     private studentInput: createStudentDTO
     private name: string = ''
     private email: string = ''
+    private studentId: string = ''
 
     constructor() {
         this.studentInput = {
             name: '',
-            email: ''
+            email: '',
+            studentId: ''
         }
     }
 
@@ -30,10 +32,16 @@ export class StudentBuilder {
         return this
     }
 
+    withStudentId (value: string) {
+        this.studentInput.studentId = value
+        return this
+    }
+
     build(): createStudentDTO {
         return {
             name: this.studentInput.name,
-            email: this.studentInput.email
+            email: this.studentInput.email,
+            studentId: this.studentInput.studentId
         }
     }
 }

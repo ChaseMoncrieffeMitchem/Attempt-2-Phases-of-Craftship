@@ -7,10 +7,12 @@ function getRandomNumber(min: number, max: number): number {
 export class ClassBuilder {
     private classInput: createClassDTO
     private name: string = ""
+    private classId: string = ''
 
     constructor() {
         this.classInput = {
-            name: ''
+            name: '',
+            classId: ''
         }
     }
 
@@ -21,9 +23,15 @@ export class ClassBuilder {
     return this
    }
 
+   withClassId(value: string) {
+    this.classInput.classId = value;
+    return this;
+  }
+
    build(): createClassDTO {
     return {
-        name: this.classInput.name
+        name: this.classInput.name,
+        classId: this.classInput.classId
     }
    }
 }
