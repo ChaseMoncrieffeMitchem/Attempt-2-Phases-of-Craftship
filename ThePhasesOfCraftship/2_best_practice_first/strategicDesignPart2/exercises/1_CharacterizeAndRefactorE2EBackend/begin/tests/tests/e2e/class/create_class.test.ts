@@ -34,7 +34,7 @@ defineFeature(feature, (test) => {
     });
 
     given(/^I want to create a classroom named "(.*)"$/, (arg0) => {
-      classInput = new ClassBuilder().withName("").build();
+      classInput = new ClassBuilder().withName("").withClassId("").build();
     });
 
     when("I request to create that classroom", async () => {
@@ -56,7 +56,7 @@ defineFeature(feature, (test) => {
     let response: any;
     let className: string;
 
-    beforeEach(async () => {
+    beforeAll(async () => {
       // Start the Server
       await webServer.start(3003);
 
@@ -64,7 +64,7 @@ defineFeature(feature, (test) => {
       // Reset the database
     });
 
-    afterEach(async () => {
+    afterAll(async () => {
       // Stop the processes running on the Server
       await webServer.stop();
     });

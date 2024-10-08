@@ -10,6 +10,6 @@ Feature: Enroll a student inside of a classroom
         Then that student should be enrolled in that classroom
 
     Scenario: Failed to enroll a Student inside of a Classroom
-        Given the student is already enrolled in the same classroom
-        When I request to enroll that student into that classroom
+        Given no student name is passed into the system
+        When I request to enroll that non-student into that classroom
         Then the enrollment should not take place

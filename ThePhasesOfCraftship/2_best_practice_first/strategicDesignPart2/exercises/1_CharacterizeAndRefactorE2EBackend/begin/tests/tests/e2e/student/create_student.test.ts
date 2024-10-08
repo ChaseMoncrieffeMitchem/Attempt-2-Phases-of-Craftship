@@ -22,7 +22,7 @@ defineFeature(feature, (test) => {
     let webServer: WebServer = root.getWebServer();
     let driver: RESTfulAPIDriver;
 
-    beforeEach(async () => {
+    beforeAll(async () => {
       // Start the Server
       await webServer.start();
 
@@ -30,7 +30,7 @@ defineFeature(feature, (test) => {
       // Reset the database
     });
 
-    afterEach(async () => {
+    afterAll(async () => {
       // Stop the processes running on the Server
       await webServer.stop();
     });

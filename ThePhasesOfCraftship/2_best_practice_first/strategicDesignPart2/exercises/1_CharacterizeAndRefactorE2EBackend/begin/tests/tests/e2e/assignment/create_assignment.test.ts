@@ -73,7 +73,7 @@ defineFeature(feature, (test) => {
     let classId: any;
     let title: string;
 
-    beforeEach(async () => {
+    beforeAll(async () => {
       // Start the Server
       await webServer.start(3005);
 
@@ -81,7 +81,7 @@ defineFeature(feature, (test) => {
       // Reset the database
     });
 
-    afterEach(async () => {
+    afterAll(async () => {
       // Stop the processes running on the Server
       await webServer.stop();
     });

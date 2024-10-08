@@ -68,14 +68,13 @@ defineFeature(feature, (test) => {
           .withStudentId(studentId)
           .withClassId(classId)
           .build();
-          console.log(enrolledStudentInput)
+        console.log(enrolledStudentInput);
       }
     );
 
-
     when("I request to enroll that student into that classroom", async () => {
       response = await driver.post("/class-enrollments", enrolledStudentInput);
-      console.log(response)
+      console.log(response);
     });
 
     then("that student should be enrolled in that classroom", () => {
@@ -90,11 +89,44 @@ defineFeature(feature, (test) => {
     when,
     then,
   }) => {
-    given("the student is already enrolled in the same classroom", () => {});
+    let studentInput: createStudentDTO;
+    let classInput: createClassDTO;
+    let root = new CompositionRoot();
+    let webServer: WebServer = root.getWebServer();
+    let driver: RESTfulAPIDriver;
+    let response: any;
+    let enrolledStudentInput: createEnrolledStudentDTO;
+    let studentId: any;
+    let requestBody: any = {};
 
-    when("I request to enroll that student into that classroom", () => {});
+    beforeAll(async () => {
+      // Start the Server
+      await webServer.start(3011);
 
-    then("the enrollment should not take place", () => {});
+      driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3011);
+      // Reset the database
+    });
+
+    afterAll(async () => {
+      // Stop the processes running on the Server
+      await webServer.stop();
+    });
+    given("no student name is passed into the system", () => {
+      requestBody = {
+        studentId: "",
+        classId: classId
+      };
+    });
+
+    when(
+      "I request to enroll that non-student into that classroom",
+      async () => {
+        response = await driver.post("/class-enrollments", requestBody);
+      }
+    );
+
+    then("the enrollment should not take place", () => {
+      expect(response.statusCode).toBe(404);
+    });
   });
 });
-
