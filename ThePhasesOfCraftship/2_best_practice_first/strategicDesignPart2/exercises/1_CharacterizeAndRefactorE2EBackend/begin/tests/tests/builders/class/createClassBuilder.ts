@@ -1,4 +1,8 @@
-import { createClassDTO } from "../../../../src/shared/dtos/class/createClassDTO"
+import { createAssignmentDTO } from "../../../../src/shared/dtos/assignment/create_assignmentDTO";
+import { createClassDTO } from "../../../../src/shared/dtos/class/createClassDTO";
+import { createStudentDTO } from "../../../../src/shared/dtos/student/createStudentDTO";
+import { RESTfulAPIDriver } from "../../../../src/shared/http/apiDriver";
+import { StudentBuilder } from "../student/createStudentBuilder";
 
 function getRandomNumber(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -35,3 +39,4 @@ export class ClassBuilder {
     }
    }
 }
+
