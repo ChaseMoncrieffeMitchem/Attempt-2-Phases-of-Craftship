@@ -1,4 +1,5 @@
 import { createStudentDTO } from "../../../../src/shared/dtos/student/createStudentDTO"
+import { RESTfulAPIDriver } from "../../../../src/shared/http/apiDriver";
 
 function getRandomNumber(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -7,16 +8,15 @@ function getRandomNumber(min: number, max: number): number {
 export class StudentBuilder {
 
     private studentInput: createStudentDTO
-    private name: string = ''
-    private email: string = ''
-    private studentId: string = ''
+    private driver: RESTfulAPIDriver;
 
-    constructor() {
+    constructor(driver: RESTfulAPIDriver) {
         this.studentInput = {
             name: '',
             email: '',
             studentId: ''
         }
+        this.driver = driver
     }
 
     withName (value: string) {
@@ -32,16 +32,21 @@ export class StudentBuilder {
         return this
     }
 
-    withStudentId (value: string) {
-        this.studentInput.studentId = value
+    async withStudentId (value: string) {
+        if (value) {
+            return this.studentInput.studentId
+        } else {
+            const response = await this.driver.post('/students', {name: this.studentInput.name, email: this.studentInput.email})
+            this.studentInput.studentId = response.body.data?.id
+        }
+
         return this
     }
 
-    build(): createStudentDTO {
-        return {
-            name: this.studentInput.name,
-            email: this.studentInput.email,
-            studentId: this.studentInput.studentId
+    async build(): Promise<createStudentDTO> {
+        if (!this.studentInput.studentId) {
+            await this.withStudentId("")
         }
+        return this.studentInput
     }
 }
