@@ -1,4 +1,6 @@
 import { createAssignmentDTO } from "../../../../src/shared/dtos/assignment/create_assignmentDTO"
+import { RESTfulAPIDriver } from "../../../../src/shared/http/apiDriver";
+import { ClassBuilder } from "../class/createClassBuilder";
 
 function getRandomNumber(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -6,16 +8,21 @@ function getRandomNumber(min: number, max: number): number {
 
 export class assignmentBuilder {
     private assignmentInput: createAssignmentDTO
-    private title: string = ""
-    private classId: string = ''
-    private assignmentId: string = ''
+    private classBuilder?: ClassBuilder
+    private driver: RESTfulAPIDriver
 
-    constructor() {
+    constructor(driver: RESTfulAPIDriver) {
         this.assignmentInput = {
             title: "",
             classId: "",
             assignmentId: ''
         }
+        this.driver = driver
+    }
+
+    from (classBuilder: ClassBuilder) {
+        this.classBuilder = classBuilder
+        return this
     }
 
     withTitle(value: string) {
@@ -29,17 +36,25 @@ export class assignmentBuilder {
     }
     
 
-    withClassId(value: string) {
-        this.assignmentInput.classId = value; 
-        return this
+    async withClassId() {
+        if (this.classBuilder) {
+            const classOutput = await this.classBuilder.build(); 
+            this.assignmentInput.classId = classOutput.classId;
+        } else {
+            throw new Error('ClassBuilder is not defined.');
+        }
+        return this;
     }
 
-    withAssignmentId(value: string) {
-        this.assignmentInput.assignmentId = value
-        return this
+    async withAssignmentId(value: string) {
+        if (value) {
+            return this
+        } else {
+            const response = await this.driver.post('/assignments', { title: this.assignmentInput.title, classId: this.assignmentInput.classId })
+        }
     }
 
-    build(): createAssignmentDTO {
+    async build(): Promise<createAssignmentDTO> {
         return {
             title: this.assignmentInput.title,
             classId: this.assignmentInput.classId,
