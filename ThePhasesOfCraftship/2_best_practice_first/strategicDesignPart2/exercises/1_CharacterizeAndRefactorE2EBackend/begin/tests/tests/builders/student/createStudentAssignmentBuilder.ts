@@ -1,31 +1,47 @@
 import { createStudentAssignmentDTO } from "../../../../src/shared/dtos/student/createStudentAssignmentDTO";
+import { RESTfulAPIDriver } from "../../../../src/shared/http/apiDriver";
+import { assignmentBuilder } from "../assignment/createAssignment Builder";
+import { ClassBuilder } from "../class/createClassBuilder";
+import { StudentBuilder } from "./createStudentBuilder";
 
 export class StudentAssignmentBuilder {
-    private studentAssignmentInput: createStudentAssignmentDTO
-    private classId: string = ''
-    private assignmentId: string = ''
+    // private studentAssignmentInput: createStudentAssignmentDTO
+    private studentBuilder?: StudentBuilder
+    // private classBuilder?: ClassBuilder
+    private assignmentBuilder?: assignmentBuilder
+    private driver: RESTfulAPIDriver
 
-    constructor() {
-        this.studentAssignmentInput = {
-            studentId: '',
-            assignmentId: ''
-        }
+    constructor(driver: RESTfulAPIDriver) {
+        this.driver = driver
     }
 
-    withAssignmentId(value: string) {
-        this.studentAssignmentInput.assignmentId = value
+    // from (classBuilder: ClassBuilder) {
+    //     this.classBuilder = classBuilder
+    //     return this
+    // }
+
+    from (studentBuilder: StudentBuilder) {
+        this.studentBuilder = studentBuilder
         return this
     }
 
-    withStudentId(value: string) {
-        this.studentAssignmentInput.studentId = value
+    with (assignmentBuilder: assignmentBuilder) {
+        this.assignmentBuilder = assignmentBuilder
         return this
     }
 
-    build(): createStudentAssignmentDTO {
-        return {
-            assignmentId: this.studentAssignmentInput.assignmentId,
-            studentId: this.studentAssignmentInput.studentId
-        }
+    async build() {
+        if(!this.studentBuilder) throw new Error('Student Builder not defined')
+        if(!this.assignmentBuilder) throw new Error('Assignment Builder not defined')
+
+        const studentOutput = await this.studentBuilder.build()
+        const studentId = studentOutput.studentId
+
+        const assignmentOutput = await this.assignmentBuilder.build()
+        const assignmentId = assignmentOutput.assignmentId
+
+        const assignmentsAssignedToStudents = await this.driver.post('/student-assignments', { studentId: studentId, assignmentId: assignmentId })
+
+        return { assignmentsAssignedToStudents }
     }
 }
