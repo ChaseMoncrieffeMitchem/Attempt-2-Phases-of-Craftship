@@ -1,6 +1,6 @@
 import { createStudentAssignmentDTO } from "../../../../src/shared/dtos/student/createStudentAssignmentDTO";
 import { RESTfulAPIDriver } from "../../../../src/shared/http/apiDriver";
-import { assignmentBuilder } from "../assignment/createAssignment Builder";
+import { AssignmentBuilder } from "../assignment/createAssignment Builder";
 import { ClassBuilder } from "../class/createClassBuilder";
 import { StudentBuilder } from "./createStudentBuilder";
 
@@ -8,7 +8,7 @@ export class StudentAssignmentBuilder {
     // private studentAssignmentInput: createStudentAssignmentDTO
     private studentBuilder?: StudentBuilder
     // private classBuilder?: ClassBuilder
-    private assignmentBuilder?: assignmentBuilder
+    private assignmentBuilder?: AssignmentBuilder
     private driver: RESTfulAPIDriver
 
     constructor(driver: RESTfulAPIDriver) {
@@ -25,7 +25,7 @@ export class StudentAssignmentBuilder {
         return this
     }
 
-    and (assignmentBuilder: assignmentBuilder) {
+    and (assignmentBuilder: AssignmentBuilder) {
         this.assignmentBuilder = assignmentBuilder
         return this
     }

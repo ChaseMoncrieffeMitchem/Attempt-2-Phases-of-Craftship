@@ -1,5 +1,6 @@
 import { RESTfulAPIDriver } from "../../../../src/shared/http/apiDriver";
 import { StudentAssignmentBuilder } from "../student/createStudentAssignmentBuilder";
+import { AssignmentBuilder } from "./createAssignment Builder";
 
 export class SubmitAssignmentBuilder {
     private studentAssignmentBuilder?: StudentAssignmentBuilder
@@ -18,10 +19,13 @@ export class SubmitAssignmentBuilder {
         if (!this.studentAssignmentBuilder) throw new Error('Student Assignment Builder not defined')
 
         const studentAssignmentOutput = await this.studentAssignmentBuilder.build()
-        console.log("Response from studentAssignmentBuilder:", studentAssignmentOutput);
+        const { studentId, assignmentId } = studentAssignmentOutput
 
+        const response = await this.driver.post('/student-assignments/submit', {studentId: studentId, assignmentId: assignmentId})
 
-        const { assignmentsAssignedToStudents } = studentAssignmentOutput
-        const { studentId, assignmentId } = assignmentsAssignedToStudents
+        const submissionStatus = response.body.data.submitted
+
+        return { studentId, assignmentId, submissionStatus }
+
     }
 }
