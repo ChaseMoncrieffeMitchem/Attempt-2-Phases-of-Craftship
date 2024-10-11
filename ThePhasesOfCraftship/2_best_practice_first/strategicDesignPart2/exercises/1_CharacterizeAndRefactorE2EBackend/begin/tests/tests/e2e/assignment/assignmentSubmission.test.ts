@@ -46,32 +46,30 @@ defineFeature(feature, (test) => {
   test("Successfully submitted an assignment", ({ given, when, then }) => {
     given("an assignment has been given to a student", async () => {
       // Student Creation
-      studentInput = new StudentBuilder()
+      studentInput = await new StudentBuilder(driver)
         .withName("")
         .withRandomEmail("")
-        .withStudentId("")
         .build();
-      response = await driver.post("/students", studentInput);
+      // response = await driver.post("/students", studentInput);
       studentId = response.body.data.id;
 
       // Class Creation
-      classInput = new ClassBuilder().withClassId("").withName("").build();
+      classInput = await new ClassBuilder(driver).withName("").build();
       response = await driver.post("/classes", classInput);
       classId = response.body.data.id;
 
       // Assignment Creation
-      assignmentInput = new assignmentBuilder()
-        .withClassId(classId)
+      assignmentInput = await new assignmentBuilder(driver)
         .withTitle("")
         .withAssignmentId("")
         .build();
-      response = await driver.post("/assignments", assignmentInput);
-      assignmentId = response.body.data.id;
+      // response = await driver.post("/assignments", assignmentInput);
+      // assignmentId = response.body.data.id;
 
       // Merge Student with Assignment
-      studentWithAssignmentInput = new StudentAssignmentBuilder()
-        .withStudentId(studentId)
-        .withAssignmentId(assignmentId)
+      studentWithAssignmentInput = await new StudentAssignmentBuilder(driver)
+        .with(studentId)
+        .and(assignmentId)
         .build();
 
       response = await driver.post(

@@ -68,7 +68,7 @@
 //         .withTitle("")
 //         .withAssignmentId("")
 //         .build();
-        
+
 //       response = await driver.post("/assignments", assignmentInput);
 //       assignmentId = response.body.data?.id;
 //       console.log(assignmentId)
@@ -131,10 +131,13 @@ import { CompositionRoot } from "../../../../src/shared/composition/compositionR
 import { ClassRoomBuilder } from "../../builders/class/centralClassRoomBuilder";
 import { StudentBuilder } from "../../builders/student/createStudentBuilder";
 import { ClassBuilder } from "../../builders/class/createClassBuilder";
-import { assignmentBuilder } from "../../builders/assignment/createAssignment Builder";
+import { AssignmentBuilder, assignmentBuilder } from "../../builders/assignment/createAssignment Builder";
 import { StudentAssignmentBuilder } from "../../builders/student/createStudentAssignmentBuilder";
 import { StudentGradeBuilder } from "../../builders/student/createStudentGradeBuilder";
 import { createStudentGradeDTO } from "../../../../src/shared/dtos/student/createStudentGradeDTO";
+import { createStudentDTO } from "../../../../src/shared/dtos/student/createStudentDTO";
+import { createClassDTO } from "../../../../src/shared/dtos/class/createClassDTO";
+import { createAssignmentDTO } from "../../../../src/shared/dtos/assignment/create_assignmentDTO";
 
 const feature = loadFeature(
   path.join(__dirname, "../../features/grade_assignment.feature")
@@ -151,6 +154,12 @@ defineFeature(feature, (test) => {
   let studentId: string;
   let classId: string;
   let assignmentId: string;
+  let classInput: createClassDTO;
+  let studentInput: createStudentDTO;
+  let assignmentInput: createAssignmentDTO;
+  let studentBuilder: StudentBuilder
+  let classBuilder: ClassBuilder
+  let assignmentBuilder: AssignmentBuilder
 
   beforeAll(async () => {
     await webServer.start(3014);
@@ -165,32 +174,30 @@ defineFeature(feature, (test) => {
   test("Successfully have Assignment Graded", ({ given, when, then }) => {
     given("an assignment has been submitted", async () => {
       // Using ClassRoomBuilder to handle the creation of class, student, and assignment
-      const studentBuilder = new StudentBuilder()
-        .withName("") // Add student details
+      studentInput = await new StudentBuilder(driver)
+        .withName("")
         .withRandomEmail("")
-        .withStudentId("");
+        .build();
 
-      const classBuilder = new ClassBuilder()
-        .withClassId("") // Add class details
-        .withName("");
+      classInput = await new ClassBuilder(driver).withName("").build();
 
-      const assignmentBuilders = [
-        new assignmentBuilder()
-          .withClassId("") // Add assignment details
-          .withTitle("")
-          .withAssignmentId("")
-      ];
+      assignmentInput = await new AssignmentBuilder(driver)
+        .withTitle("")
+        .build();
 
       // Build the classroom structure with the created class, student, and assignment
-      const { studentIds, classId: newClassId, assignmentIds } =
-        await classroomBuilder
-          .withStudent(studentBuilder)
-          .withClass(classBuilder)
-          .withAssignmentsAssignedToAllStudents(assignmentBuilders)
-          .build();
+      const {
+        studentIds,
+        classId: newClassId,
+        assignmentIds,
+      } = await classroomBuilder
+        .withStudent(studentBuilder)
+        .withClass(classBuilder)
+        .withAssignmentsAssignedToAllStudents(assignmentBuilders)
+        .build();
 
       studentId = studentIds[0]; // Get student ID from builder result
-      classId = newClassId;      // Get class ID
+      classId = newClassId; // Get class ID
       assignmentId = assignmentIds[0]; // Get assignment ID
 
       // Submit the assignment
@@ -213,7 +220,10 @@ defineFeature(feature, (test) => {
         .withGrade()
         .build();
 
-      response = await driver.post("/student-assignments/grade", studentGradeInput);
+      response = await driver.post(
+        "/student-assignments/grade",
+        studentGradeInput
+      );
     });
 
     then("the assignment should be successfully graded", () => {

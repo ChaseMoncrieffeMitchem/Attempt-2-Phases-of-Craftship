@@ -15,31 +15,30 @@ const feature = loadFeature(
 );
 
 defineFeature(feature, (test) => {
+
+  let root = new CompositionRoot();
+  let webServer: WebServer = root.getWebServer();
+  let driver: RESTfulAPIDriver;
+
+  beforeAll(async () => {
+    await webServer.start();
+
+    driver = new RESTfulAPIDriver(webServer.getHttp() as Server);
+    // Reset the database
+  });
+
+  afterAll(async () => {
+    await webServer.stop();
+  });
+
   test("Successfully created a Student", ({ given, when, then }) => {
     let studentInput: createStudentDTO;
     let response: any;
-    let root = new CompositionRoot();
-    let webServer: WebServer = root.getWebServer();
-    let driver: RESTfulAPIDriver;
 
-    beforeAll(async () => {
-      // Start the Server
-      await webServer.start();
-
-      driver = new RESTfulAPIDriver(webServer.getHttp() as Server);
-      // Reset the database
-    });
-
-    afterAll(async () => {
-      // Stop the processes running on the Server
-      await webServer.stop();
-    });
-
-    given(/^I want to create a student named "(.*)"$/, () => {
-      studentInput = new StudentBuilder()
+    given(/^I want to create a student named "(.*)"$/, async () => {
+      studentInput = await new StudentBuilder(driver)
         .withName("")
         .withRandomEmail("")
-        .withStudentId("")
         .build();
     });
 
@@ -67,33 +66,27 @@ defineFeature(feature, (test) => {
     let driver: RESTfulAPIDriver;
     let studentName: string;
   
-    beforeAll(async () => {
+    // beforeAll(async () => {
     
-        // Start the Server on port 3001
-        await webServer.start(3001);
+    //     // Start the Server on port 3001
+    //     await webServer.start(3001);
   
-        // Pass the correct port to the driver
-        driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3001);
-    });
+    //     // Pass the correct port to the driver
+    //     driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3001);
+    // });
   
-    afterAll(async () => {
-        // Stop the processes running on the Server
-        await webServer.stop();
-     
-      
-    });
-  
+    // afterAll(async () => {
+    //     // Stop the processes running on the Server
+    //     await webServer.stop();
+
     given(/^a student named "(.*)" already exists$/, async (arg0) => {
       try {
-        studentInput = new StudentBuilder()
+        studentInput = await new StudentBuilder(driver)
           .withName("")
           .withRandomEmail("")
-          .withStudentId("")
-          .build();
+          .build()
 
         studentName = studentInput.name
-        response = await driver.post("/students", studentInput);
-        expect(response.statusCode).toBe(201)
       } catch (error) {
         throw error;
       }
@@ -101,11 +94,10 @@ defineFeature(feature, (test) => {
   
     when("I request to create another student with the same name", async () => {
       try {
-        studentInput = new StudentBuilder()
+        studentInput = await new StudentBuilder(driver)
           .withName(studentName)
           .withRandomEmail("")
           .build();
-        response = await driver.post("/students", studentInput);
       } catch (error) {
         throw error;
       }
@@ -121,5 +113,6 @@ defineFeature(feature, (test) => {
       expect(response.body.error).toBe("Student with this name already exists");
     });
   });
-  
-});
+     
+      
+    });

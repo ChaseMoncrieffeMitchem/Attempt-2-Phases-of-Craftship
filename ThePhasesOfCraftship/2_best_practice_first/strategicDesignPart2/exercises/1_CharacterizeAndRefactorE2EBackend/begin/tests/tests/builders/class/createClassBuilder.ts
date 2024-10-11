@@ -27,23 +27,24 @@ export class ClassBuilder {
     return this;
   }
 
-  async withClassId(value: string) {
+  withClassId(value: string) {
     if (value) {
       this.classInput.classId = value;
-    } else {
-      // Call API to create class and get classId if not provided
-      const response = await this.driver.post("/classes", {
-        name: this.classInput.name,
-      });
-      this.classInput.classId = response.body.data?.id;
     }
     return this;
   }
 
   async build(): Promise<createClassDTO> {
+    // If classId is not set, make an API call to create a class
     if (!this.classInput.classId) {
-      await this.withClassId(""); // This ensures we get a classId from API if not provided
+      const response = await this.driver.post("/classes", {
+        name: this.classInput.name,
+      });
+
+      // Assign the classId from the response
+      this.classInput.classId = response.body.data?.id; // Ensure the API response contains the id
     }
-    return this.classInput;
+    
+    return this.classInput; // Return the constructed class input
   }
 }

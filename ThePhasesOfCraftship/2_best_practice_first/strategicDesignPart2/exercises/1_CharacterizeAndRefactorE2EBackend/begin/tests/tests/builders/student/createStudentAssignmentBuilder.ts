@@ -20,12 +20,12 @@ export class StudentAssignmentBuilder {
     //     return this
     // }
 
-    from (studentBuilder: StudentBuilder) {
+    with (studentBuilder: StudentBuilder) {
         this.studentBuilder = studentBuilder
         return this
     }
 
-    with (assignmentBuilder: assignmentBuilder) {
+    and (assignmentBuilder: assignmentBuilder) {
         this.assignmentBuilder = assignmentBuilder
         return this
     }
@@ -42,6 +42,6 @@ export class StudentAssignmentBuilder {
 
         const assignmentsAssignedToStudents = await this.driver.post('/student-assignments', { studentId: studentId, assignmentId: assignmentId })
 
-        return { assignmentsAssignedToStudents }
+        return { studentId, assignmentId }
     }
 }

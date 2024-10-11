@@ -48,35 +48,33 @@ defineFeature(feature, (test) => {
     let studentInput: createStudentDTO;
 
     given("a student exists", async () => {
-      studentInput = new StudentBuilder()
+      studentInput = await new StudentBuilder(driver)
         .withName("")
         .withRandomEmail("")
-        .withStudentId("")
         .build();
-      response = await driver.post("/students", studentInput);
+      // response = await driver.post("/students", studentInput);
       studentId = response.body.data.id;
     });
 
     and("an assignment exists", async () => {
       // Create a Class so ClassId is obtained
-      classInput = new ClassBuilder().withClassId("").withName("").build();
-      response = await driver.post("/classes", classInput);
+      classInput = await new ClassBuilder(driver).withName("").build();
+      // response = await driver.post("/classes", classInput);
       classId = response.body.data.id;
 
       // Create an Assignment
-      assignmentInput = new assignmentBuilder()
-        .withClassId(classId)
+      assignmentInput = await new assignmentBuilder(driver)
         .withTitle("")
         .withAssignmentId("")
         .build();
-      response = await driver.post("/assignments", assignmentInput);
+      // response = await driver.post("/assignments", assignmentInput);
       assignmentId = response.body.data.id;
     });
 
     when("I request to assign that assignment to the student", async () => {
-      studentWithAssignmentInput = new StudentAssignmentBuilder()
-        .withStudentId(studentId)
-        .withAssignmentId(assignmentId)
+      studentWithAssignmentInput =await new StudentAssignmentBuilder(driver)
+        .with(studentId)
+        .and(assignmentId)
         .build();
 
       response = await driver.post(

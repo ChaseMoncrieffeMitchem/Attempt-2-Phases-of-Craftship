@@ -12,29 +12,33 @@ const feature = loadFeature(
 );
 
 defineFeature(feature, (test) => {
+  let root = new CompositionRoot();
+    let webServer: WebServer = root.getWebServer();
+    let driver: RESTfulAPIDriver;
+
+
+  beforeAll(async () => {
+    // Start the Server
+    await webServer.start(3002);
+
+    driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3002);
+    // Reset the database
+  });
+
+  afterAll(async () => {
+    // Stop the processes running on the Server
+    await webServer.stop();
+  });
 
 
   test("Successfully created a classroom", ({ given, when, then }) => {
     let classInput: createClassDTO;
-    let driver: RESTfulAPIDriver;
-    let root = new CompositionRoot();
-    let webServer: WebServer = root.getWebServer();
+    
     let response: any;
-    beforeAll(async () => {
-      // Start the Server
-      await webServer.start(3002);
+    
 
-      driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3002);
-      // Reset the database
-    });
-
-    afterAll(async () => {
-      // Stop the processes running on the Server
-      await webServer.stop();
-    });
-
-    given(/^I want to create a classroom named "(.*)"$/, (arg0) => {
-      classInput = new ClassBuilder().withName("").withClassId("").build();
+    given(/^I want to create a classroom named "(.*)"$/, async (arg0) => {
+      classInput = await new ClassBuilder(driver).withName("").build();
     });
 
     when("I request to create that classroom", async () => {
@@ -50,33 +54,33 @@ defineFeature(feature, (test) => {
 
   test("Failed to create a classroom", ({ given, when, then }) => {
     let classInput: createClassDTO;
-    let driver: RESTfulAPIDriver;
-    let root = new CompositionRoot();
-    let webServer: WebServer = root.getWebServer();
+    // let driver: RESTfulAPIDriver;
+    // let root = new CompositionRoot();
+    // let webServer: WebServer = root.getWebServer();
     let response: any;
     let className: string;
 
-    beforeAll(async () => {
-      // Start the Server
-      await webServer.start(3003);
+    // beforeAll(async () => {
+    //   // Start the Server
+    //   await webServer.start(3003);
 
-      driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3003);
-      // Reset the database
-    });
+    //   driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3003);
+    //   // Reset the database
+    // });
 
-    afterAll(async () => {
-      // Stop the processes running on the Server
-      await webServer.stop();
-    });
+    // afterAll(async () => {
+    //   // Stop the processes running on the Server
+    //   await webServer.stop();
+    // });
 
     given(/^a classroom by name "(.*)" already exists$/, async (arg0) => {
-      classInput = new ClassBuilder().withName("").build();
+      classInput = await new ClassBuilder(driver).withName("").build();
       className = classInput.name;
       response = await driver.post("/classes", classInput);
     });
 
     when("I request to create a classroom by that same name", async () => {
-      classInput = new ClassBuilder().withName(className).build();
+      classInput = await new ClassBuilder(driver).withName(className).build();
       response = await driver.post("/classes", classInput);
     });
 

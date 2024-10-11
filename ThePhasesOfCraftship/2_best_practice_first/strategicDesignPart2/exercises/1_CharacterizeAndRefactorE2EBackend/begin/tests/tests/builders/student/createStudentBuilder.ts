@@ -32,21 +32,26 @@ export class StudentBuilder {
         return this
     }
 
-    async withStudentId (value: string) {
-        if (value) {
-            return this.studentInput.studentId
-        } else {
-            const response = await this.driver.post('/students', {name: this.studentInput.name, email: this.studentInput.email})
-            this.studentInput.studentId = response.body.data?.id
-        }
+    // async withStudentId (value: string) {
+    //     if (value) {
+    //         return this.studentInput.studentId
+    //     } else {
+    //         const response = await this.driver.post('/students', {name: this.studentInput.name, email: this.studentInput.email})
+    //         this.studentInput.studentId = response.body.data?.id
+    //     }
 
-        return this
-    }
+    //     return this
+    // }
 
     async build(): Promise<createStudentDTO> {
+        // If studentId is not provided, make the API call to create a student
         if (!this.studentInput.studentId) {
-            await this.withStudentId("")
+            const response = await this.driver.post('/students', {
+                name: this.studentInput.name,
+                email: this.studentInput.email
+            });
+            this.studentInput.studentId = response.body.data?.id; // Set the studentId from the API response
         }
-        return this.studentInput
+        return this.studentInput; // Return the constructed student input
     }
 }

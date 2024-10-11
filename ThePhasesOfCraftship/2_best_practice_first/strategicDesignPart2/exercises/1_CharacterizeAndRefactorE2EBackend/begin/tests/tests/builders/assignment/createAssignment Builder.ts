@@ -6,7 +6,7 @@ function getRandomNumber(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export class assignmentBuilder {
+export class AssignmentBuilder {
   private assignmentInput: createAssignmentDTO;
   private classBuilder?: ClassBuilder;
   private driver: RESTfulAPIDriver;
