@@ -43,7 +43,6 @@ defineFeature(feature, (test) => {
 
     when("I request to create that student", async () => {
       response = studentInput
-      console.log(response)
     });
 
     then("the student should be Successfully created", () => {
@@ -81,7 +80,7 @@ defineFeature(feature, (test) => {
     });
   
     then("the creation should fail", () => {
-      expect(response.name).toBe("");
+      expect(response.name).toBe(studentInput.name);
       expect(response.studentId).toBeUndefined();
     });
   

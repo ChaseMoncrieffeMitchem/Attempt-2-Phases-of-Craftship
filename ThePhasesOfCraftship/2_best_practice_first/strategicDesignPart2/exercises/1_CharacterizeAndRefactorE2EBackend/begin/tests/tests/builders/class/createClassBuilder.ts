@@ -48,8 +48,6 @@ export class ClassBuilder {
       this.classInput.classId = response.body.data?.id; // Ensure the API response contains the id
     }
 
-    console.log(this.classInput.name)
-    
     return this.classInput; // Return the constructed class input
   }
 }

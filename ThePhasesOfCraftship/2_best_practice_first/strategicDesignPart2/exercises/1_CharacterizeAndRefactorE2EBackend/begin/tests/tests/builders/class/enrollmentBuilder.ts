@@ -59,10 +59,12 @@ export class EnrolledStudentBuilder {
     const classOutput = await this.classBuilder.build()
     const studentOutput = await this.studentBuilder.build()
 
-    const classId = classOutput.classId
-    const studentId = studentOutput.studentId
+    // const classId = classOutput.classId
+    // const studentId = studentOutput.studentId
 
-    const enrolledStudent = await this.driver.post('/class-enrollments', {classId: classId, studentId: studentId} )
+    const enrolledStudent = await this.driver.post('/class-enrollments', {classId: classOutput.classId, studentId: studentOutput.studentId} )
+
+    const { classId, studentId } = enrolledStudent.body
 
     // const enrolledStudent = await prisma.classEnrollment.upsert({
     //   where: {
@@ -81,6 +83,6 @@ export class EnrolledStudentBuilder {
     //   }
     // });
 
-    return {enrolledStudent}
+    return { classId, studentId }
   } 
 }

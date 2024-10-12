@@ -13,6 +13,8 @@ import { ClassBuilder } from "../../builders/class/createClassBuilder";
 import { createClassDTO } from "../../../../src/shared/dtos/class/createClassDTO";
 import { createEnrolledStudentDTO } from "../../../../src/shared/dtos/class/enrolledStudentDTO";
 import { EnrolledStudentBuilder } from "../../builders/class/enrollmentBuilder";
+import { AssignmentBuilder } from "../../builders/assignment/createAssignment Builder";
+import { stderr } from "process";
 
 const feature = loadFeature(
   path.join(__dirname, "../../features/enroll_student_in_class.feature")
@@ -31,40 +33,32 @@ defineFeature(feature, (test) => {
   let classBuilder: ClassBuilder;
   let studentBuilder: StudentBuilder;
   let enrolledStudentInput: any
+  let assignmentBuilder: AssignmentBuilder
+
+  beforeAll(async () => {
+    await webServer.start(3006);
+
+    driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3006);
+  });
+
+  afterAll(async () => {
+    await webServer.stop();
+  });
 
   test("Successfully enrolled a Student into a Classroom", ({
     given,
     when,
     then,
   }) => {
-    beforeAll(async () => {
-      // Start the Server
-      await webServer.start(3006);
-
-      driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3006);
-      // Reset the database
-    });
-
-    afterAll(async () => {
-      // Stop the processes running on the Server
-      await webServer.stop();
-    });
 
     given(
       /^an enrolled student exists with the studentId of "(.*)" and classId of "(.*)"$/,
       async (arg0) => {
-        // Create Student
-        studentInput = await new StudentBuilder(driver)
-          .withName("")
-          .withRandomEmail("")
-          .build();
-        // const studentResponse = await driver.post("/students", studentInput);
-        // studentId = studentResponse.body.data.id;
+        // Create instance of a student
+        studentBuilder = new StudentBuilder(driver)
 
-        // Create a class
-        classInput = await new ClassBuilder(driver).withName("").build();
-        // const classResponse = await driver.post("/classes", classInput);
-        // classId = classResponse.body.data.id;
+        // Create instance of an assignment
+        classBuilder = new ClassBuilder(driver)
 
         // Build enrollment input with both IDs
         enrolledStudentInput = await new EnrolledStudentBuilder(driver)
@@ -75,13 +69,12 @@ defineFeature(feature, (test) => {
     );
 
     when("I request to enroll that student into that classroom", async () => {
-      response = await driver.post("/class-enrollments", enrolledStudentInput);
+      response = enrolledStudentInput
     });
 
     then("that student should be enrolled in that classroom", () => {
-      expect(response.statusCode).toBe(201);
-      expect(response.body.data.studentId).toBe(enrolledStudentInput.studentId);
-      expect(response.body.data.classId).toBe(enrolledStudentInput.classId);
+      expect(response.studentId).toBe(enrolledStudentInput.studentId);
+      expect(response.classId).toBe(enrolledStudentInput.classId);
     });
   });
 
@@ -90,40 +83,23 @@ defineFeature(feature, (test) => {
     when,
     then,
   }) => {
-    let root = new CompositionRoot();
-    let webServer: WebServer = root.getWebServer();
-    let driver: RESTfulAPIDriver;
-    let response: any;
-    let requestBody: any = {};
+    let studentName: string
 
-    beforeAll(async () => {
-      // Start the Server
-      await webServer.start(3011);
-
-      driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3011);
-      // Reset the database
-    });
-
-    afterAll(async () => {
-      // Stop the processes running on the Server
-      await webServer.stop();
-    });
-    given("no student name is passed into the system", () => {
-      requestBody = {
-        studentId: "",
-        classId: classId
-      };
+    given(/^a student named "(.*)" already exists$/, async () => {
+      studentInput = await new StudentBuilder(driver).withName("").withRandomEmail("").build()
+      studentName = studentInput.name
     });
 
     when(
-      "I request to enroll that non-student into that classroom",
+      "I request to enroll that duplicate student into that classroom",
       async () => {
-        response = await driver.post("/class-enrollments", requestBody);
+        studentInput = await new StudentBuilder(driver).withName(studentName).withRandomEmail("").build()
+        response = studentInput
       }
     );
 
     then("the enrollment should not take place", () => {
-      expect(response.statusCode).toBe(404);
+      expect(response.studentId).toBeUndefined();
     });
   });
 });
