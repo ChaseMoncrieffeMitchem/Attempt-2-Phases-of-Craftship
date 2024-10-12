@@ -27,10 +27,10 @@ export class AssignmentBuilder {
 
   withTitle(value: string) {
     if (value) {
-      this.assignmentInput.title = value; // Set the title if a value is provided
+      this.assignmentInput.title = value;
     } else {
       const randomInteger = getRandomNumber(100, 10000);
-      this.assignmentInput.title = `title-${randomInteger}`; // Generate a random title if value is empty
+      this.assignmentInput.title = `title-${randomInteger}`;
     }
     return this;
   }
