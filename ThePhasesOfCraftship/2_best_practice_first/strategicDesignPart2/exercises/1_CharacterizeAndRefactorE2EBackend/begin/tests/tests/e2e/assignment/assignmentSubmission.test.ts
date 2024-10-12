@@ -8,7 +8,7 @@ import { Server } from "http";
 import { CompositionRoot } from "../../../../src/shared/composition/compositionRoot";
 import { ClassBuilder } from "../../builders/class/createClassBuilder";
 import { createClassDTO } from "../../../../src/shared/dtos/class/createClassDTO";
-import { assignmentBuilder } from "../../builders/assignment/createAssignment Builder";
+import { AssignmentBuilder } from "../../builders/assignment/createAssignment Builder";
 import { createAssignmentDTO } from "../../../../src/shared/dtos/assignment/create_assignmentDTO";
 import { StudentAssignmentBuilder } from "../../builders/student/createStudentAssignmentBuilder";
 import { createStudentAssignmentDTO } from "../../../../src/shared/dtos/student/createStudentAssignmentDTO";
@@ -59,7 +59,7 @@ defineFeature(feature, (test) => {
       classId = response.body.data.id;
 
       // Assignment Creation
-      assignmentInput = await new assignmentBuilder(driver)
+      assignmentInput = await new AssignmentBuilder(driver)
         .withTitle("")
         .withAssignmentId("")
         .build();

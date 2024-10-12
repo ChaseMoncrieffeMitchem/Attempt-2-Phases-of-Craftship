@@ -1,4 +1,7 @@
 import { createStudentGradeDTO } from "../../../../src/shared/dtos/student/createStudentGradeDTO"
+import { RESTfulAPIDriver } from "../../../../src/shared/http/apiDriver";
+import { SubmitAssignmentBuilder } from "../assignment/submitAssignment";
+import { StudentAssignmentBuilder } from "./createStudentAssignmentBuilder";
 
 function getRandomGrade(): string {
     const grades = ['A', 'B', 'C', 'D'];
@@ -6,39 +9,48 @@ function getRandomGrade(): string {
 }
 
 export class StudentGradeBuilder {
-    private studentGradeInput: createStudentGradeDTO
+    private grade: string = ''
     private name: string = ''
     private email: string = ''
     private studentId: string = ''
+    private driver: RESTfulAPIDriver
+    private submitAssignmentBuilder?: SubmitAssignmentBuilder;
 
-    constructor() {
-        this.studentGradeInput = {
-            assignmentId: '',
-            grade: '',
-            studentId: ''
-        }
+    constructor(driver: RESTfulAPIDriver) {
+        this.driver = driver
     }
 
-    withAssignmentId (value: string) {
-        this.studentGradeInput.assignmentId = value
-        return this
-    }
+    // withAssignmentId (value: string) {
+    //     this.studentGradeInput.assignmentId = value
+    //     return this
+    // }
 
-    withStudentId (value: string) {
-        this.studentGradeInput.studentId = value
+    // withStudentId (value: string) {
+    //     this.studentGradeInput.studentId = value
+    //     return this
+    // }
+
+    from (submitAssignmentBuilder: SubmitAssignmentBuilder) {
+        this.submitAssignmentBuilder = submitAssignmentBuilder
         return this
     }
 
     withGrade () {
-    this.studentGradeInput.grade = getRandomGrade()
+    this.grade = getRandomGrade()
         return this
     }
 
-    build(): createStudentGradeDTO {
-        return {
-            assignmentId: this.studentGradeInput.assignmentId,
-            grade: this.studentGradeInput.grade,
-            studentId: this.studentGradeInput.studentId
-        }
+    async build() {
+        if (!this.submitAssignmentBuilder) throw new Error("Student Assignment Builder is not defined")
+
+        const submitAssignmentBuilderOutput = await this.submitAssignmentBuilder.build()
+
+        const { studentId, assignmentId } = submitAssignmentBuilderOutput
+
+        const response = await this.driver.post('/student-assignments/grade', {studentId: studentId, assignmentId: assignmentId, grade: this.grade } )
+
+        const grade = response.body.data.grade
+
+        return { grade, studentId, assignmentId }
     }
 }

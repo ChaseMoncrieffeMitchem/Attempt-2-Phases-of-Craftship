@@ -21,9 +21,12 @@ export class ClassBuilder {
   }
 
   withName(value: string) {
-    if (value !== "") return this;
-    const randomInteger = getRandomNumber(100, 100000);
-    this.classInput.name = `ClassName-${randomInteger}`;
+    if (value) {
+      this.classInput.name = value; // Assign the provided name
+    } else {
+      const randomInteger = getRandomNumber(100, 100000);
+      this.classInput.name = `ClassName-${randomInteger}`; // Fallback to random name
+    }
     return this;
   }
 
@@ -44,6 +47,8 @@ export class ClassBuilder {
       // Assign the classId from the response
       this.classInput.classId = response.body.data?.id; // Ensure the API response contains the id
     }
+
+    console.log(this.classInput.name)
     
     return this.classInput; // Return the constructed class input
   }

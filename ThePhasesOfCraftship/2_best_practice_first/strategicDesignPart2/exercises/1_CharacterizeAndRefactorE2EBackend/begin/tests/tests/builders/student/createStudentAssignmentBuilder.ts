@@ -15,11 +15,6 @@ export class StudentAssignmentBuilder {
         this.driver = driver
     }
 
-    // from (classBuilder: ClassBuilder) {
-    //     this.classBuilder = classBuilder
-    //     return this
-    // }
-
     with (studentBuilder: StudentBuilder) {
         this.studentBuilder = studentBuilder
         return this

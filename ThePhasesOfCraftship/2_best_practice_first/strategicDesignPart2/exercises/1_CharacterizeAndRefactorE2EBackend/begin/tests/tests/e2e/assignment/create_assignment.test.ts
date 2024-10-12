@@ -4,7 +4,7 @@ import { RESTfulAPIDriver } from "../../../../src/shared/http/apiDriver";
 import { WebServer } from "../../../../src/shared/http/webServer";
 import { CompositionRoot } from "../../../../src/shared/composition/compositionRoot";
 import { createAssignmentDTO } from "../../../../src/shared/dtos/assignment/create_assignmentDTO";
-import { assignmentBuilder } from "../../builders/assignment/createAssignment Builder";
+import { AssignmentBuilder } from "../../builders/assignment/createAssignment Builder";
 import { Server } from "http";
 
 function getRandomNumber(min: number, max: number): number {
@@ -46,9 +46,8 @@ defineFeature(feature, (test) => {
         name: `Math ${randomInteger}`,
       });
       classId = response.body.data?.id;
-      assignmentInput = new assignmentBuilder()
+      assignmentInput = await new AssignmentBuilder(driver)
         .withTitle("")
-        .withClassId(classId)
         .build();
     });
 
@@ -92,25 +91,17 @@ defineFeature(feature, (test) => {
         name: `Math ${randomInteger}`,
       });
     //   classId = response.body.data.id;
-      assignmentInput = new assignmentBuilder()
+      assignmentInput = await new AssignmentBuilder(driver)
         .withTitle("")
-        .withClassId(response.body.data?.id)
         .build();
-      response = await driver.post("/assignments", assignmentInput);
       title = response.body.data?.title
     });
 
     when("I request to create a assignment by that same title", async () => {
-        const randomInteger = getRandomNumber(100, 10000);
-      response = await driver.post("/classes", {
-        name: `Math ${randomInteger}`,
-      });
-      classId = response.body.data.id;
-      assignmentInput = new assignmentBuilder()
-        .withTitle(title)
-        .withClassId(classId)
+      
+      assignmentInput = await new AssignmentBuilder(driver)
+        .withTitle("")
         .build();
-      response = await driver.post("/assignments", assignmentInput);
     });
 
     then("the assignment should not be created", () => {

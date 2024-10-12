@@ -56,11 +56,14 @@ export class EnrolledStudentBuilder {
     if (!this.studentBuilder) throw new Error('You must define the student builder');
     if (!this.classBuilder) throw new Error('You must define the classroom builder');
 
-    let classId = (await this.classBuilder.build()).classId
-    let studentId = (await this.studentBuilder.build()).studentId
+    const classOutput = await this.classBuilder.build()
+    const studentOutput = await this.studentBuilder.build()
 
-    const enrolledStudent = await this.driver.post('/class-enrollments', {classId, studentId} )
-    
+    const classId = classOutput.classId
+    const studentId = studentOutput.studentId
+
+    const enrolledStudent = await this.driver.post('/class-enrollments', {classId: classId, studentId: studentId} )
+
     // const enrolledStudent = await prisma.classEnrollment.upsert({
     //   where: {
     //     studentId_classId: {
@@ -78,6 +81,6 @@ export class EnrolledStudentBuilder {
     //   }
     // });
 
-    return { enrolledStudent }
-  }
+    return {enrolledStudent}
+  } 
 }

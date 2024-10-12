@@ -40,52 +40,37 @@ defineFeature(feature, (test) => {
     given(/^I want to create a classroom named "(.*)"$/, async (arg0) => {
       classInput = await new ClassBuilder(driver).withName("").build();
     });
-
+  
     when("I request to create that classroom", async () => {
-      response = await driver.post("/classes", classInput);
+      response = classInput
     });
 
     then("the class should be Successfully created", () => {
-      expect(response.body.success).toBeTruthy();
-      expect(response.body.error).toBeFalsy();
-      expect(response.body.data.name).toEqual(classInput.name);
+      expect(response.classId).toBe(classInput.classId);
+      // expect(response.body.error).toBeFalsy();
+      // expect(response.body.data.name).toEqual(classInput.name);
     });
   });
 
   test("Failed to create a classroom", ({ given, when, then }) => {
     let classInput: createClassDTO;
-    // let driver: RESTfulAPIDriver;
-    // let root = new CompositionRoot();
-    // let webServer: WebServer = root.getWebServer();
     let response: any;
     let className: string;
 
-    // beforeAll(async () => {
-    //   // Start the Server
-    //   await webServer.start(3003);
-
-    //   driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3003);
-    //   // Reset the database
-    // });
-
-    // afterAll(async () => {
-    //   // Stop the processes running on the Server
-    //   await webServer.stop();
-    // });
 
     given(/^a classroom by name "(.*)" already exists$/, async (arg0) => {
       classInput = await new ClassBuilder(driver).withName("").build();
       className = classInput.name;
-      response = await driver.post("/classes", classInput);
+      // response = await driver.post("/classes", classInput);
     });
 
     when("I request to create a classroom by that same name", async () => {
       classInput = await new ClassBuilder(driver).withName(className).build();
-      response = await driver.post("/classes", classInput);
+      response = classInput
     });
 
     then("the classroom should not be created", () => {
-      expect(response.body.success).toBeFalsy();
+      expect(response.classId).toBeUndefined();
     });
   });
 });

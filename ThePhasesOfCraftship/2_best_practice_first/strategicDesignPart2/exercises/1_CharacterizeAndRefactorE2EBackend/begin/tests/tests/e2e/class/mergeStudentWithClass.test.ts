@@ -12,7 +12,7 @@ import { response } from "express";
 import { ClassBuilder } from "../../builders/class/createClassBuilder";
 import { createClassDTO } from "../../../../src/shared/dtos/class/createClassDTO";
 import { createEnrolledStudentDTO } from "../../../../src/shared/dtos/class/enrolledStudentDTO";
-import { EnrollmentBuilder } from "../../builders/class/enrollmentBuilder";
+import { EnrolledStudentBuilder } from "../../builders/class/enrollmentBuilder";
 
 const feature = loadFeature(
   path.join(__dirname, "../../features/enroll_student_in_class.feature")
@@ -25,9 +25,12 @@ defineFeature(feature, (test) => {
   let webServer: WebServer = root.getWebServer();
   let driver: RESTfulAPIDriver;
   let response: any;
-  let enrolledStudentInput: createEnrolledStudentDTO;
   let studentId: any;
   let classId: any;
+  let enrollmentBuilder: EnrolledStudentBuilder;
+  let classBuilder: ClassBuilder;
+  let studentBuilder: StudentBuilder;
+  let enrolledStudentInput: any
 
   test("Successfully enrolled a Student into a Classroom", ({
     given,
@@ -51,23 +54,23 @@ defineFeature(feature, (test) => {
       /^an enrolled student exists with the studentId of "(.*)" and classId of "(.*)"$/,
       async (arg0) => {
         // Create Student
-        studentInput = new StudentBuilder()
+        studentInput = await new StudentBuilder(driver)
           .withName("")
           .withRandomEmail("")
           .build();
-        const studentResponse = await driver.post("/students", studentInput);
-        studentId = studentResponse.body.data.id;
+        // const studentResponse = await driver.post("/students", studentInput);
+        // studentId = studentResponse.body.data.id;
 
         // Create a class
-        classInput = new ClassBuilder().withName("").build();
-        const classResponse = await driver.post("/classes", classInput);
-        classId = classResponse.body.data.id;
+        classInput = await new ClassBuilder(driver).withName("").build();
+        // const classResponse = await driver.post("/classes", classInput);
+        // classId = classResponse.body.data.id;
 
         // Build enrollment input with both IDs
-        enrolledStudentInput = new EnrollmentBuilder()
-          .withStudentId(studentId)
-          .withClassId(classId)
-          .build();
+        enrolledStudentInput = await new EnrolledStudentBuilder(driver)
+          .from(classBuilder)
+          .and(studentBuilder)
+          .build()
       }
     );
 
