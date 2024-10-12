@@ -18,15 +18,12 @@ defineFeature(feature, (test) => {
 
 
   beforeAll(async () => {
-    // Start the Server
     await webServer.start(3002);
 
     driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3002);
-    // Reset the database
   });
 
   afterAll(async () => {
-    // Stop the processes running on the Server
     await webServer.stop();
   });
 
@@ -47,8 +44,7 @@ defineFeature(feature, (test) => {
 
     then("the class should be Successfully created", () => {
       expect(response.classId).toBe(classInput.classId);
-      // expect(response.body.error).toBeFalsy();
-      // expect(response.body.data.name).toEqual(classInput.name);
+      
     });
   });
 
@@ -61,7 +57,6 @@ defineFeature(feature, (test) => {
     given(/^a classroom by name "(.*)" already exists$/, async (arg0) => {
       classInput = await new ClassBuilder(driver).withName("").build();
       className = classInput.name;
-      // response = await driver.post("/classes", classInput);
     });
 
     when("I request to create a classroom by that same name", async () => {

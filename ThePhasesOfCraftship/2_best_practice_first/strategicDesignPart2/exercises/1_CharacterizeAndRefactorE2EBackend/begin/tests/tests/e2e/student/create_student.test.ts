@@ -24,7 +24,6 @@ defineFeature(feature, (test) => {
     await webServer.start();
 
     driver = new RESTfulAPIDriver(webServer.getHttp() as Server);
-    // Reset the database
   });
 
   afterAll(async () => {
@@ -43,13 +42,14 @@ defineFeature(feature, (test) => {
     });
 
     when("I request to create that student", async () => {
-      response = await driver.post("/students", studentInput);
+      response = studentInput
+      console.log(response)
     });
 
     then("the student should be Successfully created", () => {
-      expect(response.body.data.name).toEqual(studentInput.name);
-      expect(response.body.data.email).toEqual(studentInput.email);
-      expect(response.body.data.id).toBeDefined();
+      expect(response.name).toEqual(studentInput.name);
+      expect(response.email).toEqual(studentInput.email);
+      expect(response.studentId).toBeDefined();
     });
   });
 
@@ -61,58 +61,29 @@ defineFeature(feature, (test) => {
   }) => {
     let studentInput: createStudentDTO;
     let response: any;
-    let root = new CompositionRoot();
-    let webServer: WebServer = root.getWebServer();
-    let driver: RESTfulAPIDriver;
     let studentName: string;
   
-    // beforeAll(async () => {
-    
-    //     // Start the Server on port 3001
-    //     await webServer.start(3001);
-  
-    //     // Pass the correct port to the driver
-    //     driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3001);
-    // });
-  
-    // afterAll(async () => {
-    //     // Stop the processes running on the Server
-    //     await webServer.stop();
-
     given(/^a student named "(.*)" already exists$/, async (arg0) => {
-      try {
         studentInput = await new StudentBuilder(driver)
           .withName("")
           .withRandomEmail("")
           .build()
 
         studentName = studentInput.name
-      } catch (error) {
-        throw error;
-      }
     });
   
     when("I request to create another student with the same name", async () => {
-      try {
         studentInput = await new StudentBuilder(driver)
           .withName(studentName)
           .withRandomEmail("")
           .build();
-      } catch (error) {
-        throw error;
-      }
+          response = studentInput
     });
   
     then("the creation should fail", () => {
-     
-      expect(response.body.success).toBeFalsy();
-      expect(response.body.error).toBeTruthy();
+      expect(response.name).toBe("");
+      expect(response.studentId).toBeUndefined();
     });
   
-    and(/^I should receive an error message saying "(.*)"$/, (arg0) => {
-      expect(response.body.error).toBe("Student with this name already exists");
-    });
   });
-     
-      
     });

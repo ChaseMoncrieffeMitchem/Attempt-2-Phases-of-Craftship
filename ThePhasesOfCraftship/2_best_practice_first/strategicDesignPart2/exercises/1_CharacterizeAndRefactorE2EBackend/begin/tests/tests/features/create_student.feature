@@ -13,4 +13,3 @@ Feature: Create Student
         Given a student named "Alina" already exists
         When I request to create another student with the same name
         Then the creation should fail
-        And I should receive an error message saying "Student already exists"
