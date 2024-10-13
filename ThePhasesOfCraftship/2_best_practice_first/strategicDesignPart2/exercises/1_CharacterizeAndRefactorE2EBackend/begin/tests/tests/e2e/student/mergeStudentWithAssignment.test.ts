@@ -19,7 +19,6 @@ const feature = loadFeature(
 );
 
 defineFeature(feature, (test) => {
-  let studentId: any;
   let requestBody: any = {};
   let root = new CompositionRoot();
   let webServer: WebServer = root.getWebServer();
@@ -49,19 +48,26 @@ defineFeature(feature, (test) => {
     let studentEnrollmentInput: any
     let classBuilder: any
     let studentBuilder: any
-    let assignmentBuilder: any
+    let assignmentId: any
     let studentAssignmentInput: any
+    let studentId: any;
 
     given("a student has been given an assignment", async () => {
-      studentBuilder = await new StudentBuilder(driver).withName("").withRandomEmail("").build()
-      console.log(studentBuilder)
-      classInput = await new ClassBuilder(driver).withName("").build()
-      console.log(classInput)
-      assignmentBuilder = await new AssignmentBuilder(driver, classBuilder).withTitle("").build()
+      response = await new StudentBuilder(driver).withName("").withRandomEmail("").build()
+      console.log(response)
+      studentId = response.studentId
+
+      response = await new ClassBuilder(driver).withName("").build()
+      console.log(response)
+      classId = response.classId
+
+      response = await new AssignmentBuilder(driver).withTitle("").withClassId(classId).build()
+      console.log(response)
+      assignmentId = response.assignmentId
 
       studentAssignmentInput = await new StudentAssignmentBuilder(driver)
-      .with(studentBuilder)
-      .and(assignmentBuilder)
+      .withStudentId(studentId)
+      .withAssignmentId(assignmentId)
       .build()
       console.log(studentAssignmentInput)
     });
@@ -82,7 +88,7 @@ defineFeature(feature, (test) => {
     when,
     then,
   }) => {
-    given("an assignment Does not exist", () => {
+    given("an assignment Does not exist", (studentId) => {
       requestBody = {
         studentId: studentId,
         assignmentId: "",

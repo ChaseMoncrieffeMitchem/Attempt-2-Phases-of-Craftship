@@ -6,36 +6,30 @@ import { StudentBuilder } from "./createStudentBuilder";
 
 export class StudentAssignmentBuilder {
     // private studentAssignmentInput: createStudentAssignmentDTO
-    private studentBuilder?: StudentBuilder
+    private studentId?: string
     // private classBuilder?: ClassBuilder
-    private assignmentBuilder?: AssignmentBuilder
+    private assignmentId?: string
     private driver: RESTfulAPIDriver
 
     constructor(driver: RESTfulAPIDriver) {
         this.driver = driver
     }
 
-    with (studentBuilder: StudentBuilder) {
-        this.studentBuilder = studentBuilder
+    withStudentId (value: string) {
+        this.studentId = value
         return this
     }
 
-    and (assignmentBuilder: AssignmentBuilder) {
-        this.assignmentBuilder = assignmentBuilder
+    withAssignmentId (value: string) {
+        this.assignmentId = value
         return this
     }
 
     async build() {
-        if(!this.studentBuilder) throw new Error('Student Builder not defined')
-        if(!this.assignmentBuilder) throw new Error('Assignment Builder not defined')
+        if(!this.studentId) throw new Error('Student Builder not defined')
+        if(!this.assignmentId) throw new Error('Assignment Builder not defined')
 
-        const studentOutput = await this.studentBuilder.build()
-        // const studentId = studentOutput.studentId
-
-        const assignmentOutput = await this.assignmentBuilder.build()
-        // const assignmentId = assignmentOutput.assignmentId
-
-        const assignmentsAssignedToStudents = await this.driver.post('/student-assignments', { studentId: studentOutput.studentId, assignmentId: assignmentOutput.assignmentId })
+        const assignmentsAssignedToStudents = await this.driver.post('/student-assignments', { studentId: this.studentId, assignmentId: this.assignmentId })
 
         const { studentId, assignmentId } = assignmentsAssignedToStudents.body
 
