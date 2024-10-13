@@ -17,6 +17,8 @@ defineFeature(feature, (test) => {
   let webServer: WebServer = root.getWebServer();
   let driver: RESTfulAPIDriver;
   let classBuilder: ClassBuilder
+  let classInput: any
+  
 
   beforeAll(async () => {
     await webServer.start(3010);
@@ -29,15 +31,18 @@ defineFeature(feature, (test) => {
   });
 
   test("Successfully created a assignment", ({ given, when, then }) => {
-    let assignmentInput: createAssignmentDTO;
+    let assignmentInput: any;
     let response: any;
+    let classId: any
 
     given(/^I want to create a assignment titled "(.*)"$/, async (arg0) => {
-      classBuilder = new ClassBuilder(driver)
-
-      assignmentInput = await new AssignmentBuilder(driver, classBuilder)
+      response = await new ClassBuilder(driver).withName("").build()
+      classId = response.classId
+      
+      assignmentInput = await new AssignmentBuilder(driver)
         .withTitle("")
-        .build();
+        .withClassId(classId)
+        .build()
     });
 
     when("I request to create that assignment", async () => {
@@ -55,17 +60,21 @@ defineFeature(feature, (test) => {
     let assignmentInput: createAssignmentDTO;
     let response: any;
     let assignmentTitle: string;
+    let classId: any
 
     given(/^a assignment by title "(.*)" already exists$/, async (arg0) => {
-      classBuilder = new ClassBuilder(driver)
-      assignmentInput = await new AssignmentBuilder(driver, classBuilder)
+      response = await new ClassBuilder(driver).withName("").build()
+      classId = response.classId
+      
+      assignmentInput = await new AssignmentBuilder(driver)
         .withTitle("")
+        .withClassId(classId)
         .build();
         assignmentTitle = assignmentInput.title
     });
 
     when("I request to create a assignment by that same title", async () => {
-      assignmentInput = await new AssignmentBuilder(driver, classBuilder)
+      assignmentInput = await new AssignmentBuilder(driver)
         .withTitle(assignmentTitle)
         .build();
         response = assignmentInput

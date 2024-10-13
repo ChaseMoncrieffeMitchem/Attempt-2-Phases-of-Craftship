@@ -8,17 +8,15 @@ function getRandomNumber(min: number, max: number): number {
 
 export class AssignmentBuilder {
   private assignmentInput: createAssignmentDTO;
-  private classBuilder: ClassBuilder;
   private driver: RESTfulAPIDriver;
 
-  constructor(driver: RESTfulAPIDriver, classBuilder: ClassBuilder) {
+  constructor(driver: RESTfulAPIDriver) {
     this.assignmentInput = {
       title: "",
       classId: "",
-      assignmentId: "",
+      assignmentId: ""
     };
     this.driver = driver;
-    this.classBuilder = classBuilder
   }
 
   withTitle(value: string) {
@@ -31,34 +29,26 @@ export class AssignmentBuilder {
     return this;
   }
 
-  async withClassId() {
-    if (!this.classBuilder) {
-      throw new Error("ClassBuilder is not defined.");
-    }
-    const classId = this.classBuilder.getClassId();
-    this.assignmentInput.classId = classId;
-    return this;
+  withClassId(value: string) {
+    this.assignmentInput.classId = value
+    return this
   }
 
-  withAssignmentId(value: string) {
-    if (value) {
-      this.assignmentInput.assignmentId = value;
-    }
-    return this;
-  }
+  // withAssignmentId(value: string) {
+  //   if (value) {
+  //     this.assignmentInput.assignmentId = value;
+  //   }
+  //   return this;
+  // }
 
   async build(): Promise<createAssignmentDTO> {
-    if (!this.assignmentInput.classId) {
-      await this.withClassId();
-    }
-
-    if (!this.assignmentInput.assignmentId) {
+    
       const response = await this.driver.post("/assignments", {
         title: this.assignmentInput.title,
         classId: this.assignmentInput.classId,
       });
       this.assignmentInput.assignmentId = response.body.data?.id;
-    }
+    
 
     console.log(this.assignmentInput)
 

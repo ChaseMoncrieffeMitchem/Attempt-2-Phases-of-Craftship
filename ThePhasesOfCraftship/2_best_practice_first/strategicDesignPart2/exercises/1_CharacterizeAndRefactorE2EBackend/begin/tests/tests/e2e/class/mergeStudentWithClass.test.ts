@@ -69,17 +69,14 @@ defineFeature(feature, (test) => {
 
         // Create instance of a student
         response = await new StudentBuilder(driver).withName("").withRandomEmail("").build();
-        console.log("Student Builder after build:", response)
         studentId = response.studentId
 
         // Create instance of a class
         response = await new ClassBuilder(driver).withName("").build();
-        console.log("Class Builder after build:", response);
         classId = response.classId
 
         // Build enrollment input with both IDs
         enrolledStudentInput = await new EnrolledStudentBuilder(driver).withClassId(classId).withStudentId(studentId).build();
-        console.log("Enrolled Student Input:", enrolledStudentInput);
       }
     );
 
