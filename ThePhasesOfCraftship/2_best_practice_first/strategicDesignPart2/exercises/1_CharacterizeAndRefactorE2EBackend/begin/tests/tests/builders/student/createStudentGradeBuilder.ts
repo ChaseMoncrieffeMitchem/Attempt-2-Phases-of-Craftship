@@ -13,6 +13,7 @@ export class StudentGradeBuilder {
     private name: string = ''
     private email: string = ''
     private studentId: string = ''
+    private assignmentId: string = ''
     private driver: RESTfulAPIDriver
     private submitAssignmentBuilder?: SubmitAssignmentBuilder;
 
@@ -20,18 +21,13 @@ export class StudentGradeBuilder {
         this.driver = driver
     }
 
-    // withAssignmentId (value: string) {
-    //     this.studentGradeInput.assignmentId = value
-    //     return this
-    // }
+    withAssignmentId (value: string) {
+        this.assignmentId = value
+        return this
+    }
 
-    // withStudentId (value: string) {
-    //     this.studentGradeInput.studentId = value
-    //     return this
-    // }
-
-    from (submitAssignmentBuilder: SubmitAssignmentBuilder) {
-        this.submitAssignmentBuilder = submitAssignmentBuilder
+    withStudentId (value: string) {
+        this.studentId = value
         return this
     }
 
@@ -41,15 +37,14 @@ export class StudentGradeBuilder {
     }
 
     async build() {
-        if (!this.submitAssignmentBuilder) throw new Error("Student Assignment Builder is not defined")
+        if (!this.studentId) throw new Error("StudentID not defined")
+        if (!this.assignmentId) throw new Error("AssignmentID not defined")
 
-        const submitAssignmentBuilderOutput = await this.submitAssignmentBuilder.build()
+        const response = await this.driver.post('/student-assignments/grade', {studentId: this.studentId, assignmentId: this.assignmentId, grade: this.grade } )
 
-        const { studentId, assignmentId } = submitAssignmentBuilderOutput
+        const { studentId, assignmentId, grade } = response.body?.data
 
-        const response = await this.driver.post('/student-assignments/grade', {studentId: studentId, assignmentId: assignmentId, grade: this.grade } )
-
-        const grade = response.body.data.grade
+        console.log("Here's what you need:", studentId, assignmentId, grade)
 
         return { grade, studentId, assignmentId }
     }

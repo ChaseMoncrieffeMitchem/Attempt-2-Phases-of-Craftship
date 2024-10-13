@@ -49,9 +49,6 @@ export class AssignmentBuilder {
       });
       this.assignmentInput.assignmentId = response.body.data?.id;
     
-
-    console.log(this.assignmentInput)
-
     return this.assignmentInput;
   }
 }

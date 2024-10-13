@@ -45,7 +45,6 @@ export class StudentBuilder {
       this.studentInput.studentId = response.body.data?.id; // Set the studentId from the API response
       this._studentId = this.studentInput.studentId; // Store the studentId in the private property
     }
-    console.log(this.studentInput);
     return this.studentInput; // Return the constructed student input
   }
 

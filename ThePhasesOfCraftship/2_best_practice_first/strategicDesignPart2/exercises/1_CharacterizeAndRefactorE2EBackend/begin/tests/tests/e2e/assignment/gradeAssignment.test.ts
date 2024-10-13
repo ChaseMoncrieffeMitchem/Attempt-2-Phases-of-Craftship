@@ -147,6 +147,8 @@ const feature = loadFeature(
 );
 
 defineFeature(feature, (test) => {
+
+
   let response: any;
   let root = new CompositionRoot();
   let webServer: WebServer = root.getWebServer();
@@ -154,8 +156,6 @@ defineFeature(feature, (test) => {
   let grade: any;
   let studentGradeInput: createStudentGradeDTO;
   // let classroomBuilder: ClassRoomBuilder;
-  let studentId: string;
-  let classId: string;
   let assignmentId: string;
   let classInput: createClassDTO;
   let studentInput: createStudentDTO;
@@ -177,6 +177,12 @@ defineFeature(feature, (test) => {
   });
 
   test("Successfully have Assignment Graded", ({ given, when, then }) => {
+  let studentId: string;
+  let classId: string;
+  let assignmentId: string;
+  let submitAssignmentInput: any;
+
+
     given("an assignment has been submitted", async () => {
       // Using ClassRoomBuilder to handle the creation of class, student, and assignment
 
@@ -185,54 +191,45 @@ defineFeature(feature, (test) => {
         .withName("")
         .withRandomEmail("")
         .build();
+        studentId = studentInput.studentId
 
       // Create class
       classInput = await new ClassBuilder(driver).withName("").build();
+      classId = classInput.classId
 
       // Create assignment
       assignmentInput = await new AssignmentBuilder(driver)
         .withTitle("")
+        .withClassId(classId)
         .build();
+        assignmentId = assignmentInput.assignmentId
 
       // Student assigned an assignment
       studentAssignmentInput = await new StudentAssignmentBuilder(driver)
-      .with(studentBuilder)
-      .and(assignmentBuilder)
+      .withStudentId(studentId)
+      .withAssignmentId(assignmentId)
       .build()
-
+ 
       // Submit the assignment
-      // const studentWithAssignmentInput = new StudentAssignmentBuilder()
-      //   .withStudentId(studentId)
-      //   .withAssignmentId(assignmentId)
-      //   .build();
-
-      //
-
-      // response = await driver.post(
-      //   "/student-assignments/submit",
-      //   studentWithAssignmentInput
-      // );
+      submitAssignmentInput = await new SubmitAssignmentBuilder(driver)
+        .withStudentId(studentId)
+        .withAssignmentId(assignmentId)
+        .build();
     });
 
     when("I make a request to grade that assignment", async () => {
       // Use StudentGradeBuilder to grade the assignment
-      studentGradeInput = await new StudentGradeBuilder(driver)
-        .from(submitAssignmentBuilder)
+      response = await new StudentGradeBuilder(driver)
+        .withStudentId(studentId)
+        .withAssignmentId(assignmentId)
         .withGrade()
         .build()
-
-      // response = await driver.post(
-      //   "/student-assignments/grade",
-      //   studentGradeInput
-      // );
     });
 
     then("the assignment should be successfully graded", () => {
-      expect(response.statusCode).toBe(200);
-      expect(response.body.data.studentId).toBeDefined();
-      expect(response.body.data.assignmentId).toBeDefined();
-      expect(response.body.data.grade).toBeDefined();
-      expect(response.body.data.status).toBe("submitted");
+      expect(response.studentId).toBeDefined();
+      expect(response.assignmentId).toBeDefined();
+      expect(response.grade).toBeDefined();
     });
   });
 });

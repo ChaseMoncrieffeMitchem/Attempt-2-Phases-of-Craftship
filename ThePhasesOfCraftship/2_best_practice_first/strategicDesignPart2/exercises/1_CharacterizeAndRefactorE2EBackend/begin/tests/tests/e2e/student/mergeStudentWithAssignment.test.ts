@@ -54,27 +54,22 @@ defineFeature(feature, (test) => {
 
     given("a student has been given an assignment", async () => {
       response = await new StudentBuilder(driver).withName("").withRandomEmail("").build()
-      console.log(response)
       studentId = response.studentId
 
       response = await new ClassBuilder(driver).withName("").build()
-      console.log(response)
       classId = response.classId
 
       response = await new AssignmentBuilder(driver).withTitle("").withClassId(classId).build()
-      console.log(response)
       assignmentId = response.assignmentId
 
       studentAssignmentInput = await new StudentAssignmentBuilder(driver)
       .withStudentId(studentId)
       .withAssignmentId(assignmentId)
       .build()
-      console.log(studentAssignmentInput)
     });
 
     when("I request to assign that assignment to the student", async () => {
       response = studentAssignmentInput
-      console.log(response)
     });
 
     then("the student should be successfully assigned that Assignement", () => {

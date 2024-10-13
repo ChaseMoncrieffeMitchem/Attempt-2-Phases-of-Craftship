@@ -28,7 +28,6 @@ export class ClassBuilder {
       const randomInteger = getRandomNumber(100, 100000);
       this.classInput.name = `ClassName-${randomInteger}`;
     }
-    console.log("Class Name:", this.classInput.name); 
     return this;
   }
 
@@ -40,7 +39,6 @@ export class ClassBuilder {
       // this.classInput.name = response.body.data?.name;
       this.classInput.classId = response.body.data?.id; 
     }
-    console.log(this.classInput)
     return this.classInput;
   }
 
