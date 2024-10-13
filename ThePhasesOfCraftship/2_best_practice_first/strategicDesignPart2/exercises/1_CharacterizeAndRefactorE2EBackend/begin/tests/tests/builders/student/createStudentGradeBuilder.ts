@@ -44,8 +44,6 @@ export class StudentGradeBuilder {
 
         const { studentId, assignmentId, grade } = response.body?.data
 
-        console.log("Here's what you need:", studentId, assignmentId, grade)
-
         return { grade, studentId, assignmentId }
     }
 }
