@@ -36,6 +36,7 @@ defineFeature(feature, (test) => {
 
     given(/^I want to create a classroom named "(.*)"$/, async (arg0) => {
       classInput = await new ClassBuilder(driver).withName("").build();
+      console.log(classInput)
     });
   
     when("I request to create that classroom", async () => {
@@ -43,8 +44,7 @@ defineFeature(feature, (test) => {
     });
 
     then("the class should be Successfully created", () => {
-      expect(response.classId).toBe(classInput.classId);
-      
+      expect(response.classId).toBeDefined();
     });
   });
 

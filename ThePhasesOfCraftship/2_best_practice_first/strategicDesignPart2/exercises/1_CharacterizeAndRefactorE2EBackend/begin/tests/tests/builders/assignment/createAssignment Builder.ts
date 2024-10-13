@@ -8,21 +8,17 @@ function getRandomNumber(min: number, max: number): number {
 
 export class AssignmentBuilder {
   private assignmentInput: createAssignmentDTO;
-  private classBuilder?: ClassBuilder;
+  private classBuilder: ClassBuilder;
   private driver: RESTfulAPIDriver;
 
-  constructor(driver: RESTfulAPIDriver) {
+  constructor(driver: RESTfulAPIDriver, classBuilder: ClassBuilder) {
     this.assignmentInput = {
       title: "",
       classId: "",
       assignmentId: "",
     };
     this.driver = driver;
-  }
-
-  from(classBuilder: ClassBuilder) {
-    this.classBuilder = classBuilder;
-    return this;
+    this.classBuilder = classBuilder
   }
 
   withTitle(value: string) {
@@ -36,12 +32,11 @@ export class AssignmentBuilder {
   }
 
   async withClassId() {
-    if (this.classBuilder) {
-      const classOutput = await this.classBuilder.build();
-      this.assignmentInput.classId = classOutput.classId;
-    } else {
+    if (!this.classBuilder) {
       throw new Error("ClassBuilder is not defined.");
     }
+    const classId = this.classBuilder.getClassId();
+    this.assignmentInput.classId = classId;
     return this;
   }
 
@@ -65,6 +60,8 @@ export class AssignmentBuilder {
       this.assignmentInput.assignmentId = response.body.data?.id;
     }
 
-    return this.assignmentInput
+    console.log(this.assignmentInput)
+
+    return this.assignmentInput;
   }
 }

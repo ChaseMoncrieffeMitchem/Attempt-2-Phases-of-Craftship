@@ -30,12 +30,14 @@ export class StudentAssignmentBuilder {
         if(!this.assignmentBuilder) throw new Error('Assignment Builder not defined')
 
         const studentOutput = await this.studentBuilder.build()
-        const studentId = studentOutput.studentId
+        // const studentId = studentOutput.studentId
 
         const assignmentOutput = await this.assignmentBuilder.build()
-        const assignmentId = assignmentOutput.assignmentId
+        // const assignmentId = assignmentOutput.assignmentId
 
-        const assignmentsAssignedToStudents = await this.driver.post('/student-assignments', { studentId: studentId, assignmentId: assignmentId })
+        const assignmentsAssignedToStudents = await this.driver.post('/student-assignments', { studentId: studentOutput.studentId, assignmentId: assignmentOutput.assignmentId })
+
+        const { studentId, assignmentId } = assignmentsAssignedToStudents.body
 
         return { studentId, assignmentId }
     }

@@ -9,8 +9,9 @@ function getRandomNumber(min: number, max: number): number {
 }
 
 export class ClassBuilder {
-  private classInput: createClassDTO;
+  public classInput: createClassDTO;
   private driver: RESTfulAPIDriver;
+  // private _classId?: string;
 
   constructor(driver: RESTfulAPIDriver) {
     this.classInput = {
@@ -22,32 +23,32 @@ export class ClassBuilder {
 
   withName(value: string) {
     if (value) {
-      this.classInput.name = value; // Assign the provided name
+      this.classInput.name = value;
     } else {
       const randomInteger = getRandomNumber(100, 100000);
-      this.classInput.name = `ClassName-${randomInteger}`; // Fallback to random name
+      this.classInput.name = `ClassName-${randomInteger}`;
     }
-    return this;
-  }
-
-  withClassId(value: string) {
-    if (value) {
-      this.classInput.classId = value;
-    }
+    console.log("Class Name:", this.classInput.name); 
     return this;
   }
 
   async build(): Promise<createClassDTO> {
-    // If classId is not set, make an API call to create a class
     if (!this.classInput.classId) {
       const response = await this.driver.post("/classes", {
         name: this.classInput.name,
-      });
-
-      // Assign the classId from the response
-      this.classInput.classId = response.body.data?.id; // Ensure the API response contains the id
+      })
+      // this.classInput.name = response.body.data?.name;
+      this.classInput.classId = response.body.data?.id; 
     }
-
-    return this.classInput; // Return the constructed class input
+    console.log(this.classInput)
+    return this.classInput;
   }
+
+  // getClassId(): string {
+  //   if (!this._classId) {
+  //     throw new Error("Class ID is not available. Please call the build() method first.");
+  //   }
+  //   return this._classId;
+  // }
 }
+

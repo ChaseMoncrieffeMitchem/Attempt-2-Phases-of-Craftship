@@ -34,55 +34,36 @@ import { StudentBuilder } from "../student/createStudentBuilder";
 import { ClassBuilder } from "./createClassBuilder";
 
 export class EnrolledStudentBuilder {
-  private classBuilder?: ClassBuilder;
-  private studentBuilder?: StudentBuilder;
+  private classId?: string
+  private studentId?: string
   private driver: RESTfulAPIDriver;
 
   constructor(driver: RESTfulAPIDriver) {
-    this.driver = driver
+    this.driver = driver;
   }
 
-  from (classBuilder: ClassBuilder) {
-    this.classBuilder = classBuilder;
+  withClassId (classId: string) {
+    this.classId = classId
     return this;
   }
 
-  and (studentBuilder: StudentBuilder) {
-    this.studentBuilder = studentBuilder;
-    return this;
+  withStudentId (studentId: string) {
+    this.studentId = studentId
+    return this
   }
 
   async build() {
-    if (!this.studentBuilder) throw new Error('You must define the student builder');
-    if (!this.classBuilder) throw new Error('You must define the classroom builder');
+    if (!this.studentId) throw new Error('StudentId not successfully passed');
+    if (!this.classId) throw new Error('lassId not successfully passed');
 
-    const classOutput = await this.classBuilder.build()
-    const studentOutput = await this.studentBuilder.build()
 
-    // const classId = classOutput.classId
-    // const studentId = studentOutput.studentId
+    const enrolledStudent = await this.driver.post('/class-enrollments', {
+      classId: this.classId, 
+      studentId: this.studentId
+    });
+    
+    const { classId, studentId } = enrolledStudent.body?.data
 
-    const enrolledStudent = await this.driver.post('/class-enrollments', {classId: classOutput.classId, studentId: studentOutput.studentId} )
-
-    const { classId, studentId } = enrolledStudent.body
-
-    // const enrolledStudent = await prisma.classEnrollment.upsert({
-    //   where: {
-    //     studentId_classId: {
-    //       studentId: student.id,
-    //       classId: classRoom.id
-    //     }
-    //   },
-    //   create: {
-    //     studentId: student.id,
-    //     classId: classRoom.id
-    //   },
-    //   update: {
-    //     studentId: student.id,
-    //     classId: classRoom.id
-    //   }
-    // });
-
-    return { classId, studentId }
+    return { studentId, classId }
   } 
 }

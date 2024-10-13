@@ -5,8 +5,7 @@ Feature: Give an Assignement to a Student
     So that the student will submit that Assignement
 
     Scenario: Successfully give Assignment to Student
-        Given a student exists
-        And an assignment exists
+        Given a student has been given an assignment
         When I request to assign that assignment to the student
         Then the student should be successfully assigned that Assignement
 

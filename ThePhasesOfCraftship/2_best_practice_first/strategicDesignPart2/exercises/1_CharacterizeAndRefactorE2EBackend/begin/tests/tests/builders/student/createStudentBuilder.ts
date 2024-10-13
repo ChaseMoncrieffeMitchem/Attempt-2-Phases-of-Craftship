@@ -6,8 +6,9 @@ function getRandomNumber(min: number, max: number): number {
 }
 
 export class StudentBuilder {
-  private studentInput: createStudentDTO;
+  public studentInput: createStudentDTO;
   private driver: RESTfulAPIDriver;
+  private _studentId?: string;
 
   constructor(driver: RESTfulAPIDriver) {
     this.studentInput = {
@@ -42,7 +43,17 @@ export class StudentBuilder {
         email: this.studentInput.email,
       });
       this.studentInput.studentId = response.body.data?.id; // Set the studentId from the API response
+      this._studentId = this.studentInput.studentId; // Store the studentId in the private property
     }
+    console.log(this.studentInput);
     return this.studentInput; // Return the constructed student input
   }
+
+  getStudentId(): string {
+    if (!this._studentId) {
+      throw new Error("Student ID is not available. Please call the build method first.");
+    }
+    return this._studentId;
+  }
+
 }

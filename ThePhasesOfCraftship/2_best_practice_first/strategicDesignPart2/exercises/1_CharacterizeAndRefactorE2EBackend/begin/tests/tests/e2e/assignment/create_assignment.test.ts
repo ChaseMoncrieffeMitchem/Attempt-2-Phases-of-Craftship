@@ -35,8 +35,7 @@ defineFeature(feature, (test) => {
     given(/^I want to create a assignment titled "(.*)"$/, async (arg0) => {
       classBuilder = new ClassBuilder(driver)
 
-      assignmentInput = await new AssignmentBuilder(driver)
-      .from(classBuilder)
+      assignmentInput = await new AssignmentBuilder(driver, classBuilder)
         .withTitle("")
         .build();
     });
@@ -59,16 +58,14 @@ defineFeature(feature, (test) => {
 
     given(/^a assignment by title "(.*)" already exists$/, async (arg0) => {
       classBuilder = new ClassBuilder(driver)
-      assignmentInput = await new AssignmentBuilder(driver)
-      .from(classBuilder)
+      assignmentInput = await new AssignmentBuilder(driver, classBuilder)
         .withTitle("")
         .build();
         assignmentTitle = assignmentInput.title
     });
 
     when("I request to create a assignment by that same title", async () => {
-      assignmentInput = await new AssignmentBuilder(driver)
-      .from(classBuilder)
+      assignmentInput = await new AssignmentBuilder(driver, classBuilder)
         .withTitle(assignmentTitle)
         .build();
         response = assignmentInput

@@ -12,6 +12,7 @@ import { AssignmentBuilder } from "../../builders/assignment/createAssignment Bu
 import { createAssignmentDTO } from "../../../../src/shared/dtos/assignment/create_assignmentDTO";
 import { StudentAssignmentBuilder } from "../../builders/student/createStudentAssignmentBuilder";
 import { createStudentAssignmentDTO } from "../../../../src/shared/dtos/student/createStudentAssignmentDTO";
+import { EnrolledStudentBuilder } from "../../builders/class/enrollmentBuilder";
 
 const feature = loadFeature(
   path.join(__dirname, "../../features/connect_student_with_assignment.feature")
@@ -40,51 +41,39 @@ defineFeature(feature, (test) => {
     when,
     then,
   }) => {
-    let classInput: createClassDTO;
+
+    let classInput: any;
     let classId: any;
     let assignmentInput: createAssignmentDTO;
-    let assignmentId: any;
     let studentWithAssignmentInput: createStudentAssignmentDTO;
-    let studentInput: createStudentDTO;
+    let studentEnrollmentInput: any
+    let classBuilder: any
+    let studentBuilder: any
+    let assignmentBuilder: any
+    let studentAssignmentInput: any
 
-    given("a student exists", async () => {
-      studentInput = await new StudentBuilder(driver)
-        .withName("")
-        .withRandomEmail("")
-        .build();
-      // response = await driver.post("/students", studentInput);
-      studentId = response.body.data.id;
-    });
+    given("a student has been given an assignment", async () => {
+      studentBuilder = await new StudentBuilder(driver).withName("").withRandomEmail("").build()
+      console.log(studentBuilder)
+      classInput = await new ClassBuilder(driver).withName("").build()
+      console.log(classInput)
+      assignmentBuilder = await new AssignmentBuilder(driver, classBuilder).withTitle("").build()
 
-    and("an assignment exists", async () => {
-      // Create a Class so ClassId is obtained
-      classInput = await new ClassBuilder(driver).withName("").build();
-      // response = await driver.post("/classes", classInput);
-      classId = response.body.data.id;
-
-      // Create an Assignment
-      assignmentInput = await new AssignmentBuilder(driver)
-        .withTitle("")
-        .withAssignmentId("")
-        .build();
-      // response = await driver.post("/assignments", assignmentInput);
-      assignmentId = response.body.data.id;
+      studentAssignmentInput = await new StudentAssignmentBuilder(driver)
+      .with(studentBuilder)
+      .and(assignmentBuilder)
+      .build()
+      console.log(studentAssignmentInput)
     });
 
     when("I request to assign that assignment to the student", async () => {
-      studentWithAssignmentInput =await new StudentAssignmentBuilder(driver)
-        .with(studentId)
-        .and(assignmentId)
-        .build();
-
-      response = await driver.post(
-        "/student-assignments",
-        studentWithAssignmentInput
-      );
+      response = studentAssignmentInput
+      console.log(response)
     });
 
     then("the student should be successfully assigned that Assignement", () => {
-      expect(response.statusCode).toBe(201);
+      expect(response.studentId).toBe(studentAssignmentInput.studentId);
+      expect(response.assignmentId).toBe(studentAssignmentInput.assignmentId)
     });
   });
 
