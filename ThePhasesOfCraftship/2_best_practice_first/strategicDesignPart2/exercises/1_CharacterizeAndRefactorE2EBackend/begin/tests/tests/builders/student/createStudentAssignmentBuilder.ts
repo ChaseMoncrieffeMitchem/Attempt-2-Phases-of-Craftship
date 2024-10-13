@@ -31,7 +31,7 @@ export class StudentAssignmentBuilder {
 
         const assignmentsAssignedToStudents = await this.driver.post('/student-assignments', { studentId: this.studentId, assignmentId: this.assignmentId })
 
-        const { studentId, assignmentId } = assignmentsAssignedToStudents.body
+        const { studentId, assignmentId } = assignmentsAssignedToStudents.body?.data
 
         return { studentId, assignmentId }
     }

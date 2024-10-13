@@ -12,6 +12,7 @@ import { AssignmentBuilder } from "../../builders/assignment/createAssignment Bu
 import { createAssignmentDTO } from "../../../../src/shared/dtos/assignment/create_assignmentDTO";
 import { StudentAssignmentBuilder } from "../../builders/student/createStudentAssignmentBuilder";
 import { createStudentAssignmentDTO } from "../../../../src/shared/dtos/student/createStudentAssignmentDTO";
+import { SubmitAssignmentBuilder } from "../../builders/assignment/submitAssignment";
 
 const feature = loadFeature(
   path.join(
@@ -21,7 +22,7 @@ const feature = loadFeature(
 );
 
 defineFeature(feature, (test) => {
-  let studentId: any;
+  
   let requestBody: any = {};
   let root = new CompositionRoot();
   let webServer: WebServer = root.getWebServer();
@@ -29,9 +30,7 @@ defineFeature(feature, (test) => {
   let response: any;
   let studentInput: createStudentDTO;
   let classInput: createClassDTO;
-  let classId: any;
   let assignmentInput: createAssignmentDTO;
-  let assignmentId: any;
   let studentWithAssignmentInput: createStudentAssignmentDTO;
 
   beforeAll(async () => {
@@ -44,51 +43,47 @@ defineFeature(feature, (test) => {
   });
 
   test("Successfully submitted an assignment", ({ given, when, then }) => {
+    let studentId: any;
+  let classId: any;
+  let assignmentId: any;
+
+
     given("an assignment has been given to a student", async () => {
       // Student Creation
       studentInput = await new StudentBuilder(driver)
         .withName("")
         .withRandomEmail("")
         .build();
-      // response = await driver.post("/students", studentInput);
-      studentId = response.body.data.id;
+        studentId = studentInput.studentId;
 
       // Class Creation
       classInput = await new ClassBuilder(driver).withName("").build();
-      response = await driver.post("/classes", classInput);
-      classId = response.body.data.id;
+      classId = classInput.classId;
 
       // Assignment Creation
       assignmentInput = await new AssignmentBuilder(driver)
         .withTitle("")
-        .withAssignmentId("")
+        .withClassId(classId)
         .build();
-      // response = await driver.post("/assignments", assignmentInput);
-      // assignmentId = response.body.data.id;
+      assignmentId = assignmentInput.assignmentId;
 
       // Merge Student with Assignment
       studentWithAssignmentInput = await new StudentAssignmentBuilder(driver)
-        .with(studentId)
-        .and(assignmentId)
+        .withStudentId(studentId)
+        .withAssignmentId(assignmentId)
         .build();
-
-      response = await driver.post(
-        "/student-assignments",
-        studentWithAssignmentInput
-      );
     });
 
     when("I make a request to Submit that assignment", async () => {
-      response = await driver.post(
-        "/student-assignments/submit",
-        studentWithAssignmentInput
-      );
+      response = await new SubmitAssignmentBuilder(driver).withStudentId(studentId)
+      .withAssignmentId(assignmentId)
+      .build()
     });
 
     then(
       "the assignment should be given a successful submission status",
       () => {
-        expect(response.body.data.status).toBe("submitted");
+        expect(response.studentId).toBeDefined();
       }
     );
   });

@@ -3,29 +3,34 @@ import { StudentAssignmentBuilder } from "../student/createStudentAssignmentBuil
 import { AssignmentBuilder } from "./createAssignment Builder";
 
 export class SubmitAssignmentBuilder {
-    private studentAssignmentBuilder?: StudentAssignmentBuilder
+    private studentId?: string
+    private assignmentId?: string
     private driver: RESTfulAPIDriver;
 
     constructor(driver: RESTfulAPIDriver) {
         this.driver = driver
     }
 
-    from(studentAssignmentBuilder: StudentAssignmentBuilder) {
-        this.studentAssignmentBuilder = studentAssignmentBuilder;
-        return this;
-    }
+    withStudentId (value: string) {
+        this.studentId = value
+        return this
+      }
+
+      withAssignmentId (value: string) {
+        this.assignmentId = value
+        return this
+      }
 
     async build() {
-        if (!this.studentAssignmentBuilder) throw new Error('Student Assignment Builder not defined')
+        if (!this.studentId) throw new Error('Student ID not defined')
+        if (!this.assignmentId) throw new Error('Assignment ID not defined')
 
-        const studentAssignmentOutput = await this.studentAssignmentBuilder.build()
-        const { studentId, assignmentId } = studentAssignmentOutput
 
-        const response = await this.driver.post('/student-assignments/submit', {studentId: studentId, assignmentId: assignmentId})
+        const response = await this.driver.post('/student-assignments/submit', {studentId: this.studentId, assignmentId: this.assignmentId})
 
-        const submissionStatus = response.body.data.submitted
+        const { studentId, assignmentId, status } = response.body?.data
 
-        return { studentId, assignmentId, submissionStatus }
+        return { studentId, assignmentId, status }
 
     }
 }
