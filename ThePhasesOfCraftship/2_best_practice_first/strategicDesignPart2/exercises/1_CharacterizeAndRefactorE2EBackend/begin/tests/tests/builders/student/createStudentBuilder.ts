@@ -38,11 +38,11 @@ export class StudentBuilder {
   async build(): Promise<createStudentDTO> {
     // If studentId is not provided, make the API call to create a student
     if (!this.studentInput.studentId) {
-      const response = await this.driver.post("/students", {
+      const response = await this.driver?.post("/students", {
         name: this.studentInput.name,
         email: this.studentInput.email,
       });
-      this.studentInput.studentId = response.body.data?.id; // Set the studentId from the API response
+      this.studentInput.studentId = response.body?.data?.id; // Set the studentId from the API response
       this._studentId = this.studentInput.studentId; // Store the studentId in the private property
     }
     return this.studentInput; // Return the constructed student input

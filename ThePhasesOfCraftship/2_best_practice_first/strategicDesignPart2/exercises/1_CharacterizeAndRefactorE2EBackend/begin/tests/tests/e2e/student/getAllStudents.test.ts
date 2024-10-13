@@ -21,9 +21,9 @@ defineFeature(feature, (test) => {
   let driver: RESTfulAPIDriver;
 
   beforeAll(async () => {
-    await webServer.start();
+    await webServer.start(3016);
 
-    driver = new RESTfulAPIDriver(webServer.getHttp() as Server);
+    driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3016);
   });
 
   afterAll(async () => {
