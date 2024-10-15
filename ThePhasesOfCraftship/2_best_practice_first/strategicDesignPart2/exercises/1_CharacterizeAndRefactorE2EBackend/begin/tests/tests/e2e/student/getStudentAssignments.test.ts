@@ -9,6 +9,7 @@ import { ClassBuilder } from "../../builders/class/createClassBuilder";
 import { AssignmentsInClassBuilder } from "../../builders/class/assignmentsInClassBuilder";
 import { StudentBuilder } from "../../builders/student/createStudentBuilder";
 import { GetStudentAssignmentsBuilder } from "./getAllStudentAssignments";
+import { StudentAssignmentBuilder } from "../../builders/student/createStudentAssignmentBuilder";
 
 const feature = loadFeature(
   path.join(__dirname, "../../features/student_submitted_assignments.feature")
@@ -40,11 +41,20 @@ defineFeature(feature, (test) => {
     let response: any;
     let studentInput: any
     let studentId: any
+    let assignmentId: string
+    let studentAssignment: any
 
     given("students have assignments belonging to them", async () => {
         studentInput = await new StudentBuilder(driver).withName("").withRandomEmail("").build()
         studentId = studentInput.studentId
 
+        classInput = await new ClassBuilder(driver).withName("").build()
+        classId = classInput.classId
+
+        assignmentInput = await new AssignmentBuilder(driver).withClassId(classId).withTitle("").build()
+        assignmentId = assignmentInput.assignmentId
+
+        studentAssignment = await new StudentAssignmentBuilder(driver).withStudentId(studentId).withAssignmentId(assignmentId).build()
     });
 
     when("I request to retrieve those student assignments", async () => {

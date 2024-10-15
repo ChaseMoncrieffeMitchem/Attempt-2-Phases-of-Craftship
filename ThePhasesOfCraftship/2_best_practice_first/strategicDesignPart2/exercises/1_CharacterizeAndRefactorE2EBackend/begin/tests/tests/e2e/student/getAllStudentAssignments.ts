@@ -16,8 +16,6 @@ export class GetStudentAssignmentsBuilder {
     async build() {
         const response = await this.driver.get(`/student/${this.studentId}/assignments`)
 
-        console.log(response)
-
         return response
     }
 }
