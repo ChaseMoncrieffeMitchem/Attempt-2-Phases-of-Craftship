@@ -46,7 +46,6 @@ defineFeature(feature, (test) => {
 
         when('I make a request to get a student by their StudentID', async () => {
             response = await new StudentByIdBuilder(driver).withStudentId(studentId).build()
-            console.log(response.body.data)
         });
 
         then('that student should be retrieved by their StudentID', () => {
