@@ -1,20 +1,22 @@
 import { RESTfulAPIDriver } from "../../../../src/shared/http/apiDriver";
 
-export class AssignmentsInClassBuilder {
+export class GetStudentAssignmentsBuilder {
     private driver: RESTfulAPIDriver;
-    private classId?: string
+    private studentId?: string;
 
     constructor(driver: RESTfulAPIDriver) {
         this.driver = driver
     }
 
-    withClassId (value: string) {
-        this.classId = value
+    withStudentId(value: string) {
+        this.studentId = value
         return this
     }
 
     async build() {
-        const response = await this.driver.get(`/classes/${this.classId}/assignments`)
+        const response = await this.driver.get(`/student/${this.studentId}/assignments`)
+
+        console.log(response)
 
         return response
     }

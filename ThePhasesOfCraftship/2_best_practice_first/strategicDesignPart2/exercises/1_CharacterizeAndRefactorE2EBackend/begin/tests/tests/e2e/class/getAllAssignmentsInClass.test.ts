@@ -46,6 +46,7 @@ defineFeature(feature, (test) => {
 
     then('I should see all of the assignments in that class', () => {
         expect(response.statusCode).toBe(200)
+        expect(response.text).toBeDefined()
     });
 });
 });
