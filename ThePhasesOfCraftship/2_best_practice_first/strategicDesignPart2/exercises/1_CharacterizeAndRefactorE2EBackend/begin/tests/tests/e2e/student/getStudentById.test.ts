@@ -42,18 +42,17 @@ defineFeature(feature, (test) => {
             .withRandomEmail("")
             .build()
             studentId = studentInput.studentId
-            console.log(studentId)
         });
 
         when('I make a request to get a student by their StudentID', async () => {
             response = await new StudentByIdBuilder(driver).withStudentId(studentId).build()
-            console.log(response)
+            console.log(response.body.data)
         });
 
         then('that student should be retrieved by their StudentID', () => {
-            expect(response.data?.id).toBeDefined()
-            expect(response.data?.name).toBeDefined()
-            expect(response.data?.email).toBeDefined()
+            expect(response.body.data.id).toBeDefined()
+            expect(response.body.data.name).toBeDefined()
+            expect(response.body.data.email).toBeDefined()
         });
     });
 });

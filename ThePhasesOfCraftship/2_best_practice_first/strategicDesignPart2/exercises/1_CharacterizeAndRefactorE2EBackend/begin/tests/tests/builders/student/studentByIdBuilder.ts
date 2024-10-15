@@ -16,8 +16,6 @@ export class StudentByIdBuilder {
     async build() {
         const response = await this.driver.get(`/students/${this.studentId}`)
 
-        console.log(response)
-
         return response
     }
 }
