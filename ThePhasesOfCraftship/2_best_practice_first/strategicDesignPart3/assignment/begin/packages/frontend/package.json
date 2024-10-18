@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start:dev": "vite"
+    "start:dev": "vite",
+    "test:e2e": "jest -c jest.config.e2e.ts"
   },
   "dependencies": {
     "@dddforum/shared": "file:../shared",
