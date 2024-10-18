@@ -1,7 +1,9 @@
 
 import express, { Request, Response } from 'express';
-import { prisma } from './database';
-import { User } from '@prisma/client';
+// import { prisma } from './database';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient()
 const cors = require('cors')
 const app = express();
 app.use(express.json());
@@ -35,7 +37,7 @@ function generateRandomPassword(length: number): string {
   return passwordArray.join('');
 }
 
-function parseUserForResponse (user: User) {
+function parseUserForResponse (user: any) {
   const returnData = JSON.parse(JSON.stringify(user));
   delete returnData.password;
   return returnData;
@@ -64,7 +66,7 @@ app.post('/users/new', async (req: Request, res: Response) => {
       return res.status(409).json({ error: Errors.UsernameAlreadyTaken, data: undefined, success: false })
     }
 
-    const { user, member } = await prisma.$transaction(async (tx) => {
+    const { user, member } = await prisma.$transaction(async () => {
       const user = await prisma.user.create({ data: { ...userData, password: generateRandomPassword(10) } });
       const member = await prisma.member.create({ data: { userId: user.id }})
       return { user, member }
@@ -135,5 +137,5 @@ app.listen(port, () => {
 
 
 prisma.post.findMany({})
-  .then((posts) => console.log(posts))
-  .catch((err) => console.log(err));
+  .then((posts: any) => console.log(posts))
+  .catch((err: unknown) => console.log(err));
