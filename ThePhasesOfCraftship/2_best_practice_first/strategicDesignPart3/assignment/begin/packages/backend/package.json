@@ -9,7 +9,8 @@
   "scripts": {
     "start:dev": "npm run migrate && npm run generate && npx nodemon",
     "generate": "ts-node prepareEnv.ts prisma generate --schema=./prisma/schema.prisma",
-    "migrate": "ts-node prepareEnv.ts prisma migrate dev --schema=./prisma/schema.prisma"
+    "migrate": "ts-node prepareEnv.ts prisma migrate dev --schema=./prisma/schema.prisma",
+    "test:e2e": "jest -c jest.config.e2e.ts"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
