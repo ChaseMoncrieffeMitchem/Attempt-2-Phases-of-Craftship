@@ -2,14 +2,16 @@ import { createUserDTO } from "../../../../shared/dtos/user/createUserDTO"
 
 export class CreateUserInputBuilder {
     private createUserInput: createUserDTO
+    private driver: RESTfulAPIDriver
 
-    constructor() {
+    constructor(driver: RESTfulAPIDriver) {
         this.createUserInput = {
             firstName: "",
             lastName: "",
             email: "",
             username: "",
         }
+        this.driver = driver
     }
 
     public withFirstName(firstName: string) {
@@ -33,7 +35,7 @@ export class CreateUserInputBuilder {
     }
 
     public async build() {
-        const response = await this.driver("", {firstName: this.withFirstName, lastName: this.withLastName, username: this.withUsername, email: this.withEmail})
+        const response = await this.driver("/users/new", {firstName: this.withFirstName, lastName: this.withLastName, username: this.withUsername, email: this.withEmail})
 
         console.log(response)
 

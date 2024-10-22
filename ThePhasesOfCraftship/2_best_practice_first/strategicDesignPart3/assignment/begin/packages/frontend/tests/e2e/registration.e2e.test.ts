@@ -1,5 +1,6 @@
 import { defineFeature, loadFeature } from "jest-cucumber";
 import * as path from 'path';
+import { CreateUserInputBuilder } from "tests/builders/user/createUserBuilder";
 
 const feature = loadFeature(
     path.join(
@@ -13,25 +14,40 @@ const feature = loadFeature(
     test('Successful registration with marketing emails accepted', ({ given, when, then, and }) => {
       let createUserResponse: any = {};
       let addEmailToMarketingList: any = {};
+      let createUserInput: any;
 
       given('I am a new user', () => {
-        createUserInput = new CreateUserInputBuilder()
-          .withAllRandomDetails()
+        createUserInput = new CreateUserInputBuilder(driver)
+          .withFirstName("")
+          .withLastName("")
+          .withUsername("")
+          .withEmail("")
           .build();
       });
 
       when('I register with valid account details accepting marketing emails', async () => {
-        createUserResponse = await request(app).post("/users/new").send(createUserCommand)
+        createUserResponse = await request(app).post("/users/new").send(createUserInput)
 
-        addEmailToMarketingList = await request(app).post("/marketing/new").send({ email: createUserCommand.email })
+        addEmailToMarketingList = await request(app).post("/marketing/new").send({ email: createUserInput.email })
       });
 
       then('I should be granted access to my account', () => {
-        expect(createUserResponse.status).toBe(201)
+        const { data, success, error } = createUserResponse.body
+
+        expect(success).toBeTruthy();
+        expect(error).toEqual({});
+        expect(data!.id).toBeDefined();
+        expect(data!.email).toEqual(createUserInput.email);
+        expect(data!.firstName).toEqual(createUserInput.firstName);
+        expect(data!.lastName).toEqual(createUserInput.lastName);
+        expect(data!.username).toEqual(createUserInput.username);
       });
 
       and('I should expect to receive marketing emails', () => {
+        const { success } = addEmailToMarketingList.body
+
         expect(addEmailToMarketingList.status).toBe(201)
+        expect(success).toBeTruthy();
       });
   });
   });
