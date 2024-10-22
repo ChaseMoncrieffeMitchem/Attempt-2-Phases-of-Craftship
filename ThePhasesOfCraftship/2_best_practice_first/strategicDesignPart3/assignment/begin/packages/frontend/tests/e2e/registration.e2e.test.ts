@@ -11,6 +11,7 @@ const feature = loadFeature(
   defineFeature(feature, (test) => {
 
     test('Successful registration with marketing emails accepted', ({ given, when, then, and }) => {
+
       given('I am a new user', () => {
 
       });
@@ -24,7 +25,7 @@ const feature = loadFeature(
       });
 
       and('I should expect to receive marketing emails', () => {
-
+        expect(addEmailToListResponse.status).toBe(201)
       });
   });
   });

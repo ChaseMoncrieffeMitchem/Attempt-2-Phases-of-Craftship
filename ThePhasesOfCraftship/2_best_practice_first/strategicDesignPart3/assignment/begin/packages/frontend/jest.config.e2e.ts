@@ -11,7 +11,7 @@ export default async (): Promise<JestConfigWithTsJest> => ({
     '^.+\\.(t|j)sx?$': ['ts-jest', { diagnostics: false }],
   },
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
-    prefix: path.resolve(__dirname, '../../'),
+    prefix: path.resolve(__dirname),
   }),
   passWithNoTests: true
 });
