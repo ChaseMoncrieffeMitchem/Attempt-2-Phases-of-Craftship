@@ -27,6 +27,7 @@
     "jest-cucumber": "^3.0.2",
     "rimraf": "^3.0.2",
     "run-script-os": "^1.1.6",
+    "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.1",
     "tsc-alias": "^1.8.8",

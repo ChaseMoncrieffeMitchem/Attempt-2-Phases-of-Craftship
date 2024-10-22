@@ -129,6 +129,7 @@ app.get('/posts', async (req: Request, res: Response) => {
     return res.status(500).json({ error: Errors.ServerError, data: undefined, success: false });
   }
 });
+
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
@@ -139,3 +140,5 @@ app.listen(port, () => {
 prisma.post.findMany({})
   .then((posts: any) => console.log(posts))
   .catch((err: unknown) => console.log(err));
+
+  export { app }

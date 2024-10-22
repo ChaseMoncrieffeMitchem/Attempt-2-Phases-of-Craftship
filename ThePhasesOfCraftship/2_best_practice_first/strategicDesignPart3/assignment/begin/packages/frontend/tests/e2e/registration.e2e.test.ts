@@ -1,8 +1,9 @@
 import { createUserDTO } from "@dddforum/shared/dtos/user/createUserDTO";
-import { request } from "http";
+import request from "supertest";
 import { defineFeature, loadFeature } from "jest-cucumber";
 import * as path from 'path';
 import { CreateUserInputBuilder } from "tests/builders/user/createUserBuilder";
+import { app } from "../../../backend/src/index"
 
 const feature = loadFeature(
     path.join(
