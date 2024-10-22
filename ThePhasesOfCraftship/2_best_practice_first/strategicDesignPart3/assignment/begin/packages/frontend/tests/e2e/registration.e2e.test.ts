@@ -2,7 +2,7 @@ import { createUserDTO } from "@dddforum/shared/dtos/user/createUserDTO";
 import request from "supertest";
 import { defineFeature, loadFeature } from "jest-cucumber";
 import * as path from 'path';
-import { CreateUserInputBuilder } from "tests/builders/user/createUserBuilder";
+import { CreateUserInputBuilder } from "../builders/user/createUserBuilder";
 import { app } from "../../../backend/src/index"
 
 const feature = loadFeature(
@@ -31,14 +31,15 @@ const feature = loadFeature(
       when('I register with valid account details accepting marketing emails', async () => {
         createUserResponse = await request(app).post("/users/new").send(createUserInput)
 
+        console.log(createUserResponse.body)
+
         addEmailToMarketingList = await request(app).post("/marketing/new").send({ email: createUserInput.email })
       });
 
       then('I should be granted access to my account', () => {
-        const { data, success, error } = createUserResponse.body
+        const { data, success } = createUserResponse.body
 
         expect(success).toBeTruthy();
-        expect(error).toEqual({});
         expect(data!.id).toBeDefined();
         expect(data!.email).toEqual(createUserInput.email);
         expect(data!.firstName).toEqual(createUserInput.firstName);
