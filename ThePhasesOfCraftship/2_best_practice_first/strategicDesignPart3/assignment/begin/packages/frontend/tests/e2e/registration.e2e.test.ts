@@ -1,3 +1,5 @@
+import { createUserDTO } from "@dddforum/shared/dtos/user/createUserDTO";
+import { request } from "http";
 import { defineFeature, loadFeature } from "jest-cucumber";
 import * as path from 'path';
 import { CreateUserInputBuilder } from "tests/builders/user/createUserBuilder";
@@ -14,15 +16,15 @@ const feature = loadFeature(
     test('Successful registration with marketing emails accepted', ({ given, when, then, and }) => {
       let createUserResponse: any = {};
       let addEmailToMarketingList: any = {};
-      let createUserInput: any;
+      let createUserInput: createUserDTO;
 
       given('I am a new user', () => {
-        createUserInput = new CreateUserInputBuilder(driver)
-          .withFirstName("")
-          .withLastName("")
-          .withUsername("")
-          .withEmail("")
-          .build();
+        createUserInput = new CreateUserInputBuilder()
+        .withFirstName("")
+        .withLastName("")
+        .withUsername("")
+        .withEmail("")
+        .build()
       });
 
       when('I register with valid account details accepting marketing emails', async () => {

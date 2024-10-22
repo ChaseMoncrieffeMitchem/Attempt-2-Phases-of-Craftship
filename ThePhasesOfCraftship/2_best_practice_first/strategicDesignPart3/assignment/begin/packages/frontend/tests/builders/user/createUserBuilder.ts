@@ -1,44 +1,66 @@
-import { createUserDTO } from "../../../../shared/dtos/user/createUserDTO"
+import { createUserDTO } from "@dddforum/shared/dtos/user/createUserDTO"
+
+function getRandomNumber(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 
 export class CreateUserInputBuilder {
     private createUserInput: createUserDTO
-    private driver: RESTfulAPIDriver
+    // private driver: RESTfulAPIDriver
 
-    constructor(driver: RESTfulAPIDriver) {
+    constructor(
+        // driver: RESTfulAPIDriver
+    ) {
         this.createUserInput = {
             firstName: "",
             lastName: "",
             email: "",
             username: "",
         }
-        this.driver = driver
+        // this.driver = driver
     }
 
     public withFirstName(firstName: string) {
-        this.createUserInput.firstName = firstName
-        return this
+        if (firstName) {
+            this.createUserInput.firstName = firstName;
+        } else {
+            this.createUserInput.firstName = `firstName-${getRandomNumber(1, 10000)}`;
+        }
+        return this;
     }
 
     public withLastName(lastName: string) {
-        this.createUserInput.lastName = lastName
-        return this
+        if (lastName) {
+            this.createUserInput.lastName = lastName;
+        } else {
+            this.createUserInput.lastName = `lastName-${getRandomNumber(1, 10000)}`;
+        }
+        return this;
     }
 
     public withUsername(username: string) {
-        this.createUserInput.username = username
-        return this
+        if (username) {
+            this.createUserInput.username = username;
+        } else {
+            this.createUserInput.username = `username-${getRandomNumber(1, 10000)}`;
+        }
+        return this;
     }
 
     public withEmail(email: string) {
-        this.createUserInput.email = email
-        return this
+        if (email) {
+            this.createUserInput.email = email;
+        } else {
+            this.createUserInput.email = `email-${getRandomNumber(1, 10000)}@gmail.com`;
+        }
+        return this;
     }
 
-    public async build() {
-        const response = await this.driver("/users/new", {firstName: this.withFirstName, lastName: this.withLastName, username: this.withUsername, email: this.withEmail})
+    public build() {
+        // const response = await this.driver("/users/new", {firstName: this.withFirstName, lastName: this.withLastName, username: this.withUsername, email: this.withEmail})
 
-        console.log(response)
+        // console.log(response)
 
-        return response
+        return this.createUserInput
     }
 }
