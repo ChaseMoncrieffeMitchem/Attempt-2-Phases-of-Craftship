@@ -123,7 +123,6 @@ test('Invalid or missing registration details', ({ given, when, then, and }) =>
 
   when('I register with invalid account details', async () => {
     createUserResponse = await driver?.post('/users/new', createUserInput)
-    console.log(createUserResponse)
   });
 
   then('I should see an error notifying me that my input is invalid', () => {
@@ -134,6 +133,46 @@ test('Invalid or missing registration details', ({ given, when, then, and }) =>
   and('I should not have been sent access to account details', () => {
     const { success } = createUserResponse.body
     expect(success).toBeFalsy()
+  });
+});
+
+test('Account already created with email', ({ given, when, then, and }) => {
+  let userInputs: createUserDTO[] = [];
+  let createUserResponses: any[] = []; // Specify the type of responses
+
+  given('a set of users already created accounts', (table: any[]) => {
+    userInputs = table.map((row: any) => {
+      return new CreateUserInputBuilder()
+        .withFirstName(row.firstName)
+        .withLastName(row.lastName)
+        .withUsername(row.userName)
+        .withEmail(row.email)
+        .build();
+    });
+  });
+
+  when('new users attempt to register with those emails', async () => { // Added async here
+    createUserResponses = await Promise.all(
+      userInputs.map((userInput) => {
+        return driver?.post("/users/new", userInput);
+      }),
+    );
+  });
+
+  then('they should see an error notifying them that the account already exists', () => {
+    for (const response of createUserResponses) {
+      expect(response.error).toBeDefined();
+      expect(response.success).toBeFalsy();
+      expect(response.body.error).toEqual("EmailAlreadyInUse");
+    }
+  });
+
+  and('they should not have been sent access to account details', () => {
+    createUserResponses.forEach((response) => {
+      expect(response.body.success).toBe(false);
+      expect(response.data).toBe(undefined);
+      expect(response.body.error).toBeDefined();
+    });
   });
 });
   });

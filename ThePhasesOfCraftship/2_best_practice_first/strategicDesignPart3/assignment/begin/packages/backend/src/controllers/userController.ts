@@ -49,7 +49,7 @@ export class UserController {
         const userData = req.body;
         const email = req.body.email
 
-        if (!email.includes('@gmail.com')) {
+        if (!email.includes('.com')) {
           return res.status(409).json({ error: Errors.InvalidEmail, data: undefined, success: false });
         }
   
