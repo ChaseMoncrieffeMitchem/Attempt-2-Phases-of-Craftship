@@ -12,7 +12,8 @@
     "test:e2e:back": "npm run test:e2e --workspace=@dddforum/backend",
     "clean": "npm run clean --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",
-    "lint": "npm run lint --workspaces --if-present"
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "jest --detectOpenHandles"
   },
   "devDependencies": {
     "@types/cucumber": "^7.0.0",

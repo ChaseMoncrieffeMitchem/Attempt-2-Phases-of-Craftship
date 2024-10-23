@@ -1,12 +1,12 @@
 import { createUserDTO } from "@dddforum/shared/dtos/user/createUserDTO";
-import request from "supertest";
+// import request from "supertest";
 import { defineFeature, loadFeature } from "jest-cucumber";
 import * as path from 'path';
 import { CreateUserInputBuilder } from "../builders/user/createUserBuilder";
-import { app } from "../../../backend/src/index"
 import { Server } from "http";
 import { WebServer } from "@dddforum/shared/http/webServer"
 import { RESTfulAPIDriver } from "@dddforum/shared/http/apiDriver"
+import { CompositionRoot } from "@dddforum/shared/composition/compositionRoot"
 
 const feature = loadFeature(
     path.join(
@@ -22,8 +22,8 @@ const feature = loadFeature(
 
 
     beforeAll(async () => {
-      await webServer.start(3000);
-      driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3000);
+      await webServer.start(3001);
+      driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3001);
     });
 
     afterAll(async () => {
@@ -45,9 +45,9 @@ const feature = loadFeature(
       });
 
       when('I register with valid account details accepting marketing emails', async () => {
-        createUserResponse = await request(app).post("/users/new").send(createUserInput)
+        createUserResponse = await driver?.post("/users/new", createUserInput)
 
-        addEmailToMarketingList = await request(app).post("/marketing/new").send({ email: createUserResponse.body.data.email })
+        addEmailToMarketingList = await driver?.post("/marketing/new", { email: createUserResponse.body.data?.email })
       });
 
       then('I should be granted access to my account', () => {
@@ -68,5 +68,23 @@ const feature = loadFeature(
         expect(success).toBeTruthy();
       });
   });
+
+  test('Successful registration without marketing emails accepted', ({ given, when, then, and }) => {
+    given('I am a new user', () => {
+
+    });
+
+    when('I register with valid account details declining marketing emails', () => {
+
+    });
+
+    then('I should be granted access to my account', () => {
+
+    });
+
+    and('I should not expect to receive marketing emails', () => {
+
+    });
+});
   });
   
