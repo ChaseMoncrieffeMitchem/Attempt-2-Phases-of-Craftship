@@ -33,7 +33,9 @@ const feature = loadFeature(
 
         console.log(createUserResponse.body)
 
-        addEmailToMarketingList = await request(app).post("/marketing/new").send({ email: createUserInput.email })
+        addEmailToMarketingList = await request(app).post("/marketing/new").send({ email: createUserResponse.body.data.email })
+
+        console.log(addEmailToMarketingList)
       });
 
       then('I should be granted access to my account', () => {

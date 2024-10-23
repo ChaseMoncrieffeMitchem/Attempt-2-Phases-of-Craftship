@@ -2,21 +2,24 @@
 import express, { Request, Response } from 'express';
 // import { prisma } from './database';
 import { PrismaClient } from '@prisma/client';
+import { Errors } from "@dddforum/shared/errorsAndExceptions/constants"
+import { ContactListAPI } from "@dddforum/shared/src/api/marketing/contactListAPI"
 
 const prisma = new PrismaClient()
 const cors = require('cors')
 const app = express();
 app.use(express.json());
 app.use(cors())
+const contactListAPI = new ContactListAPI();
 
-const Errors = {
-  UsernameAlreadyTaken: 'UserNameAlreadyTaken',
-  EmailAlreadyInUse: 'EmailAlreadyInUse',
-  ValidationError: 'ValidationError',
-  ServerError: 'ServerError',
-  ClientError: 'ClientError',
-  UserNotFound: 'UserNotFound'
-}
+// const Errors = {
+//   UsernameAlreadyTaken: 'UserNameAlreadyTaken',
+//   EmailAlreadyInUse: 'EmailAlreadyInUse',
+//   ValidationError: 'ValidationError',
+//   ServerError: 'ServerError',
+//   ClientError: 'ClientError',
+//   UserNotFound: 'UserNotFound'
+// }
 
 function isMissingKeys (data: any, keysToCheckFor: string[]) {
   for (let key of keysToCheckFor) {
@@ -126,6 +129,39 @@ app.get('/posts', async (req: Request, res: Response) => {
 
     return res.json({ error: undefined, data: { posts: postsWithVotes }, success: true });
   } catch (error) {
+    return res.status(500).json({ error: Errors.ServerError, data: undefined, success: false });
+  }
+});
+
+// Add email to marketing list
+app.post('/marketing/new', async (req: Request, res: Response) => {
+  try {
+    const keyIsMissing = isMissingKeys(req.body, 
+      ['email']
+    );
+    
+    if (keyIsMissing) {
+      return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false })
+    }
+
+    const email = req.body.email;
+    
+    // const existingUserByEmail = await prisma.user.findFirst({ where: { email: email }});
+
+    // if (existingUserByEmail) {
+    //   return res.status(409).json({ error: Errors.EmailAlreadyInUse, data: undefined, success: false })
+    // }
+
+    const addedToList = await contactListAPI.addEmailToList(email)
+
+    if (!addedToList) {
+      return res.status(400).json({ error: Errors.ContactListAPI, data: undefined, success: false})
+    }
+    
+    return res.status(201).json({ error: undefined, data: email, success: true });
+  } catch (error) {
+    console.log(error)
+    // Return a failure error response
     return res.status(500).json({ error: Errors.ServerError, data: undefined, success: false });
   }
 });
