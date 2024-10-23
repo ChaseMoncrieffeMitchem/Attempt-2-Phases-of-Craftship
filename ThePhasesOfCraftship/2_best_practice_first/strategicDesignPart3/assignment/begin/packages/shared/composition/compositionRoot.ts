@@ -1,26 +1,29 @@
 import { WebServer } from "@dddforum/shared/http/webServer";
 import { Database } from "@dddforum/shared/persistance/database";
+import { UserController } from "@dddforum/backend/src/controllers/userController";
+import { PostController } from "@dddforum/backend/src/controllers/postController";
+import { MarketingController } from "@dddforum/backend/src/controllers/marketingController"
 
 const database = new Database() 
-const studentController = new StudentController(database)
-const assignmentController = new AssignmentController(database)
-const classController = new ClassController(database)
+const userController = new UserController(database)
+const postController = new PostController(database)
+const marketingController = new MarketingController(database)
 
-const webServer = new WebServer(studentController, classController, assignmentController)
+const webServer = new WebServer(userController, postController, marketingController)
 
 export class CompositionRoot {
 
     private database: Database;
-    private studentController: StudentController;
-    private classController: ClassController;
-    private assignmentController: AssignmentController
+    private userController: UserController;
+    private postController: PostController;
+    private marketingController: MarketingController
     private webServer: WebServer
 
     constructor() {
         this.database = this.createDatabase()
-        this.studentController = this.createStudentController()
-        this.classController = this.createClassController()
-        this.assignmentController = this.createAssignmentController()
+        this.userController = this.createUserController()
+        this.postController = this.createPostController()
+        this.marketingController = this.createMarketingController()
         this.webServer = this.createWebServer()
     }
 
@@ -32,26 +35,26 @@ export class CompositionRoot {
         return this.database
     }
 
-    private createStudentController() {
+    private createUserController() {
         let database = this.getDatabase()
-        return new StudentController(database)
+        return new UserController(database)
     }
 
-    private createClassController() {
+    private createPostController() {
         let database = this.getDatabase()
-        return new ClassController(database)
+        return new PostController(database)
     }
 
-    private createAssignmentController() {
+    private createMarketingController() {
         let database = this.getDatabase()
-        return new AssignmentController(database)
+        return new MarketingController(database)
     }
 
     private createWebServer() {
-        let studentController = this.createStudentController()
-        let assignmentController = this.createAssignmentController()
-        let classController = this.createClassController()
-        return new WebServer(studentController, classController, assignmentController)
+        let userController = this.createUserController()
+        let postController = this.createPostController()
+        let marketingController = this.createMarketingController()
+        return new WebServer(userController, postController, marketingController)
     }
 
     public getWebServer() {
