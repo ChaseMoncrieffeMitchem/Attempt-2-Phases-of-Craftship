@@ -6,4 +6,9 @@ export class ContactListAPI {
       );
       return true;
     }
+
+    async doNotAddEmailToList(email: string): Promise<boolean> {
+      console.log(`Mailchimp contact list did not add ${email} to list`)
+      return true
+    }
   }

@@ -46,6 +46,8 @@ export class WebServer {
 
     this.express.post('/marketing/new', (req, res) => this.marketingController.addEmailToMarketingList(req, res))
 
+    this.express.post('/marketing/negative', (req, res) => this.marketingController.doNotAddEmailToMarketingList(req, res))
+
     // this.express.post("/students", (req, res) => this.studentController.createStudent(req, res));
   }
 

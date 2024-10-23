@@ -70,20 +70,41 @@ const feature = loadFeature(
   });
 
   test('Successful registration without marketing emails accepted', ({ given, when, then, and }) => {
-    given('I am a new user', () => {
+    let createUserInput: createUserDTO;
+    let createUserResponse: any = {};
+    let declineMarketingEmails: any = {};
 
+    given('I am a new user', async () => {
+      createUserInput = new CreateUserInputBuilder()
+      .withFirstName("")
+      .withLastName("")
+      .withUsername("")
+      .withEmail("")
+      .build()
+
+      createUserResponse = await driver?.post('/users/new', createUserInput)
     });
 
-    when('I register with valid account details declining marketing emails', () => {
+    when('I register with valid account details declining marketing emails', async () => {
+      declineMarketingEmails = await driver?.post('/marketing/negative', {email: createUserResponse.body.data?.email})
 
+      console.log(declineMarketingEmails)
     });
 
     then('I should be granted access to my account', () => {
+      const { data, success } = createUserResponse.body
 
+        expect(success).toBeTruthy();
+        expect(data!.id).toBeDefined();
+        expect(data!.email).toEqual(createUserInput.email);
+        expect(data!.firstName).toEqual(createUserInput.firstName);
+        expect(data!.lastName).toEqual(createUserInput.lastName);
+        expect(data!.username).toEqual(createUserInput.username);
     });
 
     and('I should not expect to receive marketing emails', () => {
-
+      const { success } = declineMarketingEmails.body
+      expect(success).toBeTruthy()
     });
 });
   });

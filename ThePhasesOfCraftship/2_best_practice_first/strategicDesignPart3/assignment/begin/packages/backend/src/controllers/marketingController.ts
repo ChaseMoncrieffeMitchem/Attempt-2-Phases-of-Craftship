@@ -17,24 +17,24 @@ function isMissingKeys(data: any, keysToCheckFor: string[]) {
   return false;
 }
 
-function generateRandomPassword(length: number): string {
-  const charset =
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
-  const passwordArray = [];
+// function generateRandomPassword(length: number): string {
+//   const charset =
+//     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
+//   const passwordArray = [];
 
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * charset.length);
-    passwordArray.push(charset[randomIndex]);
-  }
+//   for (let i = 0; i < length; i++) {
+//     const randomIndex = Math.floor(Math.random() * charset.length);
+//     passwordArray.push(charset[randomIndex]);
+//   }
 
-  return passwordArray.join("");
-}
+//   return passwordArray.join("");
+// }
 
-function parseUserForResponse(user: any) {
-  const returnData = JSON.parse(JSON.stringify(user));
-  delete returnData.password;
-  return returnData;
-}
+// function parseUserForResponse(user: any) {
+//   const returnData = JSON.parse(JSON.stringify(user));
+//   delete returnData.password;
+//   return returnData;
+// }
 
 export class MarketingController {
   private contactListAPI: ContactListAPI;
@@ -60,8 +60,50 @@ export class MarketingController {
       const email = req.body.email;
 
       const addedToList = await this.contactListAPI.addEmailToList(email);
+      
 
       if (!addedToList) {
+        return res
+          .status(400)
+          .json({
+            error: Errors.ContactListAPI,
+            data: undefined,
+            success: false,
+          });
+      }
+
+      return res
+        .status(201)
+        .json({ error: undefined, data: email, success: true });
+    } catch (error) {
+      console.log(error);
+      // Return a failure error response
+      return res
+        .status(500)
+        .json({ error: Errors.ServerError, data: undefined, success: false });
+    }
+  }
+
+  async doNotAddEmailToMarketingList(req: Request, res: Response) {
+    try {
+      const keyIsMissing = isMissingKeys(req.body, ["email"]);
+
+      if (keyIsMissing) {
+        return res
+          .status(400)
+          .json({
+            error: Errors.ValidationError,
+            data: undefined,
+            success: false,
+          });
+      }
+
+      const email = req.body.email;
+
+      const notAddedToList = await this.contactListAPI.doNotAddEmailToList(email);
+      
+
+      if (!notAddedToList) {
         return res
           .status(400)
           .json({
