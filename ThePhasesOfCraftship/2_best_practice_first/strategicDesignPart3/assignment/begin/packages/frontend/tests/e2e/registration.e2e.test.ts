@@ -4,6 +4,9 @@ import { defineFeature, loadFeature } from "jest-cucumber";
 import * as path from 'path';
 import { CreateUserInputBuilder } from "../builders/user/createUserBuilder";
 import { app } from "../../../backend/src/index"
+import { Server } from "http";
+import { WebServer } from "@dddforum/shared/http/webServer"
+import { RESTfulAPIDriver } from "@dddforum/shared/http/apiDriver"
 
 const feature = loadFeature(
     path.join(
@@ -13,6 +16,19 @@ const feature = loadFeature(
   );
 
   defineFeature(feature, (test) => {
+    let root = new CompositionRoot();
+    let webServer: WebServer = root.getWebServer();
+    let driver: RESTfulAPIDriver;
+
+
+    beforeAll(async () => {
+      await webServer.start(3000);
+      driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3000);
+    });
+
+    afterAll(async () => {
+      await webServer.stop();
+    });
 
     test('Successful registration with marketing emails accepted', ({ given, when, then, and }) => {
       let createUserResponse: any = {};
@@ -31,11 +47,7 @@ const feature = loadFeature(
       when('I register with valid account details accepting marketing emails', async () => {
         createUserResponse = await request(app).post("/users/new").send(createUserInput)
 
-        console.log(createUserResponse.body)
-
         addEmailToMarketingList = await request(app).post("/marketing/new").send({ email: createUserResponse.body.data.email })
-
-        console.log(addEmailToMarketingList)
       });
 
       then('I should be granted access to my account', () => {
