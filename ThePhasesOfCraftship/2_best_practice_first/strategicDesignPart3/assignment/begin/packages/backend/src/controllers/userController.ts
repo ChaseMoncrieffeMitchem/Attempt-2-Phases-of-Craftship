@@ -47,6 +47,11 @@ export class UserController {
         }
   
         const userData = req.body;
+        const email = req.body.email
+
+        if (!email.includes('@gmail.com')) {
+          return res.status(409).json({ error: Errors.InvalidEmail, data: undefined, success: false });
+        }
   
         // Check if email is already in use
         const existingUserByEmail = await prisma.user.findFirst({ where: { email: req.body.email } });

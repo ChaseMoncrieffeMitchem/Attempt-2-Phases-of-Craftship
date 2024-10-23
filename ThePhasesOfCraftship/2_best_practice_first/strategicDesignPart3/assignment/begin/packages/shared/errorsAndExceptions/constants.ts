@@ -5,7 +5,8 @@ const Errors = {
     ServerError: 'ServerError',
     ClientError: 'ClientError',
     UserNotFound: 'UserNotFound',
-    ContactListAPI: 'ContactListProblem'
+    ContactListAPI: 'ContactListProblem',
+    InvalidEmail: 'EmailIsNotValidForUse'
   }
 
   export {Errors}

@@ -87,8 +87,6 @@ const feature = loadFeature(
 
     when('I register with valid account details declining marketing emails', async () => {
       declineMarketingEmails = await driver?.post('/marketing/negative', {email: createUserResponse.body.data?.email})
-
-      console.log(declineMarketingEmails)
     });
 
     then('I should be granted access to my account', () => {
@@ -106,6 +104,37 @@ const feature = loadFeature(
       const { success } = declineMarketingEmails.body
       expect(success).toBeTruthy()
     });
+});
+
+test('Invalid or missing registration details', ({ given, when, then, and }) => 
+  {
+    let createUserInput: createUserDTO;
+    let createUserResponse: any = {};
+
+  given('I am a new user', () => {
+    createUserInput = new CreateUserInputBuilder()
+      .withFirstName("")
+      .withLastName("")
+      .withUsername("")
+      .withEmail("invalidEmail")
+      .build()
+      
+  });
+
+  when('I register with invalid account details', async () => {
+    createUserResponse = await driver?.post('/users/new', createUserInput)
+    console.log(createUserResponse)
+  });
+
+  then('I should see an error notifying me that my input is invalid', () => {
+    const { error } = createUserResponse.body
+    expect(error).toBeDefined()
+  });
+
+  and('I should not have been sent access to account details', () => {
+    const { success } = createUserResponse.body
+    expect(success).toBeFalsy()
+  });
 });
   });
   
