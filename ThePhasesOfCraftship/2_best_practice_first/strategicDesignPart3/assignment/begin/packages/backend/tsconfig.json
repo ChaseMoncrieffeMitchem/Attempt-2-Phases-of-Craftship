@@ -16,6 +16,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src/**/*", "prepareEnv.ts"],
+  "include": ["src/**/*", "prepareEnv.ts", "../shared/src/marketing"],
   "exclude": ["src/**/*.spec.ts"]
 }
