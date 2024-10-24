@@ -1,8 +1,19 @@
-import { PrismaClient } from "@prisma/client";
+import { Post, PrismaClient } from "@prisma/client";
+import { createUserDTO } from '@dddforum/shared/dtos/user/createUserDTO'
+import { ContactListAPI } from "@dddforum/shared/src/api/marketing/contactListAPI";
 
 interface UserPersistence {
     save(userData: UserData): any;
     getByEmail(email: string): any;
+}
+
+interface PostPersistence {
+    getPosts(): any;
+}
+
+interface MarketingPersistence {
+    addToEmailList(email: string): any;
+    doNotAddToEmailList(email: string): any;
 }
 
 type UserData = {
@@ -15,18 +26,36 @@ type UserData = {
 
 export class Database {
     public users: UserPersistence
-
+    public posts: PostPersistence
+    public marketing: MarketingPersistence
+    private contactListAPI: ContactListAPI;
 
     
     constructor(private prisma: PrismaClient) {
         this.prisma = new PrismaClient()
         this.users = this.buildUserPersistence();
+        this.posts = this.buildPostPersistence();
+        this.marketing = this.buildMarketingPersistence();
+        this.contactListAPI = new ContactListAPI();
     }
 
     private buildUserPersistence(): UserPersistence {
         return {
             save: this.saveUser,
             getByEmail: this.getUserByEmail,
+        }
+    }
+    
+    private buildPostPersistence(): PostPersistence {
+        return {
+            getPosts: this.getUserPosts,
+        }
+    }
+
+    private buildMarketingPersistence(): MarketingPersistence {
+        return {
+            addToEmailList: this.addToMarketingEmailList,
+            doNotAddToEmailList: this.doNotAddToMarketingEmailList,
         }
     }
 
@@ -52,7 +81,36 @@ export class Database {
     
         return data;
     }
+
+    private async getUserPosts() {
+
+        const data = await this.prisma.post.findMany({
+            include: {
+              votes: true, // Include associated votes for each post
+              memberPostedBy: {
+                include: {
+                  user: true
+                }
+              },
+              comments: true
+            },
+            orderBy: {
+              dateCreated: 'desc', // Sorts by dateCreated in descending order
+            },
+          });
+
+          return data
+    }
     
+    private async addToMarketingEmailList(email: string): Promise<boolean> {
+        const result = await this.contactListAPI.addEmailToList(email);
+        return result; 
+    }
+
+    private async doNotAddToMarketingEmailList(email: string): Promise<boolean> {
+        const result = await this.contactListAPI.doNotAddEmailToList(email);
+        return result;
+    }
 
     public async connect (): Promise<boolean> {
         return new Promise(async (resolve, reject) => {

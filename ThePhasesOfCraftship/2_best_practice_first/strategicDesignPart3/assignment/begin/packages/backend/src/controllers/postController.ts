@@ -1,5 +1,5 @@
 import { Errors } from "@dddforum/shared/errorsAndExceptions/constants";
-import { Database } from "@dddforum/shared/persistance/database"
+import { Database } from "@dddforum/backend/src/persistance/database"
 import { ContactListAPI } from "@dddforum/shared/src/api/marketing/contactListAPI";
 import { PrismaClient } from "@prisma/client";
 import express, { Request, Response } from 'express';
