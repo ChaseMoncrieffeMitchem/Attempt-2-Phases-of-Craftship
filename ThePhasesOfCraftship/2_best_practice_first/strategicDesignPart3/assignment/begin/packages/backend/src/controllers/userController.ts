@@ -3,6 +3,8 @@ import { Database } from "@dddforum/backend/src/persistance/database"
 import { ContactListAPI } from "@dddforum/shared/src/api/marketing/contactListAPI";
 import { PrismaClient } from "@prisma/client";
 import express, { Request, Response } from 'express';
+import { CreateUserDTO } from "@dddforum/shared/dtos/user/createUserDTO";
+import { userServices } from "@/services/users";
 
 const prisma = new PrismaClient()
 const cors = require('cors')
@@ -37,21 +39,24 @@ function isMissingKeys (data: any, keysToCheckFor: string[]) {
   }
 
 export class UserController {
-    constructor(private database: Database) {}
+    constructor(private userService: userServices) {}
   
     async createUser(req: Request, res: Response) {
       try {
-        const keyIsMissing = isMissingKeys(req.body, ['email', 'firstName', 'lastName', 'username']);
-        if (keyIsMissing) {
-          return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
-        }
-  
-        const userData = req.body;
-        const email = req.body.email
 
-        if (!email.includes('.com')) {
-          return res.status(409).json({ error: Errors.InvalidEmail, data: undefined, success: false });
-        }
+        const dto = CreateUserDTO.formRequest(req.body)
+        const response = await this.userService.createUser(dto)
+        // const keyIsMissing = isMissingKeys(req.body, ['email', 'firstName', 'lastName', 'username']);
+        // if (keyIsMissing) {
+        //   return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
+        // }
+  
+        const userData = response
+        // const email = req.body.email
+
+        // if (!email.includes('.com')) {
+        //   return res.status(409).json({ error: Errors.InvalidEmail, data: undefined, success: false });
+        // }
   
         // Check if email is already in use
         const existingUserByEmail = await prisma.user.findFirst({ where: { email: req.body.email } });

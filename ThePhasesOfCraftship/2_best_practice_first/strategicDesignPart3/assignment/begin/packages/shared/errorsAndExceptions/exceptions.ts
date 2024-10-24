@@ -35,11 +35,18 @@ class UserNotFoundException extends Error {
     }
   }
 
+class InvalidEmailException extends Error {
+  constructor() {
+    super("This email is not in a valid format")
+  }
+}
+
 export {
     InvalidRequestBodyException,
     UsernameTakenException,
     EmailTakenException,
     ClientException,
     ServerException,
-    UserNotFoundException
+    UserNotFoundException,
+    InvalidEmailException
 }

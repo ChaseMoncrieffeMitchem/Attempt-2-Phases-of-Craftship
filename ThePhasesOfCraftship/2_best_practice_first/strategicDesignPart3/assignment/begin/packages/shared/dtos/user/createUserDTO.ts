@@ -1,5 +1,5 @@
 import { isMissingKeys } from "@dddforum/shared/utils/utils";
-import { InvalidRequestBodyException } from "@dddforum/shared/errorsAndExceptions/exceptions";
+import { InvalidEmailException, InvalidRequestBodyException } from "@dddforum/shared/errorsAndExceptions/exceptions";
 
 export class CreateUserDTO {
     constructor(
@@ -17,7 +17,7 @@ export class CreateUserDTO {
         if (isRequestInvalid) {
             throw new InvalidRequestBodyException(requiredKeys);
         }
-
+        
         const { email, firstName, lastName, username, password } = body as {
             email: string;
             firstName: string;
@@ -25,6 +25,10 @@ export class CreateUserDTO {
             username: string;
             password: string;
         };
+
+        if (!email.includes('.com')) {
+            throw new InvalidEmailException()
+          }
 
         return new CreateUserDTO(email, firstName, lastName, username, password);
     }
