@@ -1,6 +1,7 @@
 import { Post, PrismaClient } from "@prisma/client";
 import { CreateUserDTO } from '@dddforum/shared/dtos/user/createUserDTO'
 import { ContactListAPI } from "@dddforum/shared/src/api/marketing/contactListAPI";
+import { generateRandomPassword } from "@dddforum/shared/utils/utils";
 
 interface UserPersistence {
     save(userData: UserData): any;
@@ -62,10 +63,21 @@ export class Database {
     }
 
     private async saveUser(userData: UserData) {
-        const data = await this.prisma.user.create({data: userData})
-
-        return data
+        const [user, member] = await this.prisma.$transaction(async (prisma) => {
+            const user = await prisma.user.create({
+                data: { ...userData, password: generateRandomPassword(10) },
+            });
+    
+            const member = await prisma.member.create({
+                data: { userId: user.id },
+            });
+    
+            return [user, member];
+        });
+    
+        return { user, member };
     }
+    
 
     private async getUserByEmail(email: string) {
         const data = await this.prisma.user.findUnique({
@@ -129,6 +141,13 @@ export class Database {
     private async doNotAddToMarketingEmailList(email: string): Promise<boolean> {
         const result = await this.contactListAPI.doNotAddEmailToList(email);
         return result;
+    }
+
+    private async saveMember(memberData: { userId: number }) {
+        const data = await this.prisma.member.create({
+            data: memberData,
+        });
+        return data;
     }
 
     public async connect (): Promise<boolean> {

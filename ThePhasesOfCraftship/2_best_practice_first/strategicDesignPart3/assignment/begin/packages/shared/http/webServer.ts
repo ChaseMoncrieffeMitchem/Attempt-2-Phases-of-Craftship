@@ -38,9 +38,9 @@ export class WebServer {
         return res.send({ ok: true }).status(200)
     })
 
-    this.express.post('/users/new', (req, res) => this.userController.createUser(req, res) );
+    this.express.post('/users/new', (req, res) => this.userController.createUser(req, res, express) ); // Check this if anything is messing up
 
-    this.express.get('/users', (req, res) => this.userController.getUserByEmail(req, res))
+    this.express.get('/users', (req, res) => this.userController.getUserByEmail(req, res, express)) // this too
 
     this.express.get('/posts', (req, res) => this.postController.getPosts(req, res))
 

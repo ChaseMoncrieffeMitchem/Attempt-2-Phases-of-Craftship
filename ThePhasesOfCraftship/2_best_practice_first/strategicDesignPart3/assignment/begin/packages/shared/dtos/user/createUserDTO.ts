@@ -26,9 +26,16 @@ export class CreateUserDTO {
             password: string;
         };
 
-        if (!email.includes('.com')) {
-            throw new InvalidEmailException()
-          }
+        // Check for the presence of the email
+        if (!email || typeof email !== 'string') {
+            throw new InvalidEmailException();
+        }
+
+        // Basic regex for validating email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            throw new InvalidEmailException();
+        }
 
         return new CreateUserDTO(email, firstName, lastName, username, password);
     }
