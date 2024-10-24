@@ -3,4 +3,5 @@ export type createUserDTO = {
     firstName: string,
     lastName: string,
     username: string,
+    password: string,
 }
