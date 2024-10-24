@@ -1,6 +1,6 @@
 import { Database } from "@dddforum/backend/src/persistance/database";
 import { CreateUserDTO } from "@dddforum/shared/dtos/user/createUserDTO";
-import { EmailTakenException } from "@dddforum/shared/errorsAndExceptions/exceptions";
+import { EmailTakenException, UsernameTakenException } from "@dddforum/shared/errorsAndExceptions/exceptions";
 
 export class userServices {
     constructor(private db: Database) {}
@@ -11,6 +11,11 @@ export class userServices {
         const existingUserByEmail = await this.db.users.getByEmail(email)
         if (existingUserByEmail) {
             throw new EmailTakenException()
+        }
+
+        const existingUserByUsername = await this.db.users.getByUsername(username)
+        if (existingUserByUsername) {
+            throw new UsernameTakenException()
         }
 
         const response = await this.db.users.save({firstName, lastName, username, email, password})

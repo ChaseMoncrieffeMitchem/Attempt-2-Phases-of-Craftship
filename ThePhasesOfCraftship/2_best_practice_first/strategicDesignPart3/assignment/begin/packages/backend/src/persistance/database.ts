@@ -1,10 +1,11 @@
 import { Post, PrismaClient } from "@prisma/client";
-import { createUserDTO } from '@dddforum/shared/dtos/user/createUserDTO'
+import { CreateUserDTO } from '@dddforum/shared/dtos/user/createUserDTO'
 import { ContactListAPI } from "@dddforum/shared/src/api/marketing/contactListAPI";
 
 interface UserPersistence {
     save(userData: UserData): any;
     getByEmail(email: string): any;
+    getByUsername(username: string): any;
 }
 
 interface PostPersistence {
@@ -43,6 +44,7 @@ export class Database {
         return {
             save: this.saveUser,
             getByEmail: this.getUserByEmail,
+            getByUsername: this.getUserByUsername,
         }
     }
     
@@ -80,6 +82,23 @@ export class Database {
         });
     
         return data;
+    }
+
+    private async getUserByUsername(username: string) {
+        
+            const data = await this.prisma.user.findFirst({
+                where: { username },
+                include: {
+                    member: {
+                        include: {
+                            posts: true,     // Include related posts
+                            votes: true,     // Include related votes
+                            comments: true   // Include related comments
+                        }
+                    }
+                }
+            })
+        
     }
 
     private async getUserPosts() {

@@ -59,10 +59,10 @@ export class UserController {
         // }
   
         // Check if email is already in use
-        const existingUserByEmail = await prisma.user.findFirst({ where: { email: req.body.email } });
-        if (existingUserByEmail) {
-          return res.status(409).json({ error: Errors.EmailAlreadyInUse, data: undefined, success: false });
-        }
+        // const existingUserByEmail = await prisma.user.findFirst({ where: { email: req.body.email } });
+        // if (existingUserByEmail) {
+        //   return res.status(409).json({ error: Errors.EmailAlreadyInUse, data: undefined, success: false });
+        // }
   
         // Check if username is already taken
         const existingUserByUsername = await prisma.user.findFirst({ where: { username: req.body.username as string } });
