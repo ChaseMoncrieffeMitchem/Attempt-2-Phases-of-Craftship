@@ -41,7 +41,8 @@ export class UserController {
     }
 
     private setupRoutes() {
-        this.router.post("/", this.createUser);
+        this.router.post("/new", this.createUser);
+        this.router.get("/", this.getUserByEmail)
     }
 
     public async createUser(

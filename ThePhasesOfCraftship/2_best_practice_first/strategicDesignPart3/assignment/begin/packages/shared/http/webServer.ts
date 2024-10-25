@@ -34,21 +34,28 @@ export class WebServer {
   }
 
   public setupRoutes() {
+
     this.express.get('/health', (req, res) => {
         return res.send({ ok: true }).status(200)
     })
 
-    this.express.post('/users/new', (req, res) => this.userController.createUser(req, res, express) ); // Check this if anything is messing up
+    // Use the user controller's router for user-related routes
+    this.express.use('/users', this.userController.getRouter());
 
-    this.express.get('/users', (req, res) => this.userController.getUserByEmail(req, res, express)) // this too
+    this.express.get('/posts', (req, res) => this.postController.getPosts(req, res));
+    this.express.post('/marketing/new', (req, res) => this.marketingController.addEmailToMarketingList(req, res));
+    this.express.post('/marketing/negative', (req, res) => this.marketingController.doNotAddEmailToMarketingList(req, res));
 
-    this.express.get('/posts', (req, res) => this.postController.getPosts(req, res))
+    // this.express.post('/users/new', (req, res) => this.userController.createUser(req, res, express) ); // Check this if anything is messing up
 
-    this.express.post('/marketing/new', (req, res) => this.marketingController.addEmailToMarketingList(req, res))
+    // this.express.get('/users', (req, res) => this.userController.getUserByEmail(req, res, express)) // this too
 
-    this.express.post('/marketing/negative', (req, res) => this.marketingController.doNotAddEmailToMarketingList(req, res))
+    // this.express.get('/posts', (req, res) => this.postController.getPosts(req, res))
 
-    // this.express.post("/students", (req, res) => this.studentController.createStudent(req, res));
+    // this.express.post('/marketing/new', (req, res) => this.marketingController.addEmailToMarketingList(req, res))
+
+    // this.express.post('/marketing/negative', (req, res) => this.marketingController.doNotAddEmailToMarketingList(req, res))
+
   }
 
   public async start(port: number = 3000): Promise<void> {
