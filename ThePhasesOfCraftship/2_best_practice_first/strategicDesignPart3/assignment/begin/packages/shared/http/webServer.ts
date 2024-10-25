@@ -42,7 +42,7 @@ export class WebServer {
     // Use the user controller's router for user-related routes
     this.express.use('/users', this.userController.getRouter());
 
-    this.express.get('/posts', (req, res) => this.postController.getPosts(req, res));
+    this.express.get('/posts', (req, res) => this.postController.getPosts(req, res, express));
     this.express.post('/marketing/new', (req, res) => this.marketingController.addEmailToMarketingList(req, res));
     this.express.post('/marketing/negative', (req, res) => this.marketingController.doNotAddEmailToMarketingList(req, res));
 

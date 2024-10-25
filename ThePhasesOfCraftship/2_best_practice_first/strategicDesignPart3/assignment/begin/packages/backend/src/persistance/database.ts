@@ -51,7 +51,7 @@ export class Database {
     
     private buildPostPersistence(): PostPersistence {
         return {
-            getPosts: this.getUserPosts,
+            getPosts: this.getAllPosts,
         }
     }
 
@@ -110,10 +110,10 @@ export class Database {
                     }
                 }
             })
-        
+        return data
     }
 
-    private async getUserPosts() {
+    private async getAllPosts() {
 
         const data = await this.prisma.post.findMany({
             include: {
@@ -143,12 +143,12 @@ export class Database {
         return result;
     }
 
-    private async saveMember(memberData: { userId: number }) {
-        const data = await this.prisma.member.create({
-            data: memberData,
-        });
-        return data;
-    }
+    // private async saveMember(memberData: { userId: number }) {
+    //     const data = await this.prisma.member.create({
+    //         data: memberData,
+    //     });
+    //     return data;
+    // }
 
     public async connect (): Promise<boolean> {
         return new Promise(async (resolve, reject) => {

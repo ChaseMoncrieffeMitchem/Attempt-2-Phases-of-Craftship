@@ -41,6 +41,12 @@ class InvalidEmailException extends Error {
   }
 }
 
+class InvalidSortParameter extends Error {
+  constructor() {
+    super("This sorting parameter is invalid")
+  }
+}
+
 export {
     InvalidRequestBodyException,
     UsernameTakenException,
@@ -48,5 +54,6 @@ export {
     ClientException,
     ServerException,
     UserNotFoundException,
-    InvalidEmailException
+    InvalidEmailException,
+    InvalidSortParameter
 }
