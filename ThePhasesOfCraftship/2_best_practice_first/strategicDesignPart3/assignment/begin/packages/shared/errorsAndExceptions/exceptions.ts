@@ -47,6 +47,12 @@ class InvalidSortParameter extends Error {
   }
 }
 
+class InvalidContactListException extends Error {
+  constructor() {
+    super("The contact list api had an issue")
+  }
+}
+
 export {
     InvalidRequestBodyException,
     UsernameTakenException,
@@ -55,5 +61,6 @@ export {
     ServerException,
     UserNotFoundException,
     InvalidEmailException,
-    InvalidSortParameter
+    InvalidSortParameter,
+    InvalidContactListException
 }

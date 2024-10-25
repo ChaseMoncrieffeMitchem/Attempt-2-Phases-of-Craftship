@@ -3,6 +3,9 @@ import { Database } from "@dddforum/backend/src/persistance/database";
 import { ContactListAPI } from "@dddforum/shared/src/api/marketing/contactListAPI";
 import { PrismaClient } from "@prisma/client";
 import express, { Request, Response } from "express";
+import { MarketingService } from "@/services/marketingService";
+import { ErrorExceptionHandler } from "@dddforum/shared/errorsAndExceptions/errorExceptionHandler";
+import { parseForResponse } from "@dddforum/shared/utils/utils";
 
 const prisma = new PrismaClient();
 const cors = require("cors");
@@ -38,49 +41,64 @@ function isMissingKeys(data: any, keysToCheckFor: string[]) {
 
 export class MarketingController {
   private contactListAPI: ContactListAPI;
+  private router: express.Router;
 
-  constructor(private database: Database) {
+  constructor(
+    private marketingService: MarketingService,
+    private errorHandler: ErrorExceptionHandler
+  ) {
     this.contactListAPI = new ContactListAPI();
+    this.router = express.Router();
+    this.setupRoutes();
+    this.setupErrorHandler();
   }
 
-  async addEmailToMarketingList(req: Request, res: Response) {
+  getRouter() {
+    return this.router;
+  }
+
+  private setupErrorHandler() {
+    this.router.use(this.errorHandler.handle);
+  }
+
+  private setupRoutes() {
+    this.router.get("/", this.addEmailToMarketingList);
+    this.router.get("/negative", this.doNotAddEmailToMarketingList);
+  }
+
+  async addEmailToMarketingList(
+    req: Request,
+    res: Response,
+    next: express.NextFunction
+  ) {
     try {
       const keyIsMissing = isMissingKeys(req.body, ["email"]);
 
       if (keyIsMissing) {
-        return res
-          .status(400)
-          .json({
-            error: Errors.ValidationError,
-            data: undefined,
-            success: false,
-          });
+        return res.status(400).json({
+          error: Errors.ValidationError,
+          data: undefined,
+          success: false,
+        });
       }
 
       const email = req.body.email;
 
-      const addedToList = await this.contactListAPI.addEmailToList(email);
-      
+      const response = await this.marketingService.addToEmailList(email)
 
-      if (!addedToList) {
-        return res
-          .status(400)
-          .json({
-            error: Errors.ContactListAPI,
-            data: undefined,
-            success: false,
-          });
-      }
+      // if (!addedToList) {
+      //   return res.status(400).json({
+      //     error: Errors.ContactListAPI,
+      //     data: undefined,
+      //     success: false,
+      //   });
+      // }
 
       return res
         .status(201)
-        .json({ error: undefined, data: email, success: true });
+        .json({ error: undefined, data: parseForResponse(response), success: true });
     } catch (error) {
-      console.log(error);
-      // Return a failure error response
-      return res
-        .status(500)
-        .json({ error: Errors.ServerError, data: undefined, success: false });
+      next(error);
     }
   }
 
@@ -89,28 +107,24 @@ export class MarketingController {
       const keyIsMissing = isMissingKeys(req.body, ["email"]);
 
       if (keyIsMissing) {
-        return res
-          .status(400)
-          .json({
-            error: Errors.ValidationError,
-            data: undefined,
-            success: false,
-          });
+        return res.status(400).json({
+          error: Errors.ValidationError,
+          data: undefined,
+          success: false,
+        });
       }
 
       const email = req.body.email;
 
-      const notAddedToList = await this.contactListAPI.doNotAddEmailToList(email);
-      
+      const notAddedToList =
+        await this.contactListAPI.doNotAddEmailToList(email);
 
       if (!notAddedToList) {
-        return res
-          .status(400)
-          .json({
-            error: Errors.ContactListAPI,
-            data: undefined,
-            success: false,
-          });
+        return res.status(400).json({
+          error: Errors.ContactListAPI,
+          data: undefined,
+          success: false,
+        });
       }
 
       return res
@@ -124,6 +138,4 @@ export class MarketingController {
         .json({ error: Errors.ServerError, data: undefined, success: false });
     }
   }
-
-  
 }

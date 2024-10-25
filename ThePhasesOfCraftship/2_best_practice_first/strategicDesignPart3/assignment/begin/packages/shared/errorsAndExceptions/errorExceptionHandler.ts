@@ -3,6 +3,7 @@ import { Errors } from "./constants";
 import {
   ClientException,
   EmailTakenException,
+  InvalidContactListException,
   InvalidRequestBodyException,
   InvalidSortParameter,
   UsernameTakenException,
@@ -60,6 +61,14 @@ export class ErrorExceptionHandler {
       return res
         .status(400)
         .json({ error: Errors.ClientError, data: undefined, success: false });
+    }
+
+    if (error instanceof InvalidContactListException) {
+        return res.status(400).json({
+            error: Errors.ContactListAPI,
+            data: undefined,
+            success: false,
+          });
     }
 
     return res.status(500).json({
