@@ -6,6 +6,7 @@ import {
   InvalidContactListException,
   InvalidRequestBodyException,
   InvalidSortParameter,
+  MissingReqBodyKey,
   UsernameTakenException,
   UserNotFoundException,
 } from "./exceptions";
@@ -66,6 +67,14 @@ export class ErrorExceptionHandler {
     if (error instanceof InvalidContactListException) {
         return res.status(400).json({
             error: Errors.ContactListAPI,
+            data: undefined,
+            success: false,
+          });
+    }
+
+    if (error instanceof MissingReqBodyKey) {
+        return res.status(400).json({
+            error: Errors.ValidationError,
             data: undefined,
             success: false,
           });

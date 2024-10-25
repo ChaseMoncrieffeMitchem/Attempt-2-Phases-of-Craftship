@@ -6,6 +6,7 @@ import express, { Request, Response } from "express";
 import { MarketingService } from "@/services/marketingService";
 import { ErrorExceptionHandler } from "@dddforum/shared/errorsAndExceptions/errorExceptionHandler";
 import { parseForResponse } from "@dddforum/shared/utils/utils";
+import { MarketingDTO } from "@dddforum/shared/dtos/marketing/marketingDTO"
 
 const prisma = new PrismaClient();
 const cors = require("cors");
@@ -72,17 +73,12 @@ export class MarketingController {
     next: express.NextFunction
   ) {
     try {
-      const keyIsMissing = isMissingKeys(req.body, ["email"]);
+      
+      MarketingDTO.validate(req.body)
 
-      if (keyIsMissing) {
-        return res.status(400).json({
-          error: Errors.ValidationError,
-          data: undefined,
-          success: false,
-        });
-      }
+      const marketingDTO = MarketingDTO.fromRequest(req.body);
 
-      const email = req.body.email;
+      const { email } = marketingDTO;
 
       const response = await this.marketingService.addToEmailList(email)
 
@@ -102,40 +98,40 @@ export class MarketingController {
     }
   }
 
-  async doNotAddEmailToMarketingList(req: Request, res: Response) {
+  async doNotAddEmailToMarketingList(req: Request, res: Response, next: express.NextFunction) {
     try {
-      const keyIsMissing = isMissingKeys(req.body, ["email"]);
 
-      if (keyIsMissing) {
-        return res.status(400).json({
-          error: Errors.ValidationError,
-          data: undefined,
-          success: false,
-        });
-      }
+      MarketingDTO.validate(req.body)
 
-      const email = req.body.email;
+      const marketingDTO = MarketingDTO.fromRequest(req.body)
 
-      const notAddedToList =
-        await this.contactListAPI.doNotAddEmailToList(email);
+      const { email } = marketingDTO
+      // const keyIsMissing = isMissingKeys(req.body, ["email"]);
 
-      if (!notAddedToList) {
-        return res.status(400).json({
-          error: Errors.ContactListAPI,
-          data: undefined,
-          success: false,
-        });
-      }
+      // if (keyIsMissing) {
+      //   return res.status(400).json({
+      //     error: Errors.ValidationError,
+      //     data: undefined,
+      //     success: false,
+      //   });
+      // }
+
+      const response =
+        await this.marketingService.doNotAddToEmailList(email)
+
+      // if (!notAddedToList) {
+      //   return res.status(400).json({
+      //     error: Errors.ContactListAPI,
+      //     data: undefined,
+      //     success: false,
+      //   });
+      // }
 
       return res
         .status(201)
-        .json({ error: undefined, data: email, success: true });
+        .json({ error: undefined, data: parseForResponse(response), success: true });
     } catch (error) {
-      console.log(error);
-      // Return a failure error response
-      return res
-        .status(500)
-        .json({ error: Errors.ServerError, data: undefined, success: false });
+      next(error)
     }
   }
 }

@@ -13,4 +13,14 @@ export class MarketingService {
 
         return result
     }
+
+    async doNotAddToEmailList(email: string) {
+        const result = await this.db.marketing.doNotAddToEmailList(email)
+
+        if (!result) {
+            throw new InvalidContactListException
+        }
+
+        return result
+    }
 }

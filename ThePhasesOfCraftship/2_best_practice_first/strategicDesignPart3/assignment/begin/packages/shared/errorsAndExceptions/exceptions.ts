@@ -4,6 +4,12 @@ class InvalidRequestBodyException extends Error {
     }
   }
 
+  class MissingReqBodyKey extends Error {
+    constructor() {
+      super("Key is Missing")
+    }
+  }
+
 
 class UsernameTakenException extends Error {
     constructor() {
@@ -62,5 +68,6 @@ export {
     UserNotFoundException,
     InvalidEmailException,
     InvalidSortParameter,
-    InvalidContactListException
+    InvalidContactListException,
+    MissingReqBodyKey,
 }
