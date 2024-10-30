@@ -44,18 +44,7 @@ export class WebServer {
 
     this.express.get('/posts', this.postController.getRouter());
 
-    this.express.post('/marketing/new', (req, res) => this.marketingController.addEmailToMarketingList(req, res, express));
-    this.express.post('/marketing/negative', (req, res) => this.marketingController.doNotAddEmailToMarketingList(req, res));
-
-    // this.express.post('/users/new', (req, res) => this.userController.createUser(req, res, express) ); // Check this if anything is messing up
-
-    // this.express.get('/users', (req, res) => this.userController.getUserByEmail(req, res, express)) // this too
-
-    // this.express.get('/posts', (req, res) => this.postController.getPosts(req, res))
-
-    // this.express.post('/marketing/new', (req, res) => this.marketingController.addEmailToMarketingList(req, res))
-
-    // this.express.post('/marketing/negative', (req, res) => this.marketingController.doNotAddEmailToMarketingList(req, res))
+    this.express.get('/marketing', this.marketingController.getRouter());
 
   }
 
