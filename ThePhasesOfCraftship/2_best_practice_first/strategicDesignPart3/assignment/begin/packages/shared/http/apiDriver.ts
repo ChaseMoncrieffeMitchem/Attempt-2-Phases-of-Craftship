@@ -18,6 +18,6 @@ export class RESTfulAPIDriver {
   get(url: string) {
     return request(this.baseUrl) // Using baseUrl with dynamic port
       .get(url)
-      .set("Accept", "application/json");
+      .set("Accept", "application/json")
   }
 }

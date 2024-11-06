@@ -4,7 +4,7 @@ import { ContactListAPI } from "@dddforum/shared/src/api/marketing/contactListAP
 import { PrismaClient } from "@prisma/client";
 import express, { Request, Response } from 'express';
 import { CreateUserDTO } from "@dddforum/shared/dtos/user/createUserDTO";
-import { userServices } from "@/services/userService";
+import { UserServices } from "@dddforum/backend/src/services/userService";
 import { ErrorExceptionHandler } from "@dddforum/shared/errorsAndExceptions/errorExceptionHandler"
 
 const prisma = new PrismaClient()
@@ -24,25 +24,27 @@ export class UserController {
     private router: express.Router;
 
     constructor(
-        private userService: userServices,
+        private userService: UserServices,
         private errorHandler: ErrorExceptionHandler
     ) {
         this.router = express.Router();
         this.setupRoutes();
         this.setupErrorHandler();
+
     }
 
     getRouter() {
         return this.router;
     }
 
-    private setupErrorHandler() {
-        this.router.use(this.errorHandler.handle);
+    private setupRoutes() {
+        // Using arrow functions to preserve `this` context
+        this.router.post("/new", (req, res, next) => this.createUser(req, res, next));
+        this.router.get("/", (req, res, next) => this.getUserByEmail(req, res, next));
     }
 
-    private setupRoutes() {
-        this.router.post("/new", this.createUser);
-        this.router.get("/", this.getUserByEmail)
+    private setupErrorHandler() {
+        this.router.use(this.errorHandler.handle);
     }
 
     public async createUser(
@@ -54,7 +56,7 @@ export class UserController {
             const dto = CreateUserDTO.formRequest(req.body);
             const response = await this.userService.createUser(dto);
 
-            res.status(201).json({
+            return res.status(201).json({
                 error: undefined,
                 data: parseUserForResponse(response),
                 success: true
@@ -66,16 +68,16 @@ export class UserController {
     async getUserByEmail (req: Request, res: Response, next: express.NextFunction) {
         try {
           const email = req.query.email as string;
-          // if (email === undefined) {
-          //   return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false })
-          // }
+          if (!email) {
+            return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false })
+          }
           
-          const user = await this.userService.getUserByEmail(email)
+          const response = await this.userService.getUserByEmail(email)
           // if (!user) {
           //   return res.status(404).json({ error: Errors.UserNotFound, data: undefined, success: false })
           // }
       
-          return res.status(200).json({ error: undefined, data: parseUserForResponse(user), succes: true });
+          return res.status(200).json({ error: undefined, data: parseUserForResponse(response), success: true });
         } catch (error) {
           next(error)
         }
@@ -83,3 +85,11 @@ export class UserController {
 
 
   }
+
+  const database = new Database()
+  const userService = new UserServices(database); // Initialize userService with PrismaClient instance
+const errorHandler = new ErrorExceptionHandler(); // Initialize your error handler
+const userController = new UserController(userService, errorHandler);
+
+// Export the router
+export const userRouter = userController.getRouter();

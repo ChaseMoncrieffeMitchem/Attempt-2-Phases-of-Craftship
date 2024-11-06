@@ -1,11 +1,11 @@
-import { createUserDTO } from "@dddforum/shared/dtos/user/createUserDTO"
+import { CreateUserDTO } from "@dddforum/shared/dtos/user/createUserDTO"
 
 function getRandomNumber(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
 export class CreateUserInputBuilder {
-    private createUserInput: createUserDTO
+    private createUserInput: CreateUserDTO
     // private driver: RESTfulAPIDriver
 
     constructor(
@@ -56,10 +56,13 @@ export class CreateUserInputBuilder {
         return this;
     }
 
-    public build() {
-        // const response = await this.driver("/users/new", {firstName: this.withFirstName, lastName: this.withLastName, username: this.withUsername, email: this.withEmail})
+    // public withPassword(password: string) {
+    //     this.createUserInput.password = password || generateRandomPassword(10);
+    //     return this;
+    // }
 
-        // console.log(response)
+    public build() {
+        // const response = await this.driver.post("/users/new", {email: this.withEmail, username: this.withUsername, firstName: this.withFirstName, lastName:this.withLastName })
 
         return this.createUserInput
     }

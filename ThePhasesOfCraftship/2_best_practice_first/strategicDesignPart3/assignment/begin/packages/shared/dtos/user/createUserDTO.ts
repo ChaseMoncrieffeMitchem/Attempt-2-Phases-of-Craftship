@@ -7,23 +7,21 @@ export class CreateUserDTO {
         public firstName: string,
         public lastName: string,
         public username: string,
-        public password: string
     ) {}
 
     static formRequest(body: unknown) {
-        const requiredKeys = ["email", "firstName", "lastName", "username", "password"];
+        const requiredKeys = ["email", "firstName", "lastName", "username"];
         const isRequestInvalid = !body || typeof body !== "object" || isMissingKeys(body, requiredKeys);
 
         if (isRequestInvalid) {
             throw new InvalidRequestBodyException(requiredKeys);
         }
         
-        const { email, firstName, lastName, username, password } = body as {
+        const { email, firstName, lastName, username } = body as {
             email: string;
             firstName: string;
             lastName: string;
             username: string;
-            password: string;
         };
 
         // Check for the presence of the email
@@ -37,6 +35,6 @@ export class CreateUserDTO {
             throw new InvalidEmailException();
         }
 
-        return new CreateUserDTO(email, firstName, lastName, username, password);
+        return new CreateUserDTO(email, firstName, lastName, username);
     }
 }

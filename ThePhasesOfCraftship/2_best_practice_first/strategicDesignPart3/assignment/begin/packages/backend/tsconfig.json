@@ -5,7 +5,7 @@
     "lib": ["es6"],
     "allowJs": true,
     "outDir": "build",
-    "rootDir": ".",
+    "rootDir": "../",
     "strict": true,
     "esModuleInterop": true,
     "types": ["node","jest", "../../node_modules/.prisma/client"],

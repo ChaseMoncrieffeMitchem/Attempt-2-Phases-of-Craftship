@@ -1,29 +1,40 @@
-import { createUserDTO } from "@dddforum/shared/dtos/user/createUserDTO";
+import { CreateUserDTO } from "@dddforum/shared/dtos/user/createUserDTO";
 // import request from "supertest";
 import { defineFeature, loadFeature } from "jest-cucumber";
 import * as path from "path";
 import { CreateUserInputBuilder } from "../builders/user/createUserBuilder";
-import { Server } from "http";
-import { WebServer } from "@dddforum/shared/http/webServer";
 import { RESTfulAPIDriver } from "@dddforum/shared/http/apiDriver";
-import { CompositionRoot } from "@dddforum/shared/composition/compositionRoot";
+import { CompositionRoot } from "@dddforum/backend/src/shared/compositionRoot/compositionRoot";
+import { Config } from "@dddforum/backend/src/shared/config/config"
 
 const feature = loadFeature(
   path.join(__dirname, "../features/registration.feature")
 );
 
 defineFeature(feature, (test) => {
-  let root = new CompositionRoot();
-  let webServer: WebServer = root.getWebServer();
+  // let root = new CompositionRoot();
+  // let webServer: WebServer = root.getWebServer();
   let driver: RESTfulAPIDriver;
+  let server: any
+  let dbConnection: any
+  let composition: CompositionRoot
+  let config: Config = new Config("test:e2e")
 
   beforeAll(async () => {
-    await webServer.start(3001);
-    driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3001);
+    // await webServer.start(3001);
+    // driver = new RESTfulAPIDriver(webServer.getHttp() as Server, 3001);
+
+    composition = CompositionRoot.createCompositionRoot(config);
+    server = composition.getWebServer();
+    dbConnection = composition.getDBConnection();
+    driver = new RESTfulAPIDriver(server)
+
+    await server.start();
+    await dbConnection.connect();
   });
 
   afterAll(async () => {
-    await webServer.stop();
+    await server.stop();
   });
 
   test("Successful registration with marketing emails accepted", ({
@@ -34,7 +45,7 @@ defineFeature(feature, (test) => {
   }) => {
     let createUserResponse: any = {};
     let addEmailToMarketingList: any = {};
-    let createUserInput: createUserDTO;
+    let createUserInput: CreateUserDTO;
 
     given("I am a new user", () => {
       createUserInput = new CreateUserInputBuilder()
@@ -43,12 +54,16 @@ defineFeature(feature, (test) => {
         .withUsername("")
         .withEmail("")
         .build();
+
+        console.log(createUserInput)
     });
 
     when(
       "I register with valid account details accepting marketing emails",
       async () => {
-        createUserResponse = await driver?.post("/users/new", createUserInput);
+        createUserResponse = await driver.post("/users/new", createUserInput);
+
+        console.log(createUserResponse)
 
         addEmailToMarketingList = await driver?.post("/marketing/new", {
           email: createUserResponse.body.data?.email,
@@ -81,7 +96,7 @@ defineFeature(feature, (test) => {
     then,
     and,
   }) => {
-    let createUserInput: createUserDTO;
+    let createUserInput: CreateUserDTO;
     let createUserResponse: any = {};
     let declineMarketingEmails: any = {};
 
@@ -128,7 +143,7 @@ defineFeature(feature, (test) => {
     then,
     and,
   }) => {
-    let createUserInput: createUserDTO;
+    let createUserInput: CreateUserDTO;
     let createUserResponse: any = {};
 
     given("I am a new user", () => {
@@ -156,7 +171,7 @@ defineFeature(feature, (test) => {
   });
 
   test("Account already created with email", ({ given, when, then, and }) => {
-    let userInputs: createUserDTO[] = [];
+    let userInputs: CreateUserDTO[] = [];
     let createUserResponses: any[] = []; // Specify the type of responses
 
     given("a set of users already created accounts", (table: any[]) => {

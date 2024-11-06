@@ -23,7 +23,6 @@ type UserData = {
     firstName: string;
     lastName: string;
     email: string;
-    password: string;
 }
 
 export class Database {
@@ -31,15 +30,24 @@ export class Database {
     public posts: PostPersistence
     public marketing: MarketingPersistence
     private contactListAPI: ContactListAPI;
+    private prisma: PrismaClient
 
     
-    constructor(private prisma: PrismaClient) {
+    constructor() {
         this.prisma = new PrismaClient()
         this.users = this.buildUserPersistence();
         this.posts = this.buildPostPersistence();
         this.marketing = this.buildMarketingPersistence();
         this.contactListAPI = new ContactListAPI();
     }
+
+    getConnection () {
+        return this.prisma
+    }
+
+    async connect() {
+        await this.prisma.$connect();
+      }
 
     private buildUserPersistence(): UserPersistence {
         return {
@@ -63,34 +71,50 @@ export class Database {
     }
 
     private async saveUser(userData: UserData) {
-        const [user, member] = await this.prisma.$transaction(async (prisma) => {
-            const user = await prisma.user.create({
-                data: { ...userData, password: generateRandomPassword(10) },
+        try {
+            const { email, firstName, lastName, username } = userData
+            const user = await this.prisma.user.create({
+                data: {
+                    email, firstName, lastName, username,
+                    password: generateRandomPassword(10), // Assuming password generation is required
+                },
             });
     
-            const member = await prisma.member.create({
+            // Create the associated member
+            await this.prisma.member.create({
                 data: { userId: user.id },
             });
     
-            return [user, member];
-        });
-    
-        return { user, member };
+            // Return the created user
+            return user;
+        } catch (error) {
+            console.error("Error saving user:", error);
+            throw new Error("User creation failed");
+        }
     }
     
 
     private async getUserByEmail(email: string) {
-        const data = await this.prisma.user.findUnique({
+        const data = await this.prisma.user.findFirst({
             where: { email },
-            include: {
-                member: {
-                    include: {
-                        posts: true,     // Include related posts
-                        votes: true,     // Include related votes
-                        comments: true   // Include related comments
-                    }
-                }
-            }
+            // include: {
+            //     member: {
+            //         include: {
+            //             posts: {
+            //                 include: {
+            //                     comments: true, // Include comments for each post
+            //                     votes: true     // Include votes for each post
+            //                 }
+            //             },
+            //             votes: true,          // Include member's votes
+            //             comments: {           // Include member's comments with replies
+            //                 include: {
+            //                     replyComments: true
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
         });
     
         return data;
@@ -150,18 +174,18 @@ export class Database {
     //     return data;
     // }
 
-    public async connect (): Promise<boolean> {
-        return new Promise(async (resolve, reject) => {
-            return this.prisma.$connect()
-            .then(() => {
-                console.log('Connection to the database successful')
-                return resolve(true)
-            })
-            .catch((err) => {
-                return reject(false)
-            })
-        })
-    }
+    // public async connect (): Promise<boolean> {
+    //     return new Promise(async (resolve, reject) => {
+    //         return this.prisma.$connect()
+    //         .then(() => {
+    //             console.log('Connection to the database successful')
+    //             return resolve(true)
+    //         })
+    //         .catch((err) => {
+    //             return reject(false)
+    //         })
+    //     })
+    // }
 
     // public async disconnect () {
 
@@ -185,7 +209,5 @@ export class Database {
     
     
 
-    public async getConnection () {
-        return this.prisma
-    }
+    
 }

@@ -1,5 +1,5 @@
-import { InvalidRequestBodyException, MissingReqBodyKey } from "shared/errorsAndExceptions/exceptions";
-import { isMissingKeys } from "shared/utils/utils";
+import { InvalidRequestBodyException } from "../../errorsAndExceptions/exceptions";
+import { isMissingKeys } from "../../utils/utils";
 
 export class MarketingDTO {
     constructor(public email: string) {}
@@ -8,7 +8,7 @@ export class MarketingDTO {
         const keyIsMissing = isMissingKeys(data, ["email"]);
 
         if (keyIsMissing) {
-            throw new MissingReqBodyKey
+            throw new InvalidRequestBodyException(["email"])
         }
     }
 

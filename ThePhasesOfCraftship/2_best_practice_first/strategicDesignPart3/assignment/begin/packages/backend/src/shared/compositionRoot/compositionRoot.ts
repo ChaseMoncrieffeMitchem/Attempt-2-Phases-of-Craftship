@@ -1,11 +1,11 @@
    import { WebServer } from "@dddforum/shared/http/webServer"
-   import { UserController } from "@/controllers/userController";
-   import { PostController } from "@/controllers/postController";
-   import { MarketingController } from "@/controllers/marketingController";
-   import { userServices } from "@/services/userService";
-   import { PostService } from "@/services/postService";
-   import { MarketingService } from "@/services/marketingService";
-   import { Database } from "@/persistance/database";
+   import { UserController } from "@dddforum/backend/src/controllers/userController";
+   import { PostController } from "@dddforum/backend/src/controllers/postController";
+   import { MarketingController } from "@dddforum/backend/src/controllers/marketingController";
+   import { UserServices } from "@dddforum/backend/src/services/userService";
+   import { PostService } from "@dddforum/backend/src/services/postService";
+   import { MarketingService } from "@dddforum/backend/src/services/marketingService";
+   import { Database } from "@dddforum/backend/src/persistance/database";
    import { ErrorExceptionHandler } from "@dddforum/shared/errorsAndExceptions/errorExceptionHandler";
    import { Config } from "../config/config";
 import { PrismaClient } from "@prisma/client";
@@ -17,7 +17,7 @@ import { PrismaClient } from "@prisma/client";
      private dbConnection: Database;
      private config: Config;
      private errorHandler: ErrorExceptionHandler;
-     private usersService: userServices;
+     private usersService: UserServices;
      private postsService: PostService;
      private marketingService: MarketingService;
    
@@ -56,7 +56,7 @@ import { PrismaClient } from "@prisma/client";
    
      private createUserService() {
        const dbConnection = this.getDBConnection();
-       return new userServices(dbConnection);
+       return new UserServices(dbConnection);
      }
 
      private createPostService() {
@@ -88,7 +88,7 @@ import { PrismaClient } from "@prisma/client";
    
      private createDBConnection() {
         const prisma = new PrismaClient()
-       const dbConnection = new Database(prisma);
+       const dbConnection = new Database();
        if (!this.dbConnection) {
          this.dbConnection = dbConnection;
        }
@@ -109,3 +109,5 @@ import { PrismaClient } from "@prisma/client";
        return this.webServer;
      }
    }
+
+   console.log()
