@@ -86,10 +86,10 @@ export class UserController {
 
   }
 
-  const database = new Database()
-  const userService = new UserServices(database); // Initialize userService with PrismaClient instance
-const errorHandler = new ErrorExceptionHandler(); // Initialize your error handler
-const userController = new UserController(userService, errorHandler);
+//   const database = new Database(prisma)
+//   const userService = new UserServices(database); // Initialize userService with PrismaClient instance
+// const errorHandler = new ErrorExceptionHandler(); // Initialize your error handler
+// const userController = new UserController(userService, errorHandler);
 
-// Export the router
-export const userRouter = userController.getRouter();
+// // Export the router
+// export const userRouter = userController.getRouter();

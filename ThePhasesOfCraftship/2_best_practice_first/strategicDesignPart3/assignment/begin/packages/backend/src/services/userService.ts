@@ -12,6 +12,7 @@ export class UserServices {
 
   async createUser(dto: CreateUserDTO) {
     const { firstName, lastName, username, email } = dto;
+    console.log(firstName, lastName, username, email)
 
     const existingUserByEmail = await this.db.users.getByEmail(email);
     console.log(existingUserByEmail)

@@ -88,7 +88,7 @@ import { PrismaClient } from "@prisma/client";
    
      private createDBConnection() {
         const prisma = new PrismaClient()
-       const dbConnection = new Database();
+       const dbConnection = new Database(prisma);
        if (!this.dbConnection) {
          this.dbConnection = dbConnection;
        }
@@ -96,9 +96,12 @@ import { PrismaClient } from "@prisma/client";
      }
    
      getDBConnection() {
-       if (!this.dbConnection) this.createDBConnection();
-       return this.dbConnection;
-     }
+        if (!this.dbConnection) {
+            this.dbConnection = this.createDBConnection();
+        }
+        return this.dbConnection;
+    }
+    
    
      createWebServer() {
         const { usersController, postsController, marketingController } = this.createControllers();
@@ -109,5 +112,3 @@ import { PrismaClient } from "@prisma/client";
        return this.webServer;
      }
    }
-
-   console.log()

@@ -30,11 +30,8 @@ export class Database {
     public posts: PostPersistence
     public marketing: MarketingPersistence
     private contactListAPI: ContactListAPI;
-    private prisma: PrismaClient
-
     
-    constructor() {
-        this.prisma = new PrismaClient()
+    constructor(private prisma: PrismaClient) {
         this.users = this.buildUserPersistence();
         this.posts = this.buildPostPersistence();
         this.marketing = this.buildMarketingPersistence();
@@ -73,6 +70,9 @@ export class Database {
     private async saveUser(userData: UserData) {
         try {
             const { email, firstName, lastName, username } = userData
+            if (!email || !firstName || !lastName || !username) {
+                throw new Error("Missing required fields: email, firstName, lastName, or username");
+            }
             const user = await this.prisma.user.create({
                 data: {
                     email, firstName, lastName, username,
