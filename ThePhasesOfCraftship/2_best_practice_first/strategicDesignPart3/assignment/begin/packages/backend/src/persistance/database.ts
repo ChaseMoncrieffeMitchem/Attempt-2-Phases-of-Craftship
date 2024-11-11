@@ -30,12 +30,14 @@ export class Database {
     public posts: PostPersistence
     public marketing: MarketingPersistence
     private contactListAPI: ContactListAPI;
+    private prisma: PrismaClient
     
-    constructor(private prisma: PrismaClient) {
+    constructor() {
         this.users = this.buildUserPersistence();
         this.posts = this.buildPostPersistence();
         this.marketing = this.buildMarketingPersistence();
         this.contactListAPI = new ContactListAPI();
+        this.prisma = new PrismaClient()
     }
 
     getConnection () {

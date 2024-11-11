@@ -1,36 +1,54 @@
 import express from "express";
-
 import cors from "cors";
 import { Server } from "http";
-import { ProcessService } from "@dddforum/shared/processes/processServer";
-import { UserController } from "@dddforum/backend/src/controllers/userController";
-import { PostController } from "@dddforum/backend/src/controllers/postController";
-import { MarketingController } from "@dddforum/backend/src/controllers/marketingController"
+import { 
+  ProcessService 
+} from "@dddforum/shared/processes/processServer";
+import { UserController } from "backend/src/controllers/userController";
+import { PostController } from "backend/src/controllers/postController";
+import { MarketingController } from "backend/src/controllers/marketingController";
+
+interface WebServerConfig {
+  port: number;
+  env: string;
+}
 
 export class WebServer {
   private express: express.Express;
-  private http: Server | undefined
-  private state: 'Started' | 'Stopped'
+  private state: "stopped" | "started";
+  private instance: Server | undefined;
+  private userController: UserController;
+  private postController: PostController;
+  private marketingController: MarketingController;
 
-  constructor(
-    private userController: UserController, 
-    private postController: PostController, 
-    private marketingController: MarketingController
-) 
-    {
-    this.express = this.createExpress();
-    this.configureExpress();
-    this.setupRoutes();
-    this.state = 'Stopped'
+  constructor(private config: WebServerConfig, controllers: { 
+    userController: UserController; 
+    postController: PostController; 
+    marketingController: MarketingController 
+  }) {
+    this.state = "stopped";
+    this.express = express();
+    this.userController = controllers.userController;
+    this.postController = controllers.postController;
+    this.marketingController = controllers.marketingController;
+    this.initializeServer();
   }
 
-  private createExpress() {
-    return express();
-  }
-
-  private configureExpress() {
-    this.express.use(express.json());
+  private initializeServer() {
+    this.addMiddlewares();
     this.express.use(cors());
+  }
+
+  private addMiddlewares() {
+    this.express.use(express.json());
+  }
+
+  public mountRouter(path: string, router: express.Router) {
+    this.express.use(path, router);
+  }
+
+  public getApplication() {
+    return this.express;
   }
 
   public setupRoutes() {
@@ -48,43 +66,34 @@ export class WebServer {
 
   }
 
-  public async start(port: number = 3000): Promise<void> {
-    // Kill the process running on the port if it's already running
-    // let port = 3000;
-    
-    return new Promise(async (resolve, reject) => {
-      await ProcessService.killProcessOnPort(port, () => {
-        this.http = this.express.listen(port, () => {
-          console.log(`Server is running on port ${port}`);
-          this.state = 'Started';
+  async start(): Promise<void> {
+    return new Promise((resolve, _reject) => {
+      ProcessService.killProcessOnPort(this.config.port, () => {
+        if (this.config.env === " test") {
+          resolve();
+        }
+        console.log("Starting the server");
+        this.instance = this.express.listen(this.config.port, () => {
+          console.log(`Server is running on port ${this.config.port}`);
+          this.state = "started";
           resolve();
         });
       });
     });
   }
-  
-  
-  public isStarted () {
-    return this.state === 'Started'
-  }
 
-  public async stop(): Promise<void> {
-    if (!this.isStarted()) return;
-  
+  async stop() {
     return new Promise((resolve, reject) => {
-      this.http?.close(() => {
-        this.state = 'Stopped';
-        console.log("Server Successfully Stopped")
-        resolve();
+      if (!this.instance) return reject("Server not started");
+      this.instance.close((err) => {
+        if (err) return reject("Error stopping the server");
+        this.state = "stopped";
+        return resolve("Server stopped");
       });
     });
   }
-  
-  
 
-  public getHttp() {
-    if (!this.isStarted()) throw new Error('is not started yet')
-    return this.http
+  isStarted() {
+    return this.state === "started";
   }
 }
-
